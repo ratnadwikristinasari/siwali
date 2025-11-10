@@ -1,0 +1,59 @@
+{
+  "menu": [
+    {
+
+      "url": "/",
+      "name": "Dashboards",
+      "icon": "menu-icon tf-icons ri-home-smile-line",
+      "slug": "dashboard"
+    },
+
+    {
+      "menuHeader": "Pages"
+    },
+
+     {
+      "name": "Data Program Studi",
+      "icon": "menu-icon tf-icons ri-book-shelf-fill",
+      "slug": "prodi",
+      "url": "page/prodi"
+    },
+    {
+      "name": "Data Dosen",
+      "icon": "menu-icon tf-icons ri-account-box-line",
+      "slug": "dosen",
+      "url": "page/dosen"
+    },
+    {
+      "name": "Data Mahasiswa",
+      "icon": "menu-icon tf-icons ri-graduation-cap-fill",
+      "slug": "mahasiswa",
+      "url": "page/mahasiswa"
+    },
+    {
+      "name": "Perwalian",
+      "icon": "menu-icon tf-icons ri-list-view",
+      "slug": "form-perwalian",
+      "url": "page/form"
+    },
+
+    {
+      "menuHeader": "History"
+    },
+    {
+      "name": "Riwayat Perwalian",
+      "icon": "menu-icon tf-icons ri-bank-card-2-line",
+      "slug": "cards-basic",
+      "url": "history/perwalian"
+    },
+    {
+      "menuHeader": "Notice"
+    },
+    {
+      "name": "Notifikasi",
+      "icon": "menu-icon tf-icons ri-notification-2-fill",
+      "slug": "cards-basic",
+      "url": "cards/basic"
+    }
+  ]
+}
