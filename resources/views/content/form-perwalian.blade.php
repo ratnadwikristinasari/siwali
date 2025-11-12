@@ -62,18 +62,18 @@
           <div class="mb-6">
             <div class="input-group input-group-merge">
               <span class="input-group-text"><i class="ri-mail-line ri-20px"></i></span>
-                <input type="text" id="basic-icon-default-email" class="form-control" placeholder="john.doe" aria-label="john.doe" aria-describedby="basic-icon-default-email2" />
+                <input type="text" id="basic-icon-default-email" class="form-control" placeholder="Program Studi" aria-label="john.doe" aria-describedby="basic-icon-default-email2" />
               <span id="basic-icon-default-email2" class="input-group-text">@example.com</span>
             </div>
             <div class="form-text"> You can use letters, numbers & periods </div>
           </div>
           <div class="input-group input-group-merge mb-6">
             <span id="basic-icon-default-phone2" class="input-group-text"><i class="ri-phone-fill ri-20px"></i></span>
-              <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="658 799 8941" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2" />
+              <input type="text" id="basic-icon-default-phone" class="form-control phone-mask" placeholder="IPK" aria-label="658 799 8941" aria-describedby="basic-icon-default-phone2" />
           </div>
           <div class="input-group input-group-merge mb-6">
             <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
-              <textarea id="basic-icon-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2" style="height: 60px;"></textarea>
+              <textarea id="basic-icon-default-message" class="form-control" placeholder="" aria-label="Hi, Do you have a moment to talk Joe?" aria-describedby="basic-icon-default-message2" style="height: 60px;"></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Send</button>
         </form>

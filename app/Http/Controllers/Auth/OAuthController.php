@@ -57,7 +57,14 @@ class OAuthController extends Controller
 
     Auth::login($user);
 
-    return redirect()->route('dashboard');
+    if ($user->hasAnyRole('kaprodi')) {
+      return redirect()->route('content.kaprodi.dashboard');
+    } else if ($user->hasAnyRole('')) {
+    } else {
+      return redirect()->route('content.landingpage');
+    }
+    
+
   }
 
   public function logout(Request $request)
