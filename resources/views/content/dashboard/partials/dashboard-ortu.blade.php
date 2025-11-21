@@ -174,7 +174,7 @@
                   </div>
                 </div>
               </td>
-              <td class="text-truncate">lonnie35@hotmail.com</td>
+              <td class="text-truncate">le35@hotmail.com</td>
               <td class="text-truncate">
                 <div class="d-flex align-items-center">
                   <i class="ri-edit-box-line text-warning ri-22px me-2"></i>
