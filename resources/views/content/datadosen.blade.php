@@ -25,6 +25,7 @@
         <table class="table table-sm">
           <thead>
             <tr>
+                <th class="text-truncate">No</th>
               <th class="text-truncate">Nama</th>
               <th class="text-truncate">NIP</th>
               <th class="text-truncate">Home Base</th>
@@ -32,8 +33,9 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($dosens as $listdosen)
+            @foreach ($dosens as $index => $listdosen)
             <tr>
+                <td>{{ $dosens->firstItem() + $index }}</td>
               <td>
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm me-4">
