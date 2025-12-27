@@ -14,7 +14,7 @@ public static function getprodi(string $token, ?string $majorId = null, ?int $pa
       'Authorization' => 'Bearer ' . $token,
     ])
       ->withQueryParameters($queryParams)
-      ->get(config('app.super_app_url') . '/majors');
+      ->get(config('app.super_app_url') . '/study-programs');
 
     return $response->json();
   }
