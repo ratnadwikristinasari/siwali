@@ -13,7 +13,7 @@ use App\Http\Controllers\history\CPerwalian;
 Route::get('/', [CLandingpage::class, 'index'])->name('content.landingpage');
 Route::get('/login', function () {
   redirect()->route('content.landingpage');
-  
+
 }) ->name('login');
 
 
