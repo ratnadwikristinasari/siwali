@@ -15,7 +15,6 @@ class AuthHelper {
     ])
       ->withQueryParameters($queryParams)
       ->get(config('app.super_app_url') . '/auth/me');
-
     return $response->json();
 
     }

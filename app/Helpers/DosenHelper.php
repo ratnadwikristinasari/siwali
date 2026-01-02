@@ -15,7 +15,6 @@ public static function getdosen(string $token, ?string $majorId = null, ?int $pa
     ])
       ->withQueryParameters($queryParams)
       ->get(config('app.super_app_url') . '/employees');
-
-    return $response->json();
+      return $response->json();
   }
 }
