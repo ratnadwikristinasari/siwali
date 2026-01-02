@@ -16,10 +16,11 @@ return new class extends Migration
             $table->uuid('student_id');
             $table->uuid('lecture_id');
 
-            $table->string('description')->nullable();
             $table->enum('status', ['done', 'pending'])->default('pending');
             $table->string('khs')->nullable();
             $table->double('ipk')->nullable();
+            $table->string('keluhan')->nullable();
+            $table->string('masukan')->nullable();
 
             $table->timestamps();
 

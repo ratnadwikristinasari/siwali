@@ -17,21 +17,23 @@ class CFormwali extends Controller
     $dataAuth = AuthHelper::getauth('', $token);
     $student = $dataAuth['data']['student_detail'] ?? null;
 
-    // Ambil data yang dibutuhkan
+    // Ambil data prodi
     $programStudi = $student['study_program_name']?? '_'; 
 
     //Semester Aktif
     $semesterAktif = '_';
-    if (!empty($student['student_semester'])) {
+    if (!empty($student['student_semester']) && is_array($student['student_semester'])) {
         foreach ($student['student_semester'] as $sem) {
-            if ($sem['is_active']=== true) {
-                $semesterAktif = $sem['is_active'];
+            if (!empty($sem['is_active']) && $sem ['is_active']=== true) {
+                $semesterAktif = $sem['semester_id'];
+                $kelas = $sem['is_active'];
+                break;
             }
         }
     }
 
     
 
-    return view('content.form-perwalian', compact('programStudi','semesterAktif'));
+    return view('content.form-perwalian', compact('programStudi','semesterAktif', 'kelas'));
   }
 }
