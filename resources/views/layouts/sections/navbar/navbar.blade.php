@@ -90,10 +90,14 @@ $navbarDetached = ($navbarDetached ?? '');
               </li>
               <li>
                 <div class="d-grid px-4 pt-2 pb-1">
-                  <a class="btn btn-danger d-flex" href="javascript:void(0);">
+                  <a class="btn btn-danger d-flex" 
+                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();" href="javascript:void(0);">
                     <small class="align-middle">Logout</small>
                     <i class="ri-logout-box-r-line ms-2 ri-16px"></i>
                   </a>
+                  <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" class="d-none">
+                            @csrf
+                 </form>
                 </div>
               </li>
             </ul>
