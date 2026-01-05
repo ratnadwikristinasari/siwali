@@ -33,44 +33,57 @@
             </tr>
           </thead>
           <tbody>
-            @forelse ($perwalian as $index => $historywali)
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="{{ asset('assets/img/avatars/1.png') }}" class="rounded-circle">
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">
-                      {{ $historywali->student->name ?? '-' }}
-                    </h6>
-                  </div>
-                </div>
-              </td>
+           @forelse ($perwalian as $index => $historywali)
+<tr>
+  <td>{{ $index + 1 }}</td>
 
-              <td class="text-truncate">
-                {{ Auth::user()->email ?? '-' }}
-              </td>
+  {{-- TANGGAL --}}
+  <td>
+    {{ optional($historywali->created_at)->translatedFormat('d F Y') ?? '-' }}
+  </td>
 
-              <td class="text-truncate">
-                {{ $historywali->ipk ?? '-' }}
-              </td>
+  {{-- NAMA --}}
+  <td>
+    <div class="d-flex align-items-center">
+      <div class="avatar avatar-sm me-4">
+      </div>
+      <div>
+        <h6 class="mb-0 text-truncate">
+          {{ $historywali->student->name}}
+        </h6>
+      </div>
+    </div>
+  </td>
+  {{-- IPK --}}
+  <td class="text-truncate">
+    {{ $historywali->ipk}}
+  </td>
+  <td class="text-truncate">
+    {{ $historywali->keluhan}}
+  </td>
+  <td class="text-truncate">
+    {{ $historywali->masukan}}
+  </td>
+  <td class="text-truncate">
+    {{ $historywali->khs}}
+  </td>
 
-              <td>
-                @if ($historywali->status === 'pending')
-                  <span class="badge bg-label-warning rounded-pill">Pending</span>
-                @else
-                  <span class="badge bg-label-success rounded-pill">Done</span>
-                @endif
-              </td>
-            </tr>
-            @empty
-            <tr>
-              <td colspan="4" class="text-center">
-                Belum ada data perwalian
-              </td>
-            </tr>
-            @endforelse
+  {{-- STATUS --}}
+  <td>
+    @if ($historywali->status === 'pending')
+      <span class="badge bg-label-warning rounded-pill">Pending</span>
+    @else
+      <span class="badge bg-label-success rounded-pill">Done</span>
+    @endif
+  </td>
+</tr>
+@empty
+<tr>
+  <td colspan="8" class="text-center">
+    Belum ada data perwalian
+  </td>
+</tr>
+@endforelse
             </tbody>
         </table>
       </div>
