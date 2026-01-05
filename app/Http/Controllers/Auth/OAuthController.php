@@ -19,7 +19,7 @@ class OAuthController extends Controller
 
   public function callback(Request $request)
   {
-    $response = Http::asForm()->post(config('app.super_app_url') . '/oauth/token', [
+    $response = Http::withoutVerifying()->asForm()->post(config('app.super_app_url') . '/oauth/token', [
       'grant_type' => 'authorization_code',
       'client_id' => env('OAUTH_CLIENT_ID'),
       'client_secret' => env('OAUTH_CLIENT_SECRET'),
@@ -67,6 +67,6 @@ class OAuthController extends Controller
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect()->away(config('app.super_app_url') . '/oauth/logout?redirect=' . route('login'));
+    return redirect()->away(config('app.super_app_url') . '/oauth/logout?redirect=' . route('content.landingpage'));
   }
 }

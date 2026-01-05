@@ -10,7 +10,7 @@ class MajorHelper {
       'major_id' => $majorId,
       'page' => $page
     ];
-    $response = Http::withHeaders([
+    $response = Http::withoutVerifying()->withHeaders([
       'Authorization' => 'Bearer ' . $token,
     ])
       ->withQueryParameters($queryParams)

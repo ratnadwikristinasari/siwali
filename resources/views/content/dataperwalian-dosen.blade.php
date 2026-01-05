@@ -25,15 +25,13 @@
               <th class="text-truncate">No</th>
               <th class="text-truncate">Tanggal</th>
               <th class="text-truncate">Nama</th>
+              <th class="text-truncate">Program Studi</th>
               <th class="text-truncate">IPK</th>
-              <th class="text-truncate">Keterangan</th>
-              <th class="text-truncate">Masukan</th>
-              <th class="text-truncate">KHS</th>
               <th class="text-truncate">Status</th>
             </tr>
           </thead>
           <tbody>
-            @forelse ($perwalian as $index => $historywali)
+            @forelse ($perwalian as $item)
             <tr>
               <td>
                 <div class="d-flex align-items-center">
@@ -42,7 +40,7 @@
                   </div>
                   <div>
                     <h6 class="mb-0 text-truncate">
-                      {{ $historywali->student->name ?? '-' }}
+                      {{ $item->student->name ?? '-' }}
                     </h6>
                   </div>
                 </div>
@@ -53,11 +51,11 @@
               </td>
 
               <td class="text-truncate">
-                {{ $historywali->ipk ?? '-' }}
+                {{ $item->ipk ?? '-' }}
               </td>
 
               <td>
-                @if ($historywali->status === 'pending')
+                @if ($item->status === 'pending')
                   <span class="badge bg-label-warning rounded-pill">Pending</span>
                 @else
                   <span class="badge bg-label-success rounded-pill">Done</span>

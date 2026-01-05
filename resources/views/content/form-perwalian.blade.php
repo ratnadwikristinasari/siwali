@@ -14,7 +14,7 @@
         <h5 class="mb-0">Silakan Upload Kartu Hasil Studi</h5>
       </div>
       <div class="card-body">
-        <form action="{{ route('upload.khs') }}" method="POST" class="dropzone" id="file-upload" enctype="multipart/form-data">
+        <form action="{{ route('perwalian.store') }}" method="POST" class="dropzone" id="file-upload" enctype="multipart/form-data">
             @csrf
             <div class="dz-message">
               <h3>Klik untuk Upload KHS</h3>

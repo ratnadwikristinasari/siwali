@@ -10,7 +10,7 @@ public static function getprodi(string $token, ?string $majorId = null, ?int $pa
       'major_id' => $majorId,
       'page' => $page
     ];
-    $response = Http::withHeaders([
+    $response = Http::withoutVerifying()->withHeaders([
       'Authorization' => 'Bearer ' . $token,
     ])
       ->withQueryParameters($queryParams)

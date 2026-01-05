@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('student_id');
             $table->uuid('lecture_id');
+            $table->uuid('student_user_id');
+            $table->uuid('lecture_user_id');
 
             $table->enum('status', ['done', 'pending'])->default('pending');
             $table->string('khs')->nullable();
@@ -25,8 +27,8 @@ return new class extends Migration
             $table->timestamps();
 
              // Foreign key relations to users
-            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('lecture_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('student_user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('lecture_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

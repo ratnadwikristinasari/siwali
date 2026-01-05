@@ -5,7 +5,7 @@
   <div class="col-md-12 col-lg-7">
     <div class="card">
       <div class="card-body text-nowrap">
-        <h5 class="card-title mb-0 flex-wrap text-nowrap">Congratulations Nama Mahasiswa</h5>
+        <h5 class="card-title mb-0 flex-wrap text-nowrap">CONGRATULATIONS {{ Auth::user()->name }}</h5>
         <p class="mb-2">Rata - Rata IPK</p>
         <h4 class="text-primary mb-0">3.85</h4>
         <p class="mb-2">78% of target 🚀</p>

@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Advise extends Model
 {
-    protected $table = 'Advise';
+    protected $table = 'advise';
     protected $fillable = [
+        'student_user_id',
+        'lecture_user_id',
         'student_id',
         'lecture_id',
         'status',
@@ -17,9 +19,9 @@ class Advise extends Model
         'masukan',
     ];
     public function lecture() {
-        return $this->belongsTo(User::class, 'lecture_id');
+        return $this->belongsTo(User::class, 'lecture_user_id');
     }
     public function student() {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'student_user_id');
     }
 }
