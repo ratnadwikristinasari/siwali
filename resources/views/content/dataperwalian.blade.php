@@ -24,7 +24,6 @@
             <tr>
               <th class="text-truncate">No</th>
               <th class="text-truncate">Tanggal</th>
-              <th class="text-truncate">Nama</th>
               <th class="text-truncate">IPK</th>
               <th class="text-truncate">Keterangan</th>
               <th class="text-truncate">Masukan</th>
@@ -42,18 +41,6 @@
     {{ optional($historywali->created_at)->translatedFormat('d F Y') ?? '-' }}
   </td>
 
-  {{-- NAMA --}}
-  <td>
-    <div class="d-flex align-items-center">
-      <div class="avatar avatar-sm me-4">
-      </div>
-      <div>
-        <h6 class="mb-0 text-truncate">
-          {{ $historywali->student->name}}
-        </h6>
-      </div>
-    </div>
-  </td>
   {{-- IPK --}}
   <td class="text-truncate">
     {{ $historywali->ipk}}
@@ -65,7 +52,7 @@
     {{ $historywali->masukan}}
   </td>
   <td class="text-truncate">
-    {{ $historywali->khs}}
+    <a href="{{ asset('storage/'.$historywali->khs)}}" target="_blank">Lihat file</a>
   </td>
 
   {{-- STATUS --}}

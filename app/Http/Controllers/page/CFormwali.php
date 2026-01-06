@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CFormwali extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
     $token = Auth::user()->token;   // token dari user login
     
@@ -26,11 +26,17 @@ class CFormwali extends Controller
         foreach ($student['student_semester'] as $sem) {
             if (!empty($sem['is_active']) && $sem ['is_active']=== true) {
                 $semesterAktif = $sem['semester_id'];
-                $kelas = $sem['is_active'];
+                $kelas = $sem['semester'];
                 break;
             }
         }
     }
+
+    $request->validate([
+    'masukan' => Auth::user()->roles === 'lecture'
+        ? 'nullable|string'
+        : 'prohibited',
+]);
 
     
 

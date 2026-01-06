@@ -39,16 +39,12 @@ class CPerwalian extends Controller
         if (!$lectureUser) {
             return back()->withErrors('User Dosen Wali tidak ditemukan');
         }
-        $khsfile =null;
-        if ($request->hasFile('khs')) {
-            $file = $request->file('khs');
-            $filename = time().'_'.$file->getClientOriginalName();
-
-            //Simpan ke storage/app/public/khs
-            $khsfile = $file->storeAs('khs', $filename, 'public');
+        $khsfile = session('khs_file');
+        
+        if (!$khsfile) {
+            return back()->withErrors('KHS belum diupload');
         }
-
-
+      
         //dd($lecture);
         Advise::create([
             'student_user_id' => $studentUser->id,
@@ -67,5 +63,29 @@ class CPerwalian extends Controller
             ->route('dataperwalian')
             ->with('success', 'Perwalian Berhasil Diajukan');
     }
+
+    public function edit($id) {
+        $perwalian = Advise::findOrFail($id);
+        return view('content.editform-perwalian', compact('perwalian'));
+    }
+
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'masukan' => 'nullable|string',
+        'status'  => 'required',
+    ]);
+
+    $perwalian = Advise::findOrFail($id);
+    $perwalian->update([
+        'masukan' => $request->masukan,
+        'status'  => $request->status,
+    ]);
+
+    return redirect()
+        ->route('dataperwalian')
+        ->with('success', 'Perwalian Selesai! Semoga Sukses');
+}
+
 }
 

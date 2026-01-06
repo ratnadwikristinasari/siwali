@@ -21,14 +21,14 @@
         },
         {
             "name": "Data Dosen",
-            "icon": "menu-icon tf-icons ri-account-box-line",
+            "icon": "menu-icon tf-icons ri-account-box-line ri-list-view",
             "slug": "dosen",
             "url": "page/dosen",
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
             "name": "Data Mahasiswa",
-            "icon": "menu-icon tf-icons ri-graduation-cap-fill",
+            "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
             "slug": "mahasiswa",
             "url": "page/mahasiswa",
             "roles": ["kaprodi", "lecturer", "kajur"]
@@ -49,7 +49,14 @@
             "icon": "menu-icon tf-icons ri-bank-card-2-line",
             "slug": "cards-basic",
             "url": "history/perwalian",
-            "roles": ["kaprodi", "lecturer", "kajur", "student"]
+            "roles": ["student"]
+        },
+                {
+            "name": "Perwalian Mahasiswa",
+            "icon": "menu-icon tf-icons ri-bank-card-2-line",
+            "slug": "cards-basic",
+            "url": "history/perwaliandosen",
+            "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
             "menuHeader": "Notice"

@@ -28,39 +28,56 @@
               <th class="text-truncate">Program Studi</th>
               <th class="text-truncate">IPK</th>
               <th class="text-truncate">Status</th>
+              <th class="text-truncate">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            @forelse ($perwalian as $item)
+            @forelse ($perwaliandosen as $index => $historydosenwali)
             <tr>
+               <td>{{ $index + 1 }}</td>
               <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="{{ asset('assets/img/avatars/1.png') }}" class="rounded-circle">
+                  {{ optional($historydosenwali->created_at)->translatedFormat('d F Y') ?? '-' }}
+             </td>
+              <td>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <h6 class="mb-0 text-truncate">
+                        {{ $historydosenwali->student->name}}
+                      </h6>
+                    </div>
                   </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">
-                      {{ $item->student->name ?? '-' }}
-                    </h6>
-                  </div>
-                </div>
-              </td>
-
-              <td class="text-truncate">
-                {{ Auth::user()->email ?? '-' }}
-              </td>
-
-              <td class="text-truncate">
-                {{ $item->ipk ?? '-' }}
-              </td>
+                </td>
+                
+                <td class="text-truncate">
+                  {{ $historydosenwali->ipk}}
+                </td>
+                <td class="text-truncate">
+                  {{ $historydosenwali->keluhan}}
+                </td>
+                <td class="text-truncate">
+                  {{ $historydosenwali->masukan}}
+                </td>
+                <td class="text-truncate">
+                  <a href="{{ asset('storage/'.$historydosenwali->khs)}}" target="_blank">Lihat file</a>
+                </td>
 
               <td>
-                @if ($item->status === 'pending')
+                @if ($historydosenwali->status === 'pending')
                   <span class="badge bg-label-warning rounded-pill">Pending</span>
                 @else
                   <span class="badge bg-label-success rounded-pill">Done</span>
                 @endif
               </td>
+              <td>
+                @if ($historydosenwali->status === 'pending')
+                <a href="{{ route('perwalian.edit', $historydosenwali->id) }}"
+                  class="btn btn-icon btn-sm btn-outline-primary"
+                  title="Edit">
+                  <i class="ti ti-pencil"></i>
+                </a>
+                @endif
+              </td>
+              
             </tr>
             @empty
             <tr>

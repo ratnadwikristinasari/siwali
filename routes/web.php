@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\history\CHistoryPerwalianDosen;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\CLandingpage;
 use App\Http\Controllers\dashboard\CDashboard;
@@ -40,8 +41,11 @@ Route::get('page/form', [CFormwali::class,'index'])->name('form-perwalian');
 Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
 Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
 Route::post('/perwalian', [CPerwalian::class, 'store'])->name('perwalian.store');
-Route::post('/form-perwalian/store', [Cperwalian::class, 'store'])->name('perwalian.store');
-//history
+
+Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
+Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
+
 Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
+Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');
 
 });

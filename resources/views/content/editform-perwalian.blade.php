@@ -56,6 +56,10 @@
             <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
               <textarea id="basic-icon-default-message" class="form-control" name="keluhan" style="height: 60px;" placeholder="Keterangan"></textarea>
           </div>
+          <div class="input-group input-group-merge mb-6">
+            <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
+              <textarea id="basic-icon-default-message" class="form-control" name="masukan" style="height: 60px;" placeholder="Masukan"></textarea>
+          </div>
           <button type="submit" class="btn btn-primary">Send</button>
         </form>
     </div>
