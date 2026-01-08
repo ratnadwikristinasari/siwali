@@ -1,87 +1,105 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', ' Vertical Layouts - Forms')
-
-<script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
-<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
+@section('title', 'Edit Perwalian')
 
 @section('content')
-<!-- Basic Layout -->
-<div class="row">
-  <div class="col-xl">
-    <div class="card mb-6">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Silakan Upload Kartu Hasil Studi</h5>
+<div class="row g-4">
+  <div class="col-12 col-xl-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <div class="col-xl-6">
+          <h5>Kartu Hasil Studi</h5>
       </div>
-      <div class="card-body">
-        <form action="{{ route('upload.khs') }}" method="POST" class="dropzone" id="file-upload" enctype="multipart/form-data">
-            @csrf
-            <div class="dz-message">
-              <h3>Klik untuk Upload KHS</h3>
-            </div>
-            <div id="upload-status" class="mt-2"></div>
-        </form>
-      </div>
+            @if($perwalian->khs)
+          <div class="card mt-3">
+              <div class="card-body p-0">
+                  <iframe
+                      src="{{ asset('storage/' . $perwalian->khs) }}"
+                      width="100%"
+                      height="600"
+                      style="border:none;">
+                  </iframe>
+              </div>
+          </div>
+      @else
+          <div class="alert alert-warning mt-3">
+              KHS belum diupload
+          </div>
+      @endif
+        </div>
+        
+
     </div>
   </div>
-<!-- Merged -->
-  <div class="col-xl">
-    <div class="card mb-6">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Data Perwalian</h5>
-      </div>
-      <div class="card-body">
-        <form action="{{ route('perwalian.store') }}" method="POST">
-            @csrf
-          <div class="input-group input-group-merge mb-6">
-            <span id="basic-icon-default-fullname2" class="input-group-text"><i class="ri-user-line ri-20px"></i></span>
-              <input type="text" class="form-control" id="basic-icon-default-fullname" name="nama_lengkap" value="{{ Auth::user()->name }}" readonly/>
+
+  <!-- Form Edit -->
+  <div class="col-12 col-xl-6">
+    <div class="card mb-8">
+      <div class="card-header">
+        <div class="row">
+            <h5>Data Perwalian</h5>
+      </div >
+      <div>
+        <form action="{{ route('perwalian.update', $perwalian->id) }}" method="POST">
+          @csrf
+          @method('PUT')
+
+          <div class="mb-4">
+            <label class="form-label">Nama Mahasiswa</label>
+            <input type="text"
+                   class="form-control"
+                   value="{{ $perwalian->student->name }}"
+                   readonly>
           </div>
-          <div class="input-group input-group-merge mb-6">
-            <span id="basic-icon-default-company2" class="input-group-text"><i class="ri-building-4-line ri-20px"></i></span>
-              <input type="text" id="basic-icon-default-company" class="form-control" value="{{ $kelas }}" readonly/>
+
+          <div class="mb-3">
+            <label class="form-label">IPK</label>
+            <input type="text"
+                   class="form-control"
+                   value="{{ $perwalian->ipk }}"
+                   readonly>
           </div>
-          <div class="mb-6">
-            <div class="input-group input-group-merge">
-              <span class="input-group-text"><i class="ri-building-line ri-20px"></i></span>
-                <input type="text" id="basic-icon-default-company2" class="form-control" value="{{ $programStudi }}" readonly/>
-              <span id="basic-icon-default-company2" class="input-group-text"></span>
-            </div>
+
+          <div class="mb-3">
+            <label class="form-label">Keluhan</label>
+            <textarea class="form-control"
+                      rows="3"
+                      readonly>{{ $perwalian->keluhan }}</textarea>
           </div>
-          <div class="input-group input-group-merge mb-6">
-            <span id="basic-icon-default-company2" class="input-group-text"><i class="ri-building-4-line ri-20px"></i></span>
-              <input type="text" id="basic-icon-default-company" class="form-control" name="ipk" placeholder="IPK"/>
+
+          <div class="mb-3">
+            <label class="form-label">Masukan Dosen Wali</label>
+            <textarea name="masukan"
+                      class="form-control"
+                      rows="3">{{ old('masukan', $perwalian->masukan) }}</textarea>
           </div>
-          <div class="input-group input-group-merge mb-6">
-            <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
-              <textarea id="basic-icon-default-message" class="form-control" name="keluhan" style="height: 60px;" placeholder="Keterangan"></textarea>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+              <option value="pending" {{ $perwalian->status == 'pending' ? 'selected' : '' }}>
+                Pending
+              </option>
+              <option value="done" {{ $perwalian->status == 'done' ? 'selected' : '' }}>
+                Done
+              </option>
+            </select>
           </div>
-          <div class="input-group input-group-merge mb-6">
-            <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
-              <textarea id="basic-icon-default-message" class="form-control" name="masukan" style="height: 60px;" placeholder="Masukan"></textarea>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{{ route('dataperwalian') }}" class="btn btn-secondary">
+              Kembali
+            </a>
+            <button type="submit" class="btn btn-primary">
+              Diterima
+            </button>
           </div>
-          <button type="submit" class="btn btn-primary">Send</button>
+
         </form>
+        </div>
+        
+
     </div>
   </div>
+
 </div>
-<script type="text/javascript">
-    new Dropzone("#file-upload", {
-        maxFile: 1,
-        acceptedFiles: ".pdf",
-        addRemoveLink: true,
-        success: function(file, response) {
-          document.getElementById('upload-status').innerHTML =
-          `<span class="text-success">KHS berhasil diupload</span>`;
-        },
-        error: function() {
-           document.getElementById('upload-status').innerHTML=
-            `<span class="text-success">Gagal KHS diupload</span>`;
-        },
-        removedfile: function(file) {
-          document.getElementById('upload-status').innerHTML = '';
-          file.previewElement.remove();
-        }
-    });
-</script>
 @endsection

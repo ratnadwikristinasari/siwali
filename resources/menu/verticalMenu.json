@@ -1,10 +1,10 @@
 {
     "menu": [
         {
-            "url": "/",
+            "url": "dashboard",
             "name": "Dashboards",
             "icon": "menu-icon tf-icons ri-home-smile-line",
-            "slug": "dashboard-kps",
+            "slug": "content.dashboard.dashboard-main",
             "roles": ["kajur", "kaprodi", "lecturer", "student"]
         },
 
@@ -15,21 +15,21 @@
         {
             "name": "Data Program Studi",
             "icon": "menu-icon tf-icons ri-book-shelf-fill",
-            "slug": "prodi",
+            "slug": "dataprodi",
             "url": "page/prodi",
-            "roles": ["kaprodi", "lecturer", "kajur"]
+            "roles": ["kaprodi", "kajur"]
         },
         {
             "name": "Data Dosen",
             "icon": "menu-icon tf-icons ri-account-box-line ri-list-view",
-            "slug": "dosen",
+            "slug": "datadosen",
             "url": "page/dosen",
-            "roles": ["kaprodi", "lecturer", "kajur"]
+            "roles": ["kaprodi", "kajur"]
         },
         {
             "name": "Data Mahasiswa",
             "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
-            "slug": "mahasiswa",
+            "slug": "datamahasiswa",
             "url": "page/mahasiswa",
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
@@ -38,7 +38,7 @@
             "icon": "menu-icon tf-icons ri-list-view",
             "slug": "form-perwalian",
             "url": "page/form",
-            "roles": ["kaprodi", "lecturer", "kajur", "student"]
+            "roles": ["student"]
         },
 
         {
@@ -47,14 +47,14 @@
         {
             "name": "Riwayat Perwalian",
             "icon": "menu-icon tf-icons ri-bank-card-2-line",
-            "slug": "cards-basic",
+            "slug": "dataperwalian",
             "url": "history/perwalian",
             "roles": ["student"]
         },
                 {
             "name": "Perwalian Mahasiswa",
             "icon": "menu-icon tf-icons ri-bank-card-2-line",
-            "slug": "cards-basic",
+            "slug": "dataperwaliandosen",
             "url": "history/perwaliandosen",
             "roles": ["kaprodi", "lecturer", "kajur"]
         },

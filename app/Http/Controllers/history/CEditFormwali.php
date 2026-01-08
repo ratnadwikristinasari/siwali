@@ -7,16 +7,16 @@ use App\Models\Advise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CHistoryPerwalianDosen extends Controller
+class CEditFormwali extends Controller
 {
-     public function index(Request $request)
+   public function index(Request $request)
   {
    $user = Auth::user();
    //Data perwalian Mahasiswa
-   $perwaliandosen = Advise::
+   $perwalian = Advise::
     where('lecture_user_id', $user->id)
     ->orderBy('created_at', 'desc')
     ->get();
-    return view('content.dataperwalian-dosen', compact('perwaliandosen'));
+    return view('content.editform-perwalian', compact('perwaliandosen'));
   }
 }

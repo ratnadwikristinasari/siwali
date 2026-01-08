@@ -44,6 +44,8 @@ class CPerwalian extends Controller
         if (!$khsfile) {
             return back()->withErrors('KHS belum diupload');
         }
+
+        $status = empty($request->masukan) ? 'pending' : 'succes';
       
         //dd($lecture);
         Advise::create([
@@ -51,7 +53,7 @@ class CPerwalian extends Controller
             'lecture_user_id' => $lectureUser->id,
             'student_id'=> $dataAuth['data']['student_detail']['id'],
             'lecture_id'=>$employeeId,
-            'status' => 'pending',
+            'status' => $status,
             'khs' => $khsfile,
             'ipk' => $request->ipk,
             'keluhan' => $request->keluhan,         
@@ -83,7 +85,7 @@ class CPerwalian extends Controller
     ]);
 
     return redirect()
-        ->route('dataperwalian')
+        ->route('dataperwaliandosen')
         ->with('success', 'Perwalian Selesai! Semoga Sukses');
 }
 

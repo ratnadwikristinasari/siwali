@@ -17,12 +17,18 @@ class DropzoneController extends Controller
     {
         $request->validate([
             'file' => 'required|mimes:pdf|max:1024'
+        ], [
+            'file.required' => 'KHS Wajib Diupload',
         ]);
         
         $file = $request->file('file');
         $filename = time().'_'.$file->getClientOriginalName();
         $path = $file->storeAs('khs', $filename, 'public');
         session(['khs_file' => $path]); //simpan ke session
-        return response()->json(['success'=> true]);
+        return response()->json([
+            'success'=> true,
+            'path' => $path,
+            'url' => asset('storage/' . $path)
+    ]);
     }
 }

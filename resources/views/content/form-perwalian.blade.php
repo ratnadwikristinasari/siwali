@@ -2,8 +2,9 @@
 
 @section('title', ' Vertical Layouts - Forms')
 
-<script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
+@section('page-style')
 <link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" type="text/css" />
+@endsection
 
 @section('content')
 <!-- Basic Layout -->
@@ -21,6 +22,27 @@
             </div>
             <div id="upload-status" class="mt-2"></div>
         </form>
+        {{-- preview KHS --}}
+        <div id="khs-preview" class="mt-4 d-none">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Preview Kartu Hasil Studi</h5>
+    </div>
+    <div class="card-body p-0">
+      <iframe id="khs-iframe"
+              src=""
+              width="100%"
+              height="600"
+              style="border:none;">
+      </iframe>
+    </div>
+  </div>
+</div>
+              @if ($errors->has('file'))
+                <div class="alert alert-danger mt-3">
+                 {{ $errors->first('file') }}
+  </div>
+@endif
       </div>
     </div>
   </div>
@@ -50,19 +72,26 @@
           </div>
           <div class="input-group input-group-merge mb-6">
             <span id="basic-icon-default-company2" class="input-group-text"><i class="ri-building-4-line ri-20px"></i></span>
-              <input type="text" id="basic-icon-default-company" class="form-control" name="ipk" placeholder="IPK"/>
+              <input type="text" id="basic-icon-default-company" class="form-control" name="ipk" placeholder="IPK" required/>
           </div>
           <div class="input-group input-group-merge mb-6">
             <span id="basic-icon-default-message2" class="input-group-text"><i class="ri-chat-4-line ri-20px"></i></span>
-              <textarea id="basic-icon-default-message" class="form-control" name="keluhan" style="height: 60px;" placeholder="Keterangan"></textarea>
+              <textarea id="basic-icon-default-message" class="form-control" name="keluhan" style="height: 60px;" placeholder="Keterangan" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Send</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit" disabled>
+            Ajukan
+          </button>
         </form>
     </div>
   </div>
 </div>
+
+@endsection
+@section('page-script')
+<script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
 <script type="text/javascript">
     new Dropzone("#file-upload", {
+        paraName: "file",
         maxFile: 1,
         acceptedFiles: ".pdf",
         addRemoveLink: true,
@@ -72,12 +101,36 @@
         },
         error: function() {
            document.getElementById('upload-status').innerHTML=
-            `<span class="text-success">Gagal KHS diupload</span>`;
+            `<span class="text-warning">Format KHS harus PDF</span>`;
         },
         removedfile: function(file) {
           document.getElementById('upload-status').innerHTML = '';
           file.previewElement.remove();
-        }
+        },
+        success: function(file, response) {
+    let preview = `
+        <iframe src="/storage/${response.path}" 
+                width="100%" height="600"></iframe>`;
+    document.getElementById('preview-khs').scrollIntoView({behavior:'smooth'}) = preview;
+},
+        success: function () {
+          document.getElementById('btn-submit').disabled = false; 
+        },
+    removedfile: function (file) {
+      document.getElementById('btn-submit').disabled = true;
+      file.previewElement.remove();
+    },
+    //Preview
+    success: function (file, response) {
+      document.getElementById('khs-preview').classList.remove('d-none');
+      document.getElementById('khs-iframe').src = response.url;
+    },
+        removedfile: function (file) {
+        document.getElementById('khs-preview').classList.add('d-none');
+        document.getElementById('khs-iframe').src = '';
+        file.previewElement.remove();
+    }
+
     });
 </script>
 @endsection

@@ -25,8 +25,10 @@
               <th class="text-truncate">No</th>
               <th class="text-truncate">Tanggal</th>
               <th class="text-truncate">Nama</th>
-              <th class="text-truncate">Program Studi</th>
               <th class="text-truncate">IPK</th>
+              <th class="text-truncate">Keluhan</th>
+              <th class="text-truncate">Masukan</th>
+              <th class="text-truncate">KHS</th>
               <th class="text-truncate">Status</th>
               <th class="text-truncate">Aksi</th>
             </tr>
@@ -73,7 +75,7 @@
                 <a href="{{ route('perwalian.edit', $historydosenwali->id) }}"
                   class="btn btn-icon btn-sm btn-outline-primary"
                   title="Edit">
-                  <i class="ti ti-pencil"></i>
+                  <i class="ri ri-pencil"></i>
                 </a>
                 @endif
               </td>
