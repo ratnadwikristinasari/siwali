@@ -46,6 +46,8 @@ $container = ($container ?? 'container-xxl');
             @endif
 
             @yield('content')
+            @include('_partials.alert')
+
 
           </div>
           <!-- / Content -->

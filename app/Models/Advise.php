@@ -24,4 +24,8 @@ class Advise extends Model
     public function student() {
         return $this->belongsTo(User::class, 'student_user_id');
     }
+    public function setMasukanAttribute($value) {
+        $this->attributes['masukan'] = $value;
+        $this->attributes['status'] = empty($value) ? 'Pending' : 'Done';
+    }
 }

@@ -2,6 +2,8 @@
 
 @section('title', 'Edit Perwalian')
 
+@include('_partials.alert')
+
 @section('content')
 <div class="row g-4">
   <div class="col-12 col-xl-6">
@@ -71,22 +73,11 @@
             <label class="form-label">Masukan Dosen Wali</label>
             <textarea name="masukan"
                       class="form-control"
-                      rows="3">{{ old('masukan', $perwalian->masukan) }}</textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select name="status" class="form-select">
-              <option value="pending" {{ $perwalian->status == 'pending' ? 'selected' : '' }}>
-                Pending
-              </option>
-              <option value="done" {{ $perwalian->status == 'done' ? 'selected' : '' }}>
-                Done
-              </option>
-            </select>
+                      rows="3" required>{{ old('masukan', $perwalian->masukan) }}</textarea>
           </div>
 
           <div class="d-flex justify-content-end gap-2">
-            <a href="{{ route('dataperwalian') }}" class="btn btn-secondary">
+            <a href="{{ route('dataperwaliandosen') }}" class="btn btn-secondary">
               Kembali
             </a>
             <button type="submit" class="btn btn-primary">

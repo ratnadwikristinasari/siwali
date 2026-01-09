@@ -75,7 +75,7 @@
                 <a href="{{ route('perwalian.edit', $historydosenwali->id) }}"
                   class="btn btn-icon btn-sm btn-outline-primary"
                   title="Edit">
-                  <i class="ri ri-pencil"></i>
+                  <i class="ri-edit-2-fill"></i>
                 </a>
                 @endif
               </td>

@@ -48,4 +48,5 @@ Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.up
 Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
 Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');
 
+
 });

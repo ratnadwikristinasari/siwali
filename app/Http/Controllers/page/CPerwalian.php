@@ -6,10 +6,12 @@ namespace App\Http\Controllers\page;
 use App\Helpers\AuthHelper;
 use App\Helpers\DosenHelper;
 use App\Http\Controllers\Controller;
+use App\Mail\AjukanPerwalianMail;
 use App\Models\Advise;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CPerwalian extends Controller
 {
@@ -37,33 +39,44 @@ class CPerwalian extends Controller
             'email' =>$datadosen['data']['user']['email']
         ]);
         if (!$lectureUser) {
-            return back()->withErrors('User Dosen Wali tidak ditemukan');
+            return back()->withErrors([
+                'advisor' => 'Dosen Wali tidak ditemukan'
+            ]);
         }
         $khsfile = session('khs_file');
         
         if (!$khsfile) {
-            return back()->withErrors('KHS belum diupload');
+            return back()->withErrors([
+                'khsfile' => 'KHS belum diupload'
+            ]);
         }
 
-        $status = empty($request->masukan) ? 'pending' : 'succes';
+        $status = empty($request->masukan) ? 'pending' : 'done';
       
         //dd($lecture);
-        Advise::create([
+        $wali= Advise::create([
             'student_user_id' => $studentUser->id,
             'lecture_user_id' => $lectureUser->id,
             'student_id'=> $dataAuth['data']['student_detail']['id'],
             'lecture_id'=>$employeeId,
-            'status' => $status,
+            'status' => empty($request->masukan) ? 'Pending' : 'Done',
             'khs' => $khsfile,
             'ipk' => $request->ipk,
             'keluhan' => $request->keluhan,         
         ]);
 
+        $wali->load('student', 'lecture');
+        
+    
+        if ($status === 'Pending') {
+        Mail::to($lectureUser->email)
+        ->queue(new AjukanPerwalianMail($wali));
+        }
         session()->forget('khs_file');
         
         return redirect()
             ->route('dataperwalian')
-            ->with('success', 'Perwalian Berhasil Diajukan');
+            ->with('Success', 'Perwalian Berhasil Diajukan');
     }
 
     public function edit($id) {
@@ -75,18 +88,17 @@ class CPerwalian extends Controller
 {
     $request->validate([
         'masukan' => 'nullable|string',
-        'status'  => 'required',
     ]);
 
     $perwalian = Advise::findOrFail($id);
     $perwalian->update([
         'masukan' => $request->masukan,
-        'status'  => $request->status,
+        'status'  => empty($request->masukan) ? 'pending' : 'done',
     ]);
 
     return redirect()
         ->route('dataperwaliandosen')
-        ->with('success', 'Perwalian Selesai! Semoga Sukses');
+        ->with('success', 'Perwalian Selesai!');
 }
 
 }
