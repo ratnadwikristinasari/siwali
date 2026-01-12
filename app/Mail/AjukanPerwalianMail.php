@@ -15,9 +15,9 @@ class AjukanPerwalianMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $perwalian;
-    public function __construct(Advise $wali)
+    public function __construct(Advise $perwalian)
     {
-        $this->perwalian = $wali;
+        $this->perwalian = $perwalian;
     }
 
     /**
@@ -36,9 +36,9 @@ class AjukanPerwalianMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'email.perwalian-diajukan',
+            view: 'content.email.perwalian-diajukan',
             with: [
-                'wali' => $this->perwalian,
+                'perwalian' => $this->perwalian,
             ]
         );
     }

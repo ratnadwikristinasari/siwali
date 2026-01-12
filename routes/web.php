@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
+use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\CLandingpage;
 use App\Http\Controllers\dashboard\CDashboard;
@@ -48,5 +49,6 @@ Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.up
 Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
 Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');
 
-
 });
+
+

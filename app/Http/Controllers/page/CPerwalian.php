@@ -51,7 +51,7 @@ class CPerwalian extends Controller
             ]);
         }
 
-        $status = empty($request->masukan) ? 'pending' : 'done';
+        $status = empty($request->masukan) ? 'Pending' : 'Done';
       
         //dd($lecture);
         $wali= Advise::create([
