@@ -7,6 +7,7 @@ use App\Helpers\AuthHelper;
 use App\Helpers\DosenHelper;
 use App\Http\Controllers\Controller;
 use App\Mail\AjukanPerwalianMail;
+use App\Mail\PengajuanDiterimaMail;
 use App\Models\Advise;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -91,10 +92,18 @@ class CPerwalian extends Controller
     ]);
 
     $perwalian = Advise::findOrFail($id);
+    $newstatus = empty($request->masukan) ? 'Pending' : 'Done';
     $perwalian->update([
         'masukan' => $request->masukan,
-        'status'  => empty($request->masukan) ? 'pending' : 'done',
+        'status'  => $newstatus,
     ]);
+
+    $perwalian->load('student', 'lecture');
+
+    if ($newstatus === 'Done') {
+        Mail::to($perwalian->student->email)
+        ->queue(new PengajuanDiterimaMail($perwalian));
+    }
 
     return redirect()
         ->route('dataperwaliandosen')

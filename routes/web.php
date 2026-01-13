@@ -15,10 +15,7 @@ use App\Http\Controllers\history\CHistoryPerwalian;
 use App\Http\Controllers\DropzoneController;
 
 Route::get('/', [CLandingpage::class, 'index'])->name('content.landingpage');
-Route::get('/login', function () {
-  redirect()->route('content.landingpage');
-
-}) ->name('login');
+Route::get('/login', [CLandingpage::class, 'index'])->name('login');
 
 
 Route::prefix('auth')->group(function () {
