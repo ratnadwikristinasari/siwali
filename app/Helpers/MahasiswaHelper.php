@@ -14,7 +14,7 @@ public static function getMahasiswa(string $token, ?string $majorId = null, ?int
       'Authorization' => 'Bearer ' . $token,
     ])
       ->withQueryParameters($queryParams)
-      ->get(config('app.super_app_url') . '/students');
+      ->get(config('app.super_app_url') . '/supervisor-lectures/by-lecture');
 
     return $response->json();
   }
