@@ -25,45 +25,50 @@
         });
     @endif
 
-    document.addEventListener('DOMContentLoaded', function () {
-    //ambil form perwalian 
-    const form = document.querySelector('form[action="{{ route('perwalian.store') }}"]');
-    //ambil button submit
-    const btnSubmit = document.getElementById('btn-submit');
+    document.addEventListener('DOMContentLoaded', function() {
+        //ambil form perwalian 
+        const form = document.querySelector('form[action="{{ route('perwalian.store') }}"]');
+        //ambil button submit
+        const btnSubmit = document.getElementById('btn-submit');
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault(); //mencegah form langsung kirim server
-        Swal.fire({
-            title: 'Yakin ajukan perwalian?',
-            text: 'Pastikan data dan KHS sudah benar',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Ajukan',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); //mencegah form langsung kirim server
+            Swal.fire({
+                title: 'Yakin ajukan perwalian?',
+                text: 'Pastikan data dan KHS sudah benar',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Ajukan',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                backdrop: 'rgba(0,0,0,0.6)',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
 
-                // 🔥 POPUP LOADING
-                Swal.fire({
-                    title: 'Memproses...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
+            }).then((result) => {
+                if (result.isConfirmed) {
 
-                // Disable button biar tidak double submit
-                btnSubmit.disabled = true;
+                    // 🔥 POPUP LOADING
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu',
+                        backdrop: 'rgba(0,0,0,0.6)',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
 
-                // submit form asli
-                form.submit();
-            }
+                    // Disable button biar tidak double submit
+                    btnSubmit.disabled = true;
+
+                    // submit form asli
+                    form.submit();
+                }
+            });
         });
     });
-});
 </script>
 
 {{-- ALERT ERROR
