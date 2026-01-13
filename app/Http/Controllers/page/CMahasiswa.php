@@ -4,6 +4,7 @@ namespace App\Http\Controllers\page;
 
 use App\Helpers\MahasiswaHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Advise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +21,24 @@ class CMahasiswa extends Controller
 
     //Ambil data mahasiswa 
     $data = collect($response['data']);
+
+    // dd($data);
     $meta = $response['meta'];
+
+    $nims = $$data->pluck('nim')->toArray(); //nim mahasiswa
+
+    //status akhir mahasiswa
+    $statusPerwalian = Advise::whereIn('student_user_id', $nims)
+    ->select('student_user_id', 'status', 'created_at')
+    ->orderBy('created_at', 'desc')
+    ->get()
+    ->groupBy('student_user_id')
+    ->map(fn ($items) => $items->first()->status);
+
+    //inject status ke data mahasiswa
+    $data = $data->map(function ($mhs) use ($statusPerwalian) {
+      $mhs['status'] = $statusPerwalian[$mhs['nim']] ?? null;
+    });
 
     $mahasiswas = new \Illuminate\Pagination\LengthAwarePaginator(
       $data,                     // data mahasiswa
