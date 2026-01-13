@@ -15,8 +15,9 @@ class CHistoryPerwalianDosen extends Controller
    //Data perwalian Mahasiswa
    $perwaliandosen = Advise::
     where('lecture_user_id', $user->id)
-    ->orderBy('created_at', 'desc')
+    ->orderBy('status', 'desc')
     ->get();
+
     return view('content.dataperwalian-dosen', compact('perwaliandosen'));
   }
 }
