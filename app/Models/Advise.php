@@ -14,9 +14,12 @@ class Advise extends Model
         'lecture_id',
         'status',
         'khs',
+        'semester',
         'ipk',
         'keluhan',
         'masukan',
+        'semester_id',
+        'session_id',
     ];
     public function lecture() {
         return $this->belongsTo(User::class, 'lecture_user_id');

@@ -11,22 +11,35 @@
           <div class="dropdown">
           </div>
         </div>
-      <div class="card-body pt-lg-10">
-        <div class="row g-6">
-          <div class="col-md-6 col-6">
+      <div class="card-body pt-lg-12">
+        <div class="row g-12">
+          <div class="col-md-4 col-8">
             <div class="d-flex align-items-center">
               <div class="avatar">
                 <div class="avatar-initial bg-primary rounded shadow-xs">
-                  <i class="ri-pie-chart-2-line ri-24px"></i>
+                  <i class="ri-group-line ri-24px"></i>
                 </div>
               </div>
-              <div class="ms-4">
+              <div class="ms-6">
                 <p class="mb-0">Total Mahasiswa Wali</p>
-                <h5 class="mb-0">15</h5>
+                <h3 class="mb-0">15</h3>
               </div>
             </div>
           </div>
-          <div class="col-md-6 col-6">
+          <div class="col-md-4 col-3">
+            <div class="d-flex align-items-center">
+              <div class="avatar">
+                <div class="avatar-initial bg-warning rounded shadow-xs">
+                  <i class="ri-group-line ri-24px"></i>
+                </div>
+              </div>
+              <div class="ms-4">
+                <p class="mb-0">Total Perwalian Pending</p>
+                <h3 class="mb-0">15</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-6">
             <div class="d-flex align-items-center">
               <div class="avatar">
                 <div class="avatar-initial bg-success rounded shadow-xs">
@@ -34,8 +47,8 @@
                 </div>
               </div>
               <div class="ms-4">
-                <p class="mb-0">Mahasiswa Wali Selesai Perwalian</p>
-                <h5 class="mb-0">5</h5>
+                <p class="mb-0">Total Perwalian Selesai</p>
+                <h3 class="mb-0">5</h3>
               </div>
             </div>
           </div>

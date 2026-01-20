@@ -5,7 +5,7 @@ namespace App\Helpers;
 use Illuminate\Support\Facades\Http;
 
 class AuthHelper {
-    public static function getauth(string $majorId, string $token, ?int $page = 1,) {
+    public static function getauth(?string $majorId, string $token, ?int $page = 1,) {
         $queryParams = [
       'major_id' => $majorId,
       'page' => $page

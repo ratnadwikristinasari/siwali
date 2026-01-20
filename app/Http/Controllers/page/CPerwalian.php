@@ -25,7 +25,7 @@ class CPerwalian extends Controller
         ]);
         $studentUser= Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
-        //dd($dataAuth);
+        // dd($dataAuth);
         $advisor = collect($dataAuth['data']['student_detail']['supervisor_lectures'])->firstWhere('position', 'ACADEMIC_ADVISOR');
         if (!$advisor) {
         return back()->withErrors('Dosen Wali tidak ditemukan');
@@ -53,6 +53,24 @@ class CPerwalian extends Controller
         }
 
         $status = empty($request->masukan) ? 'Pending' : 'Done';
+
+        $activeSemester = array_values(array_filter(
+            $dataAuth['data']['student_detail']['student_semester'],
+            fn($s) => $s['is_active'] === true));
+        // dd($activeSemester);
+        $semesterId = $activeSemester[0]['semester_id'] ?? null;
+        $semesterAktif = $activeSemester[0]['semester'] ?? null;
+    //     $semesterAktif = collect(
+    // $dataAuth['data']['student_detail']['student_semester'] ?? [])
+    //             ->where('is_active', true)
+    //             ->pluck('semester')
+    //             ->map(fn($s) => (int) $s)
+    //             ->first();
+
+                if (!$semesterAktif) {
+                    return back()->withErrors('Semester aktif tidak ditemukan');
+                }
+
       
         //dd($lecture);
         $wali= Advise::create([
@@ -62,8 +80,12 @@ class CPerwalian extends Controller
             'lecture_id'=>$employeeId,
             'status' => empty($request->masukan) ? 'Pending' : 'Done',
             'khs' => $khsfile,
+            'semester' =>$semesterAktif,
             'ipk' => $request->ipk,
-            'keluhan' => $request->keluhan,         
+            'keluhan' => $request->keluhan,
+            'semester_id' => $semesterId,
+            
+            // 'session_id' => $dataAuth   
         ]);
 
         $wali->load('student', 'lecture');
