@@ -51,11 +51,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                    @if (empty($listmahasiswa->status_perwalian))
+                                    {{-- @dd($listmahasiswa) --}}
+                                    @if ($listmahasiswa['status_perwalian'] === null)
                                         <span class="badge bg-label-secondary rounded-pill">
                                             Belum Perwalian
                                         </span>
-                                    @elseif ($listmahasiswa->status_perwalian === 'pending')
+                                    @elseif ($listmahasiswa['status_perwalian'] === 'pending')
                                         <span class="badge bg-label-warning rounded-pill">
                                             Pending
                                         </span>

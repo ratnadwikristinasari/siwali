@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+
 
 class Advise extends Model
 {
+    use HasUuids;
     protected $table = 'advise';
     protected $fillable = [
         'student_user_id',
