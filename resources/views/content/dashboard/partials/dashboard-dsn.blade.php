@@ -3,6 +3,7 @@
 @section('content')
 <div class="row gy-6">
   <!-- Total Perwalian -->
+
   <div class="col-lg-12">
     <div class="card h-80">
       <div class="card-header">
@@ -22,7 +23,7 @@
               </div>
               <div class="ms-6">
                 <p class="mb-0">Total Mahasiswa Wali</p>
-                <h3 class="mb-0">15</h3>
+                <h3 class="mb-0">{{ $totalperwalian['totalMahasiswa'] }}</h3>
               </div>
             </div>
           </div>
@@ -35,7 +36,7 @@
               </div>
               <div class="ms-4">
                 <p class="mb-0">Total Perwalian Pending</p>
-                <h3 class="mb-0">15</h3>
+                <h3 class="mb-0">{{ $totalperwalian['totalPending'] }}</h3>
               </div>
             </div>
           </div>
@@ -48,7 +49,7 @@
               </div>
               <div class="ms-4">
                 <p class="mb-0">Total Perwalian Selesai</p>
-                <h3 class="mb-0">5</h3>
+                <h3 class="mb-0">{{ $totalperwalian['totalDone'] }}</h3>
               </div>
             </div>
           </div>
@@ -67,19 +68,10 @@
       <div class="card-header">
         <div class="d-flex justify-content-between">
           <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Wali</h5>
-          <div class="dropdown">
-            <button class="btn text-muted p-0" type="button" id="weeklyOverviewDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="ri-more-2-line ri-24px"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="weeklyOverviewDropdown">
-              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-              <a class="dropdown-item" href="javascript:void(0);">Update</a>
-            </div>
-          </div>
         </div>
       </div>
       <div class="card-body pt-lg-2">
-        <div id="weeklyOverviewChart"></div>
+        <div id="ipkTopChart"></div>
         <div class="mt-1 mt-md-3">
           <div class="d-flex align-items-center gap-4">
           </div>
@@ -89,5 +81,9 @@
       </div>
     </div>
   </div>
+<script>
+  window.ipkTopData = @json($ipkTopData);
+</script>
+
 
 @endsection

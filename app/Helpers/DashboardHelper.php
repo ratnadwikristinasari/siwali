@@ -25,39 +25,46 @@ class DashboardHelper {
         ->where('status', 'Done')
         ->count();
  }
-public static function topIpkMahasiswa()
+public static function topIpkMahasiswa(): array
 {
-  $user = Auth::user();
+    $user = Auth::user();
 
-  $query = Advise::select('student_user_id')
-            ->selectRaw('MAX(ipk) as ipk')
-            ->where('status','Done')
-            ->whereNotNull('ipk');
+    $query = Advise::select('student_user_id')
+        ->selectRaw('MAX(ipk) as ipk')
+        ->where('status', 'Done')
+        ->whereNotNull('ipk');
 
-  //DOSEN BIMBINGAN MAHASISWA
-  if (in_array('lecture', $user->roles)) {
-  $query->where('lecture_user_id', $user->id);
-  }
+    // DOSEN BIMBINGAN
+    if (in_array('lecture', $user->roles)) {
+        $query->where('lecture_user_id', $user->id);
+    }
 
-  //KAPRODI MAHASISWA PRODI
-  if ($user->hasRole('kaprodi') && $user->prodi_id) {
-    $query->whereHas('student', function ($q) use ($user) {
-        $q->where('prodi_id', $user->prodi_id);
-    });
-}
+    // KAPRODI - mahasiswa prodi
+    if ($user->hasRole('kaprodi') && $user->prodi_id) {
+        $query->whereHas('student', function ($q) use ($user) {
+            $q->where('prodi_id', $user->prodi_id);
+        });
+    }
 
+    // KAJUR - all mahasiswa (no filter)
+    // intentionally empty
 
-  //KAJUR ALL MAHASISWA
-  if (in_array('kajur', $user->roles)) {
-
-  }
-
-    return $query->groupBy('student_user_id')
+    $data = $query
+        ->groupBy('student_user_id')
         ->orderByDesc('ipk')
         ->limit(10)
         ->with('student:id,name')
         ->get();
+
+    return [
+        'categories' => $data->map(
+            fn ($row) => $row->student->name ?? 'Unknown'
+        )->values(),
+
+        'series' => $data->pluck('ipk')->values()
+    ];
 }
+
 public static function grafikIpkPerSemester(string $token)
     {
       
@@ -94,13 +101,74 @@ public static function grafikIpkPerSemester(string $token)
             ];
         });
     }
-    public static function hitungPerwalian(Collection $data): array
-    {
+    //DASHBOARD DOSEN
+    public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
+{
+    $page = 1;
+    $allData = collect();
+
+    do {
+        $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page);
+
+        if (empty($response['data'])) {
+            break;
+        }
+
+        $allData = $allData->merge($response['data']);
+
+        $meta = $response['meta'] ?? [];
+
+        if (isset($meta['last_page'])) {
+            $lastPage = $meta['last_page'];
+        } elseif (isset($meta['total'], $meta['per_page'])) {
+            $lastPage = (int) ceil($meta['total'] / $meta['per_page']);
+        } else {
+            $lastPage = $page;
+        }
+
+        $page++;
+    } while ($page <= $lastPage);
+
+    return $allData;
+}
+
+    public static function totalPerwalianMahasiswa(): array
+{
+    $token = Auth::user()->token;
+
+    //ambil SEMUA mahasiswa wali
+    $data = self::getAllMahasiswaWali($token);
+
+    if ($data->isEmpty()) {
         return [
-            'totalMahasiswa' => $data->count(),
-            'totalPending'   => $data->where('status_perwalian', 'Pending')->count(),
-            'totalDone'      => $data->where('status_perwalian', 'Done')->count(),
+            'totalMahasiswa' => 0,
+            'totalBelum' => 0,
+            'totalPending' => 0,
+            'totalDone' => 0,
         ];
     }
+
+    $studentIds = $data->pluck('student_id')->toArray();
+
+    $advises = Advise::whereIn('student_id', $studentIds)
+        ->select('student_id', 'status', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy('student_id')
+        ->map(fn ($items) => strtolower($items->first()->status ?? ''));
+
+    $data = $data->map(function ($mhs) use ($advises) {
+        $mhs['status_perwalian'] = $advises[$mhs['student_id']] ?? null;
+        return $mhs;
+    });
+
+    return [
+        'totalMahasiswa' => $data->count(),
+        'totalBelum'     => $data->where('status_perwalian', null)->count(),
+        'totalPending'   => $data->where('status_perwalian', 'pending')->count(),
+        'totalDone'      => $data->where('status_perwalian', 'done')->count(),
+    ];
+}
+
 
 }

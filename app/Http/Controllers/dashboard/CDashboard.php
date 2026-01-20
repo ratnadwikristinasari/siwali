@@ -29,14 +29,16 @@ class CDashboard extends Controller
         $valueipk        = $grafik->pluck('ipk')->toArray();
     }
 //DASHBOARD DOSEN
-  $totalperwalian = DashboardHelper::totalPerwalian();
-
+  $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
+  $ipkTopData = DashboardHelper::topIpkMahasiswa();
 
     return view('content.dashboard.dashboard-main', compact(
       'rataIPK', 
       'totalwali',
       'semesterLabels',
-      'valueipk'
+      'valueipk',
+      'totalperwalian',
+      'ipkTopData'
       
       ));
   }
