@@ -64,23 +64,32 @@
 
   <!-- Overview -->
   <div class="col-xl-12 col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex justify-content-between">
-          <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Wali</h5>
-        </div>
-      </div>
-      <div class="card-body pt-lg-2">
-        <div id="ipkTopChart"></div>
-        <div class="mt-1 mt-md-3">
-          <div class="d-flex align-items-center gap-4">
-          </div>
-          <div class="d-grid mt-3 mt-md-4">
-          </div>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Wali</h5>
+
+        <form method="GET">
+          <select name="semester" class="form-select form-select-sm"
+                  onchange="this.form.submit()">
+            <option value="">Semua Semester</option>
+            @foreach ($listSemester as $smt)
+              <option value="{{ $smt }}"
+                {{ $semester == $smt ? 'selected' : '' }}>
+                Semester {{ $smt }}
+              </option>
+            @endforeach
+          </select>
+        </form>
       </div>
     </div>
+
+    <div class="card-body pt-lg-2">
+      <div id="ipkTopChart"></div>
+    </div>
   </div>
+</div>
+
 <script>
   window.ipkTopData = @json($ipkTopData);
 </script>

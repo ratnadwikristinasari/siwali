@@ -25,32 +25,41 @@ class DashboardHelper {
         ->where('status', 'Done')
         ->count();
  }
-public static function topIpkMahasiswa(): array
+public static function topIpkMahasiswa(?int $semester = null): array
 {
     $user = Auth::user();
 
-    $query = Advise::select('student_user_id')
-        ->selectRaw('MAX(ipk) as ipk')
+    $query = Advise::query()
         ->where('status', 'Done')
         ->whereNotNull('ipk');
 
-    // DOSEN BIMBINGAN
-    if (in_array('lecture', $user->roles)) {
+    // FILTER SEMESTER (WAJIB kalau mau per semester)
+    if ($semester !== null) {
+        $query->where('semester', $semester);
+    }
+
+    // DOSEN WALI
+    if ($user->hasRole('lecture')) {
         $query->where('lecture_user_id', $user->id);
     }
 
-    // KAPRODI - mahasiswa prodi
+    // KAPRODI
     if ($user->hasRole('kaprodi') && $user->prodi_id) {
         $query->whereHas('student', function ($q) use ($user) {
             $q->where('prodi_id', $user->prodi_id);
         });
     }
 
-    // KAJUR - all mahasiswa (no filter)
-    // intentionally empty
-
+    /**
+     * Ambil data TERAKHIR per mahasiswa
+     */
     $data = $query
-        ->groupBy('student_user_id')
+        ->whereIn('id', function ($sub) {
+            $sub->selectRaw('MAX(id)')
+                ->from('advise')
+                ->whereNotNull('ipk')
+                ->groupBy('student_user_id', 'semester');
+        })
         ->orderByDesc('ipk')
         ->limit(10)
         ->with('student:id,name')
@@ -61,9 +70,39 @@ public static function topIpkMahasiswa(): array
             fn ($row) => $row->student->name ?? 'Unknown'
         )->values(),
 
-        'series' => $data->pluck('ipk')->values()
+        'series' => $data->pluck('ipk')->values(),
     ];
 }
+
+public static function listSemesterMahasiswa(): array
+{
+    $user = Auth::user();
+
+    $query = Advise::query()
+        ->whereNotNull('semester');
+
+    // DOSEN WALI
+    if ($user->hasRole('lecture')) {
+        $query->where('lecture_user_id', $user->id);
+    }
+
+    // KAPRODI
+    if ($user->hasRole('kaprodi') && $user->prodi_id) {
+        $query->whereHas('student', function ($q) use ($user) {
+            $q->where('prodi_id', $user->prodi_id);
+        });
+    }
+
+    // KAJUR → tanpa filter tambahan
+
+    return $query
+        
+        ->distinct()
+        ->orderBy('semester')
+        ->pluck('semester')
+        ->toArray();
+}
+
 
 public static function grafikIpkPerSemester(string $token)
     {
@@ -169,6 +208,9 @@ public static function grafikIpkPerSemester(string $token)
         'totalDone'      => $data->where('status_perwalian', 'done')->count(),
     ];
 }
+
+
+
 
 
 }

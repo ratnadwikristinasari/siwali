@@ -30,7 +30,9 @@ class CDashboard extends Controller
     }
 //DASHBOARD DOSEN
   $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
+  $semester = $request->query('semester');
   $ipkTopData = DashboardHelper::topIpkMahasiswa();
+  $listSemester = DashboardHelper::listSemesterMahasiswa();
 
     return view('content.dashboard.dashboard-main', compact(
       'rataIPK', 
@@ -38,7 +40,9 @@ class CDashboard extends Controller
       'semesterLabels',
       'valueipk',
       'totalperwalian',
-      'ipkTopData'
+      'ipkTopData',
+      'listSemester',
+      'semester'
       
       ));
   }

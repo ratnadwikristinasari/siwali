@@ -14,6 +14,17 @@
     @vite('resources/assets/js/dashboards-analytics.js')
     @endsection
 
+    <script>
+    window.ipkTopData = {
+        categories: @json($ipkTopData['categories'] ?? []),
+        series: @json($ipkTopData['series'] ?? [])
+    };
+</script>
+
+{{-- setelah ini baru load dashboard.js --}}
+<script src="{{ asset('assets/js/dashboard.js') }}"></script>
+
+
 @role('student')
 @include('content.dashboard.partials.dashboard-mhs')
 @endrole 

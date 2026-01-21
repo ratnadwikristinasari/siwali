@@ -1,5 +1,5 @@
 /**
- * Dashboard Analytics
+ * Dashboard Siwali
  */
 
 "use strict";
@@ -21,7 +21,7 @@
         const options = {
             chart: {
                 type: "line",
-                height: 300,
+                height: 200,
                 toolbar: { show: false },
             },
             series: [
@@ -60,68 +60,66 @@
         ).render();
     });
 
-    // IPK Top 10 – Reversed Bar Chart
-    // --------------------------------------------------------------------
-    document.addEventListener("DOMContentLoaded", function () {
-        if (typeof ipkTopData === "undefined") return;
+   // IPK Top 10 – Reversed Bar Chart
+// --------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof window.ipkTopData === "undefined") return;
+    if (!window.ipkTopData.series.length) return;
 
-        const ipkTopChartEl = document.querySelector("#ipkTopChart");
-        if (!ipkTopChartEl) return;
+    const ipkTopChartEl = document.querySelector("#ipkTopChart");
+    if (!ipkTopChartEl) return;
 
-        const ipkTopChartConfig = {
-            chart: {
-                type: "bar",
-                height: 380,
-                toolbar: { show: false },
+    const ipkTopChartConfig = {
+        chart: {
+            type: "bar",
+            height: 170,
+            toolbar: { show: false },
+        },
+        series: [
+            {
+                name: "IPK",
+                data: window.ipkTopData.series,
             },
-            series: [
-                {
-                    name: "IPK",
-                    data: ipkTopData.series,
-                },
-            ],
-            plotOptions: {
-                bar: {
-                    horizontal: true,
-                    barHeight: "65%",
-                    borderRadius: 8,
-                },
+        ],
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                barHeight: "30%",
+                borderRadius: 3,
             },
-            xaxis: {
-                categories: ipkTopData.categories,
-                max: 4,
-            },
-            yaxis: {
-                reversed: true,
-                labels: {
-                  position: 'left',
-                  maxWidth:150,
-                  trim: true,
-                  style: {
-                    colors : labelColor,
-                    fontsize: '13px'
-                  }
-                }
-            },
-            tooltip: {
-                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                    const nama = w.globals.labels[dataPointIndex];
-                    const ipk = series[seriesIndex][dataPointIndex];
-
-                    return `
-        <div class="p-2">
-          <strong>${nama}</strong><br>
-          IPK : ${ipk.toFixed(2)}
-        </div>
-      `;
+        },
+        colors: [config.colors.primary],
+        xaxis: {
+            categories: window.ipkTopData.categories,
+            max: 4,
+            labels: {
+                style: {
+                    colors: labelColor,
+                    fontSize: "13px",
                 },
             },
-        };
-        new ApexCharts(
-            document.querySelector("#ipkTopChart"),
-            ipkTopChartConfig,
-        ).render();
-    });
+        },
+        yaxis: {
+            reversed: true,
+        },
+        tooltip: {
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                const nama = w.globals.labels[dataPointIndex];
+                const ipk = series[seriesIndex][dataPointIndex];
+
+                return `
+                  <div class="p-2">
+                    <strong>${nama}</strong><br>
+                    IPK : ${ipk.toFixed(2)}
+                  </div>
+                `;
+            },
+        },
+    };
+
+    new ApexCharts(ipkTopChartEl, ipkTopChartConfig).render();
+});
+
 
     // const weeklyOverviewChartEl = document.querySelector('#weeklyOverviewChart'),
     //   weeklyOverviewChartConfig = {
