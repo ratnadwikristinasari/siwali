@@ -141,7 +141,8 @@ public static function grafikIpkPerSemester(string $token)
         });
     }
     //DASHBOARD DOSEN
-    public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
+
+public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
 {
     $page = 1;
     $allData = collect();
@@ -171,11 +172,11 @@ public static function grafikIpkPerSemester(string $token)
     return $allData;
 }
 
-    public static function totalPerwalianMahasiswa(): array
+
+public static function totalPerwalianMahasiswa(): array
 {
     $token = Auth::user()->token;
 
-    //ambil SEMUA mahasiswa wali
     $data = self::getAllMahasiswaWali($token);
 
     if ($data->isEmpty()) {
@@ -209,6 +210,9 @@ public static function grafikIpkPerSemester(string $token)
     ];
 }
 
+ 
+
+    
 
 
 
