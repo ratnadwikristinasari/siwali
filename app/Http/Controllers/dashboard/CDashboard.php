@@ -34,6 +34,7 @@ class CDashboard extends Controller
   $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
   $semester = $request->query('semester');
   $ipkTopData = DashboardHelper::topIpkMahasiswa();
+  $sessions = SessionApiHelper::getAsOptions($token);
   $listSemester = DashboardHelper::listSemesterMahasiswa();
 
     return view('content.dashboard.dashboard-main', compact(
@@ -44,7 +45,8 @@ class CDashboard extends Controller
       'totalperwalian',
       'ipkTopData',
       'listSemester',
-      'semester'
+      'semester',
+      'sessions'
       
       ));
   }

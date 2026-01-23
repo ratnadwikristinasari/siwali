@@ -12,17 +12,10 @@
 
     @section('page-script')
         @vite('resources/assets/js/dashboards-analytics.js')
+        <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     @endsection
 
-    <script>
-        window.ipkTopData = {
-            categories: @json($ipkTopData['categories'] ?? []),
-            series: @json($ipkTopData['series'] ?? [])
-        };
-    </script>
-
     {{-- setelah ini baru load dashboard.js --}}
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     @section('content')
         <div class="row gy-6">
             @include('content.dashboard.partials.dashboard-dsn')

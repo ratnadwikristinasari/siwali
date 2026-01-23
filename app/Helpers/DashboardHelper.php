@@ -35,7 +35,7 @@ public static function topIpkMahasiswa(?string $semester = null): array
 
     // FILTER SEMESTER (WAJIB kalau mau per semester)
     if ($semester !== null) {
-        $query->where('semester_id', $semester);
+        $query->where('semester', $semester);
     }
 
     // DOSEN WALI

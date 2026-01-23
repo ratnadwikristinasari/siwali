@@ -22,6 +22,18 @@
     <h4>Data Mahasiswa</h4>
     <div class="col-12">
         <div class="card overflow-hidden">
+            <div class="row g-2 align-items-center my-3 mx-1">
+            <div class="col-12 col-md">
+                <div class="row g-2 justify-content-md-end">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="input-group input-group-sm">
+                            <input type="search" class="form-control" placeholder="Cari..." aria-label="Cari..."
+                                id="search" name="search" value="{{ request('search') }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
             <div class="table-responsive">
                 <table class="table table-sm">
                     <thead>

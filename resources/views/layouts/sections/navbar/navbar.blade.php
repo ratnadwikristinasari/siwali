@@ -38,14 +38,7 @@ $navbarDetached = ($navbarDetached ?? '');
       @endif
 
       <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <!-- Search -->
-        <div class="navbar-nav align-items-center">
-          <div class="nav-item d-flex align-items-center">
-            <i class="ri-search-line ri-22px me-1_5"></i>
-            <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2 ms-50" placeholder="Search..." aria-label="Search...">
-          </div>
-        </div>
-        <!-- /Search -->
+
         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
           <!-- Place this tag where you want the button to render. -->
@@ -70,8 +63,8 @@ $navbarDetached = ($navbarDetached ?? '');
                       </div>
                     </div>
                     <div class="flex-grow-1">
-                      <h6 class="mb-0 small">John</h6>
-                      <small class="text-muted">Admin</small>
+                      <h6 class="mb-0 small">{{ Auth()->user()->name }}</h6>
+                      <small class="text-muted">{{ Auth()->user()->role }}</small>
                     </div>
                   </div>
                 </a>
@@ -79,12 +72,12 @@ $navbarDetached = ($navbarDetached ?? '');
               <li>
                 <div class="dropdown-divider"></div>
               </li>
-              <li>
+              {{-- <li>
                 <a class="dropdown-item" href="javascript:void(0);">
                   <i class="ri-user-3-line ri-22px me-2"></i>
                   <span class="align-middle">My Profile</span>
                 </a>
-              </li>
+              </li> --}}
               <li>
                 <div class="dropdown-divider"></div>
               </li>
