@@ -25,7 +25,7 @@ class DashboardHelper {
         ->where('status', 'Done')
         ->count();
  }
-public static function topIpkMahasiswa(?int $semester = null): array
+public static function topIpkMahasiswa(?string $semester = null): array
 {
     $user = Auth::user();
 
@@ -35,7 +35,7 @@ public static function topIpkMahasiswa(?int $semester = null): array
 
     // FILTER SEMESTER (WAJIB kalau mau per semester)
     if ($semester !== null) {
-        $query->where('semester', $semester);
+        $query->where('semester_id', $semester);
     }
 
     // DOSEN WALI

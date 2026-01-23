@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Helpers\DashboardHelper;
+use App\Helpers\SemesterApiHelper;
+use App\Helpers\SessionApiHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,5 +47,37 @@ class CDashboard extends Controller
       'semester'
       
       ));
+  }
+  public function myDashboard(Request $request) {
+    $token = Auth::user()->token;
+    $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
+  $semester = $request->query('semester');
+  $ipkTopData = DashboardHelper::topIpkMahasiswa();
+  $sessions = SessionApiHelper::getAsOptions($token);
+  $listSemester = SemesterApiHelper::getSemesterAsOption($token);
+
+  // dd($semester, $ipkTopData, $listSemester, $sessions);
+
+    return view('content.dashboard.dashboard-my', compact(
+      'totalperwalian',
+      'ipkTopData',
+      'listSemester',
+      'semester',
+      'sessions'
+    ));
+
+  }
+
+  public function getTopTenStudent(Request $request)
+  {
+    $token = Auth::user()->token;
+    $semesterId = $request->input('semester_id');
+
+    $ipkTopData = DashboardHelper::topIpkMahasiswa($semesterId);
+
+    return response()->json([
+        'categories' => $ipkTopData['categories']->values(),
+        'series' => $ipkTopData['series']->values(),
+    ]);
   }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
 use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,8 @@ Route::prefix('auth')->group(function () {
 //dashboard
 Route::middleware('auth')->group(function () {
 Route::get('dashboard', [CDashboard::class, 'index'])->name('content.dashboard.dashboard-main');
+Route::get('my/dashboard', [CDashboard::class, 'mydashboard'])->name('content.dashboard.partials.dashboard-dsn');
+Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
 //page
 Route::get('page/mahasiswa', [CMahasiswa::class,'index'])->name('datamahasiswa');
 Route::get('page/dosen', [CDosen::class,'index'])->name('datadosen');
@@ -45,6 +48,8 @@ Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.up
 
 Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
 Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');
+
+        Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
 
 });
 

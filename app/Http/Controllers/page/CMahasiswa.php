@@ -37,7 +37,7 @@ public function index(Request $request)
         // Cari advises dengan student_id yang cocok
         $advises = Advise::whereIn('student_id', $studentIds)
             ->select('student_id', 'status', 'created_at')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('status', 'desc')
             ->get()
             ->groupBy('student_id')
             ->map(function ($items) {
