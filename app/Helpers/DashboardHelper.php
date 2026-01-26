@@ -30,12 +30,12 @@ public static function topIpkMahasiswa(?string $semester = null): array
     $user = Auth::user();
 
     $query = Advise::query()
-        ->where('status', 'Done')
+        ->where('status', 'done')
         ->whereNotNull('ipk');
 
-    // FILTER SEMESTER (WAJIB kalau mau per semester)
+    // FILTER SEMESTER
     if ($semester !== null) {
-        $query->where('semester', $semester);
+        $query->where('semester_id', $semester);
     }
 
     // DOSEN WALI
@@ -65,6 +65,7 @@ public static function topIpkMahasiswa(?string $semester = null): array
         ->with('student:id,name')
         ->get();
 
+
     return [
         'categories' => $data->map(
             fn ($row) => $row->student->name ?? 'Unknown'
@@ -72,6 +73,7 @@ public static function topIpkMahasiswa(?string $semester = null): array
 
         'series' => $data->pluck('ipk')->values(),
     ];
+    
 }
 
 public static function listSemesterMahasiswa(): array

@@ -129,4 +129,7 @@
                 },
             });
         </script>
+
+        @include('_partials.alert')
+
     @endsection

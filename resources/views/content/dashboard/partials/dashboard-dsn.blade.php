@@ -1,12 +1,6 @@
-        <div class="col-lg-12">
+            <div class="col-lg-12">
             <div class="card h-80">
-                <div class="card-header">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Total Perwalian</h5>
-                        <div class="dropdown">
-                        </div>
-                    </div>
-                    <div class="card-body pt-lg-12">
+ <div class="card-body pt-lg-12">
                         <div class="row g-12">
                             <div class="col-md-3 col-2">
                                 <a href="history/perwaliandosen">
@@ -70,11 +64,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
 
-        <!-- Overview -->
+    
         <div class="col-xl-12 col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -82,7 +75,7 @@
                         <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Wali</h5>
 
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="mr-2">
+                            <div class="me-2">
                                 <select id="session_id" class="form-select-sm @error('session_id') is-invalid @enderror"
                                     name="session_id">
                                     <option value="" selected>-- Pilih Tahun Ajaran --</option>

@@ -56,7 +56,7 @@ $navbarDetached = ($navbarDetached ?? '');
             <ul class="dropdown-menu dropdown-menu-end mt-3 py-2">
             <li>
                 <a class="dropdown-item" href="javascript:void(0);">
-                  <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center">
                     <div class="flex-shrink-0 me-2">
                       <div class="avatar avatar-online">
                         <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">

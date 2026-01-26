@@ -93,4 +93,5 @@
         </div>
     </div>
     </div>
+    @include('_partials.alert')
 @endsection
