@@ -49,19 +49,21 @@ public static function getMahasiswa(string $token, ?string $majorId = null, ?int
     return $allData;
 }
 
-  public static function getMahasiswaTI(string $token, ?string $majorId, ?int $page = 1)
+public static function getMahasiswaByProdi(string $token, ?string $prodiId = null, ?int $page = 1): array 
 {
-$queryParams = [
-      'major_id' => $majorId,
-      'page' => $page
-    ];
-    $response = Http::withoutVerifying()->withHeaders([
-      'Authorization' => 'Bearer ' . $token,
-    ])
-      ->withQueryParameters($queryParams)
-      ->get(config('app.super_app_url') . '/students');
 
-    return $response->json();
-}
+        $queryParams = [
+            'page' => $page
+        ];
+
+        if (!empty($prodiId)) {
+            $queryParams['study_program_id'] = $prodiId;
+        }
+
+        $response = Http::withToken($token)
+            ->get(config('app.super_app_url') . '/students', $queryParams);
+
+        return $response->json();
+    }
 }
 

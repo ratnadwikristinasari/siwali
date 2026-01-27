@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CProdi extends Controller
 {
-  public function index(Request $request)
+  public function getProdiById(Request $request)
   {
         $token = Auth::user()->token;
         $majorId = '019a4723-1d2f-733b-b9ff-25c2e27440c2';

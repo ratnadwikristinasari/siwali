@@ -12,7 +12,7 @@
             "name": "Dashboards Saya",
             "icon": "menu-icon tf-icons ri-home-smile-line",
             "slug": "content.dashboard.partials.dashboard-dsn",
-            "roles": ["kaprodi"]
+            "roles": ["kaprodi", "kajur"]
         },
 
         {

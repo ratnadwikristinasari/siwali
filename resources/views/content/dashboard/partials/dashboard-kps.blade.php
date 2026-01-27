@@ -4,7 +4,7 @@
         <div class="card h-100">
             <div class="card-header">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0 me-2">Data Teknik Informatika</h5>
+                    <h5 class="card-title m-0 me-2">Data Program Studi Teknik Informatika</h5>
                 </div>
             </div>
             <div class="card-body pt-lg-10">
@@ -71,7 +71,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Wali</h5>
+                        <h5 class="mb-1">10 IPK Tertinggi Mahasiswa Program Studi</h5>
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="me-2">

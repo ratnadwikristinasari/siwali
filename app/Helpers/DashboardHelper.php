@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 
+use App\Http\Controllers\page\CProdi;
 use App\Models\Advise;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,7 @@ public static function topIpkMahasiswa(?string $semester = null): array
         ->where('status', 'done')
         ->whereNotNull('ipk');
 
+
     // FILTER SEMESTER
     if ($semester !== null) {
         $query->where('semester_id', $semester);
@@ -58,7 +60,7 @@ public static function topIpkMahasiswa(?string $semester = null): array
             $sub->selectRaw('MAX(id)')
                 ->from('advise')
                 ->whereNotNull('ipk')
-                ->groupBy('student_user_id', 'semester');
+                ->groupBy('student_id');
         })
         ->orderByDesc('ipk')
         ->limit(10)

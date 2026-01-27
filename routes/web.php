@@ -36,7 +36,7 @@ Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('
 //page
 Route::get('page/mahasiswa', [CMahasiswa::class,'index'])->name('datamahasiswa');
 Route::get('page/dosen', [CDosen::class,'index'])->name('datadosen');
-Route::get('page/prodi', [CProdi::class,'index'])->name('dataprodi');
+Route::get('page/prodi', [CProdi::class,'getProdiById'])->name('dataprodi');
 
 Route::get('page/form', [CFormwali::class,'index'])->name('form-perwalian');
 Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
