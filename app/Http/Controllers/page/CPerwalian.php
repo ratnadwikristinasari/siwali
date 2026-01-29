@@ -57,7 +57,9 @@ class CPerwalian extends Controller
         $activeSemester = array_values(array_filter(
             $dataAuth['data']['student_detail']['student_semester'],
             fn($s) => $s['is_active'] === true));
-        // dd($activeSemester);
+
+        //dd($dataAuth, $activeSemester);
+
         $semesterId = $activeSemester[0]['semester_id'] ?? null;
         $semesterAktif = $activeSemester[0]['semester'] ?? null;
     //     $semesterAktif = collect(
@@ -71,6 +73,18 @@ class CPerwalian extends Controller
                     return back()->withErrors('Semester aktif tidak ditemukan');
                 }
 
+        $studyProgramId = data_get($dataAuth, 'data.student_detail.m_study_program_id');
+        $studyProgramName = data_get($dataAuth, 'data.student_detail.study_program_name');
+
+            if (!$studyProgramId) {
+                return back()->withErrors('Program Studi tidak ditemukan dari data user');
+            }
+        $majorId   = data_get($dataAuth, 'data.student_detail.m_major_id');
+        $majorName = data_get($dataAuth, 'data.student_detail.major_name');
+
+            if (!$majorId) {
+                return back()->withErrors('Jurusan (Major) tidak ditemukan dari data user');
+            }
       
         //dd($lecture);
         $wali= Advise::create([
@@ -81,6 +95,8 @@ class CPerwalian extends Controller
             'status' => empty($request->masukan) ? 'Pending' : 'Done',
             'khs' => $khsfile,
             'semester' =>$semesterAktif,
+            'study_program'=>$studyProgramName,
+            'major'=>$majorName,
             'ipk' => $request->ipk,
             'keluhan' => $request->keluhan,
             'semester_id' => $semesterId,

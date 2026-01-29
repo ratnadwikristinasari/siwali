@@ -214,11 +214,4 @@ public static function totalPerwalianMahasiswa(): array
     ];
 }
 
- 
-
-    
-
-
-
-
 }

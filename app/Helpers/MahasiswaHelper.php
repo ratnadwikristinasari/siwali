@@ -19,36 +19,6 @@ public static function getMahasiswa(string $token, ?string $majorId = null, ?int
     return $response->json();
   }
 
-  public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
-{
-    $page = 1;
-    $allData = collect();
-
-    do {
-        $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page);
-
-        if (empty($response['data'])) {
-            break;
-        }
-
-        $allData = $allData->merge($response['data']);
-
-        $meta = $response['meta'] ?? [];
-
-        if (isset($meta['last_page'])) {
-            $lastPage = $meta['last_page'];
-        } elseif (isset($meta['total'], $meta['per_page'])) {
-            $lastPage = (int) ceil($meta['total'] / $meta['per_page']);
-        } else {
-            $lastPage = $page;
-        }
-
-        $page++;
-    } while ($page <= $lastPage);
-
-    return $allData;
-}
-
 public static function getMahasiswaByProdi(string $token, ?string $prodiId = null, ?int $page = 1): array 
 {
 
