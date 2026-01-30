@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
+use App\Http\Controllers\page\CFormNonKHS;
+use App\Http\Controllers\page\CperwalianNonKHS;
 use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\CLandingpage;
@@ -42,6 +44,9 @@ Route::get('page/form', [CFormwali::class,'index'])->name('form-perwalian');
 Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
 Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
 Route::post('/perwalian', [CPerwalian::class, 'store'])->name('perwalian.store');
+
+Route::get('page/nonkhs', [CFormNonKHS::class,'index'])->name('form-perwalian-nonkhs');
+Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
 
 Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
 Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');

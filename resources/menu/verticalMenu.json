@@ -41,10 +41,18 @@
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
-            "name": "Perwalian",
+            "name": "Perwalian KHS",
             "icon": "menu-icon tf-icons ri-list-view",
             "slug": "form-perwalian",
             "url": "page/form",
+            "roles": ["student"]
+        },
+
+                {
+            "name": "Perwalian Non KHS",
+            "icon": "menu-icon tf-icons ri-list-view",
+            "slug": "form-perwalian-nonkhs",
+            "url": "page/nonkhs",
             "roles": ["student"]
         },
 
