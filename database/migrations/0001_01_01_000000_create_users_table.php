@@ -15,6 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('id_parent')->nullable();
             $table->uuid('external_id')->nullable();
+            $table->string('major')->nullable();
+            $table->uuid('major_id')->nullable();
+            $table->string('study_program')->nullable();
+            $table->uuid('study_program_id')->nullable();
             $table->string('name');
             $table->string('email');
             $table->text('token')->nullable();

@@ -18,15 +18,21 @@ return new class extends Migration
             $table->uuid('student_user_id');
             $table->uuid('lecture_user_id');
 
-            $table->enum('status', ['done', 'pending'])->default('pending');
+            $table->enum('status', ['done', 'signed', 'pending'])->default('pending');
+            $table->enum('type', ['khs', 'non-khs'])->default('non-khs');
+
             $table->string('khs')->nullable();
             $table->double('ipk')->nullable();
-            $table->string('keluhan')->nullable();
-            $table->string('masukan')->nullable();
+            $table->text('keluhan')->nullable();
+            $table->text('masukan')->nullable();
+
+            $table->uuid('semester_id')->nullable();
+            $table->unsignedTinyInteger('semester')->nullable();
+            $table->uuid('session_id')->nullable();
 
             $table->timestamps();
 
-             // Foreign key relations to users
+            // Foreign key relations to users
             $table->foreign('student_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('lecture_user_id')->references('id')->on('users')->onDelete('cascade');
         });
