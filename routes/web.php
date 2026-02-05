@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
+use App\Http\Controllers\page\CDetailPerwalian;
 use App\Http\Controllers\page\CFormNonKHS;
 use App\Http\Controllers\page\CperwalianNonKHS;
 use App\Mail\AjukanPerwalianMail;
@@ -50,6 +51,11 @@ Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perw
 
 Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
 Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
+Route::get('/perwalian/{id}/detail', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
+
+Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
+Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
 
 Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
 Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');

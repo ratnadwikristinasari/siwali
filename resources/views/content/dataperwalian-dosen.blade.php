@@ -71,6 +71,10 @@
                                     @endif
                                 </td>
                                 <td>
+                                        <a href="{{ route('perwalian.detail', $historydosenwali->id) }}"
+                                            class="btn btn-icon btn-sm btn-outline-primary" title="Detail">
+                                            <i class="ri-folder-info-fill"></i>
+                                        </a>
                                     @if ($historydosenwali->status === 'pending')
                                         <a href="{{ route('perwalian.edit', $historydosenwali->id) }}"
                                             class="btn btn-icon btn-sm btn-outline-primary" title="Edit">

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CFormNonKHS extends Controller
 {
-   public function index()
+   public function index(Request $request)
   {
         $token = Auth::user()->token;
 
@@ -30,6 +30,12 @@ class CFormNonKHS extends Controller
                   }
               }
     }
+
+        $request->validate([
+    'masukan' => Auth::user()->roles === 'lecture'
+        ? 'nullable|string'
+        : 'prohibited',
+]);
       
        
     return view('content.form-perwalian-nonkhs', compact('programStudi', 'semesterAktif', 'kelas', 'programStudi'));

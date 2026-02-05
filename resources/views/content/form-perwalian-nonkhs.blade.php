@@ -44,7 +44,7 @@
                             <textarea id="basic-icon-default-message" class="form-control" name="konsultasi" style="height: 60px;"
                                 placeholder="Masukkan Keluhan Anda" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="btn-submit" disabled>
+                        <button type="submit" class="btn btn-primary" id="btn-submit-nonkhs" enabled>
                             Kirim
                         </button>
                     </form>
@@ -55,8 +55,9 @@
     </div>
     @endsection
     @section('page-script')
+    
 
 
-        @include('_partials.alert')
+        @include('_partials.alert-nonkhs')
 
     @endsection
