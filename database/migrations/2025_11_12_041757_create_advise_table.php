@@ -19,7 +19,7 @@ return new class extends Migration
             $table->uuid('lecture_user_id');
 
             $table->enum('status', ['done', 'signed', 'pending'])->default('pending');
-            $table->enum('type', ['khs', 'non-khs'])->default('non-khs');
+            $table->enum('type', ['gpa_advising', 'non_gpa_advising'])->default('non_gpa_advising');
 
             $table->string('khs')->nullable();
             $table->double('ipk')->nullable();

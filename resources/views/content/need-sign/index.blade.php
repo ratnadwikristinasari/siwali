@@ -1,6 +1,6 @@
 @extends('layouts.contentNavbarLayout')
 
-@section('title', 'Mahasiswa wali')
+@section('title', 'Dokumen Perwalian Menunggu Tanda Tangan Kajur')
 
 @section('page-script')
     <script>
@@ -22,15 +22,16 @@
             <li class="breadcrumb-item">
                 <a href="{{ route('content.dashboard.dashboard-main') }}">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active">Mahasiswa Wali</li>
+            <li class="breadcrumb-item active">Dokumen Perwalian</li>
         </ol>
     </nav>
+
     <div class="row">
         <div class="col-12">
             <div class="card overflow-hidden">
                 <div class="row g-2 align-items-center my-3 mx-1">
                     <div class="col-12 col-md">
-                        <form action="{{ route('datamahasiswa') }}" method="GET" id="form-filter">
+                        <form action="{{ route('page.need_sign') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
@@ -51,47 +52,58 @@
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIM</th>
                                 <th class="text-truncate">Program Studi</th>
-                                <th class="text-truncate">Status</th>
+                                <th class="text-truncate">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($mahasiswas as $index => $listmahasiswa)
+                            @forelse ($needSigns as $index => $needSign)
                                 <tr>
-                                    <td>{{ $mahasiswas->firstItem() + $index }}</td>
+                                    <td>{{ $needSigns->firstItem() + $index }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div>
-                                                <h6 class="mb-0 text-truncate">{{ $listmahasiswa['name'] }}</h6>
+                                                <h6 class="mb-0 text-truncate">{{ $needSign->student->name }}</h6>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-truncate">{{ $listmahasiswa['nim'] }}</td>
+                                    <td class="text-truncate">{{ explode('@', $needSign->student->email)[0] }}</td>
                                     <td class="text-truncate">
                                         <div class="d-flex align-items-center">
-                                            <span>{{ $listmahasiswa['study_program_name'] }}</span>
+                                            <span>{{ $needSign->student->study_program }}</span>
                                         </div>
                                     </td>
                                     <td>
-                                        @if ($listmahasiswa['status_perwalian'] === null)
-                                            <span class="badge bg-label-secondary rounded-pill">
-                                                Belum Perwalian
-                                            </span>
-                                        @elseif ($listmahasiswa['status_perwalian'] === 'pending')
-                                            <span class="badge bg-label-warning rounded-pill">
-                                                Pending
-                                            </span>
+                                        @if ($needSign->khs)
+                                            <form action="{{ route('page.need_sign.sign', $needSign->id) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-icon btn-sm btn-outline-primary"
+                                                    title="Tanda Tangani">
+                                                    <i class="ri-check-line"></i>
+                                                </button>
+                                            </form>
+
+                                            <a class="btn btn-icon btn-sm btn-outline-primary"
+                                                href="{{ \App\Helpers\FileHelper::get("khs_files/{$needSign->khs}") }}"
+                                                title="Lihat KHS" target="_blank" rel="noopener">
+                                                <i class="ri-eye-fill"></i>
+                                            </a>
                                         @else
-                                            <span class="badge bg-label-success rounded-pill">
-                                                Done
-                                            </span>
+                                            -
                                         @endif
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        Tidak ada dokumen yang menunggu tanda tangan.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
-                {{ $mahasiswas->links('vendor.pagination.bootstrap-5') }}
+                {{ $needSigns->links('vendor.pagination.bootstrap-5') }}
             </div>
         </div>
     </div>

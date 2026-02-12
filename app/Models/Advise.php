@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-
 class Advise extends Model
 {
     use HasUuids;
@@ -24,17 +23,16 @@ class Advise extends Model
         'ipk',
         'keluhan',
         'masukan',
+        'type',
         'semester_id',
         'session_id',
     ];
-    public function lecture() {
+    public function lecture()
+    {
         return $this->belongsTo(User::class, 'lecture_user_id');
     }
-    public function student() {
+    public function student()
+    {
         return $this->belongsTo(User::class, 'student_user_id');
-    }
-    public function setMasukanAttribute($value) {
-        $this->attributes['masukan'] = $value;
-        $this->attributes['status'] = empty($value) ? 'Pending' : 'Done';
     }
 }

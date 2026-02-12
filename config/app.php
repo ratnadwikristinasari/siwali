@@ -123,6 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'super_app_url' => env('SUPER_APP_URL', 'http://jti-super-app-go.test')
+    'super_app_url' => env('SUPER_APP_URL', 'http://jti-super-app-go.test'),
+    'super_app_url_internal' => env('SUPER_APP_URL_INTERNAL', 'http://jti-super-app-go-internal.test'),
 
 ];

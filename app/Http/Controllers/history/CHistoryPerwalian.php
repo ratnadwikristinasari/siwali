@@ -9,15 +9,22 @@ use Illuminate\Support\Facades\Auth;
 
 class CHistoryPerwalian extends Controller
 {
-  public function index(Request $request)
-  {
-   $user = Auth::user();
-   //Data perwalian Mahasiswa
-   $perwalian = Advise::
-    where('student_user_id', $user->id)
-    ->orderBy('created_at', 'desc')
-    ->get();
-    return view('content.dataperwalian', compact('perwalian'));
-  }
-}
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $user = Auth::user();
+        $perwalian = Advise::where('student_user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('status', 'like', '%' . $search . '%')
+                        ->orWhere('keluhan', 'like', '%' . $search . '%')
+                        ->orWhere('masukan', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate(10)
+            ->withQueryString();
 
+        return view('content.dataperwalian', compact('perwalian'));
+    }
+}

@@ -7,7 +7,7 @@
             "slug": "content.dashboard.dashboard-main",
             "roles": ["kajur", "kaprodi", "lecturer", "student"]
         },
-                {
+        {
             "url": "my/dashboard",
             "name": "Dashboards Saya",
             "icon": "menu-icon tf-icons ri-home-smile-line",
@@ -16,7 +16,7 @@
         },
 
         {
-            "menuHeader": "Pages"
+            "menuHeader": "Perwalian"
         },
 
         {
@@ -34,44 +34,39 @@
             "roles": ["kaprodi", "kajur"]
         },
         {
-            "name": "Data Mahasiswa",
+            "name": "Mahasiswa Wali",
             "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
             "slug": "datamahasiswa",
-            "url": "page/mahasiswa",
+            "url": "student",
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
-            "name": "Perwalian KHS",
+            "name": "Form Perwalian",
             "icon": "menu-icon tf-icons ri-list-view",
             "slug": "form-perwalian",
-            "url": "page/form",
+            "url": "advising",
             "roles": ["student"]
-        },
-
-                {
-            "name": "Perwalian Non KHS",
-            "icon": "menu-icon tf-icons ri-list-view",
-            "slug": "form-perwalian-nonkhs",
-            "url": "page/nonkhs",
-            "roles": ["student"]
-        },
-
-        {
-            "menuHeader": "History"
         },
         {
             "name": "Riwayat Perwalian",
-            "icon": "menu-icon tf-icons ri-bank-card-2-line",
+            "icon": "menu-icon tf-icons ri-history-line",
             "slug": "dataperwalian",
-            "url": "history/perwalian",
+            "url": "advising/history",
             "roles": ["student"]
         },
-                {
+        {
             "name": "Perwalian Mahasiswa",
             "icon": "menu-icon tf-icons ri-bank-card-2-line",
             "slug": "dataperwaliandosen",
-            "url": "history/perwaliandosen",
+            "url": "student/history",
             "roles": ["kaprodi", "lecturer", "kajur"]
+        },
+        {
+            "name": "KHS Perlu Tanda Tangan",
+            "icon": "menu-icon tf-icons ri-file-list-3-line",
+            "slug": "page.need_sign",
+            "url": "need-sign",
+            "roles": ["kajur"]
         }
     ]
 }

@@ -20,7 +20,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'id_parent',
         'external_id',
+        'major',
+        'major_id',
+        'study_program',
+        'study_program_id',
         'name',
         'email',
         'token',
@@ -38,57 +43,56 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-    'roles' => 'array',
-    'permissions' => 'array',
-  ];
+        'roles' => 'array',
+        'permissions' => 'array',
+    ];
 
 
-  protected function normalizedRoles(): array
-  {
-    $roles = $this->roles ?? [];
-    if (!is_array($roles)) $roles = [];
-    return array_values(array_unique(array_map(
-      fn($r) => strtolower(trim((string)$r)),
-      $roles
-    )));
-  }
-
-  public function hasRole(string $role): bool
-  {
-    $role = strtolower(trim($role));
-    return in_array($role, $this->normalizedRoles(), true);
-  }
-
-  /** $roles bisa "admin|editor" atau array */
-  public function hasAnyRole(array|string $roles): bool
-  {
-    $required = is_array($roles) ? $roles : explode('|', $roles);
-    $required = array_filter(array_map(fn($r) => strtolower(trim($r)), $required));
-    if (empty($required)) return false;
-
-    $own = $this->normalizedRoles();
-    return count(array_intersect($required, $own)) > 0;
-  }
-
-  public function hasAllRoles(array|string $roles): bool
-  {
-    $required = is_array($roles) ? $roles : explode('|', $roles);
-    $required = array_filter(array_map(fn($r) => strtolower(trim($r)), $required));
-    if (empty($required)) return false;
-
-    $own = $this->normalizedRoles();
-    foreach ($required as $r) {
-      if (!in_array($r, $own, true)) return false;
+    protected function normalizedRoles(): array
+    {
+        $roles = $this->roles ?? [];
+        if (!is_array($roles)) $roles = [];
+        return array_values(array_unique(array_map(
+            fn($r) => strtolower(trim((string)$r)),
+            $roles
+        )));
     }
-    return true;
-  }
 
-  /** Untuk Blade directive */
-  public function matchesRoles(array|string $roles, string $mode = 'any'): bool
-  {
-    return $mode === 'all'
-      ? $this->hasAllRoles($roles)
-      : $this->hasAnyRole($roles);
-  }
+    public function hasRole(string $role): bool
+    {
+        $role = strtolower(trim($role));
+        return in_array($role, $this->normalizedRoles(), true);
+    }
 
+    /** $roles bisa "admin|editor" atau array */
+    public function hasAnyRole(array|string $roles): bool
+    {
+        $required = is_array($roles) ? $roles : explode('|', $roles);
+        $required = array_filter(array_map(fn($r) => strtolower(trim($r)), $required));
+        if (empty($required)) return false;
+
+        $own = $this->normalizedRoles();
+        return count(array_intersect($required, $own)) > 0;
+    }
+
+    public function hasAllRoles(array|string $roles): bool
+    {
+        $required = is_array($roles) ? $roles : explode('|', $roles);
+        $required = array_filter(array_map(fn($r) => strtolower(trim($r)), $required));
+        if (empty($required)) return false;
+
+        $own = $this->normalizedRoles();
+        foreach ($required as $r) {
+            if (!in_array($r, $own, true)) return false;
+        }
+        return true;
+    }
+
+    /** Untuk Blade directive */
+    public function matchesRoles(array|string $roles, string $mode = 'any'): bool
+    {
+        return $mode === 'all'
+            ? $this->hasAllRoles($roles)
+            : $this->hasAnyRole($roles);
+    }
 }

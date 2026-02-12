@@ -11,75 +11,75 @@ use Illuminate\Support\Facades\Auth;
 
 class CDashboard extends Controller
 {
-  public function index(Request $request)
-  {
-  $token = $request->user()->token;
-//DASHBOARD MAHASISWA
+    public function index(Request $request)
+    {
+        $token = $request->user()->token;
+        //DASHBOARD MAHASISWA
 
-  $rataIPK = DashboardHelper::rataIpkMahasiswa();
-  $totalwali = DashboardHelper::totalPerwalian();
+        $rataIPK = DashboardHelper::rataIpkMahasiswa();
+        $totalwali = DashboardHelper::totalPerwalian();
 
-  $grafik = DashboardHelper::grafikIpkPerSemester($token);
-//Grafik IPK 
-   $semesterLabels = [];
-    $valueipk = [];
-
-    if ($request->user()->hasRole('student')) {
         $grafik = DashboardHelper::grafikIpkPerSemester($token);
+        //Grafik IPK
+        $semesterLabels = [];
+        $valueipk = [];
 
-        $semesterLabels = $grafik->pluck('semester')->toArray();
-        $valueipk        = $grafik->pluck('ipk')->toArray();
+        if ($request->user()->hasRole('student')) {
+            $grafik = DashboardHelper::grafikIpkPerSemester($token);
+
+            $semesterLabels = $grafik->pluck('semester')->toArray();
+            $valueipk        = $grafik->pluck('ipk')->toArray();
+        }
+        //DASHBOARD DOSEN
+        $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
+        $semester = $request->query('semester');
+        $ipkTopData = DashboardHelper::topIpkMahasiswa();
+        $sessions = SessionApiHelper::getAsOptions($token);
+        $listSemester = DashboardHelper::listSemesterMahasiswa();
+
+        return view('content.dashboard.dashboard-main', compact(
+            'rataIPK',
+            'totalwali',
+            'semesterLabels',
+            'valueipk',
+            'totalperwalian',
+            'ipkTopData',
+            'listSemester',
+            'semester',
+            'sessions'
+
+        ));
     }
-//DASHBOARD DOSEN
-  $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
-  $semester = $request->query('semester');
-  $ipkTopData = DashboardHelper::topIpkMahasiswa();
-  $sessions = SessionApiHelper::getAsOptions($token);
-  $listSemester = DashboardHelper::listSemesterMahasiswa();
+    public function myDashboard(Request $request)
+    {
+        $token = Auth::user()->token;
+        $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
+        $semester = $request->query('semester');
+        $ipkTopData = DashboardHelper::topIpkMahasiswa();
+        $sessions = SessionApiHelper::getAsOptions($token);
+        $listSemester = SemesterApiHelper::getSemesterAsOption($token);
 
-    return view('content.dashboard.dashboard-main', compact(
-      'rataIPK', 
-      'totalwali',
-      'semesterLabels',
-      'valueipk',
-      'totalperwalian',
-      'ipkTopData',
-      'listSemester',
-      'semester',
-      'sessions'
-      
-      ));
-  }
-  public function myDashboard(Request $request) {
-    $token = Auth::user()->token;
-    $totalperwalian = DashboardHelper::totalPerwalianMahasiswa();
-  $semester = $request->query('semester');
-  $ipkTopData = DashboardHelper::topIpkMahasiswa();
-  $sessions = SessionApiHelper::getAsOptions($token);
-  $listSemester = SemesterApiHelper::getSemesterAsOption($token);
+        // dd($semester, $ipkTopData, $listSemester, $sessions);
 
-  // dd($semester, $ipkTopData, $listSemester, $sessions);
+        return view('content.dashboard.dashboard-my', compact(
+            'totalperwalian',
+            'ipkTopData',
+            'listSemester',
+            'semester',
+            'sessions'
+        ));
+    }
 
-    return view('content.dashboard.dashboard-my', compact(
-      'totalperwalian',
-      'ipkTopData',
-      'listSemester',
-      'semester',
-      'sessions'
-    ));
+    public function getTopTenStudent(Request $request)
+    {
+        $token = Auth::user()->token;
+        $semesterId = $request->input('semester_id');
 
-  }
+        $ipkTopData = DashboardHelper::topIpkMahasiswa($semesterId);
 
-  public function getTopTenStudent(Request $request)
-  {
-    $token = Auth::user()->token;
-    $semesterId = $request->input('semester_id');
-
-    $ipkTopData = DashboardHelper::topIpkMahasiswa($semesterId);
-
-    return response()->json([
-        'categories' => $ipkTopData['categories']->values(),
-        'series' => $ipkTopData['series']->values(),
-    ]);
-  }
+        return response()->json([
+            'categories' => $ipkTopData['categories']->values(),
+            'series' => $ipkTopData['series']->values(),
+        ]);
+    }
 }

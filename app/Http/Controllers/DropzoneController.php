@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FileHelper;
 use Illuminate\Http\Request;
 
 class DropzoneController extends Controller
@@ -20,15 +21,24 @@ class DropzoneController extends Controller
         ], [
             'file.required' => 'KHS Wajib Diupload',
         ]);
-        
+
         $file = $request->file('file');
-        $filename = time().'_'.$file->getClientOriginalName();
-        $path = $file->storeAs('khs', $filename, 'public');
-        session(['khs_file' => $path]); //simpan ke session
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename = FileHelper::storeFile($file, 'khs_files', $filename);
+
+        $fullUrl = FileHelper::get('khs_files', $filename);
+
+        $oldFile = session('khs_file');
+        if ($oldFile) {
+            FileHelper::deleteFile('khs_files', $oldFile);
+        }
+
+        session(['khs_file' => $filename]);
+
         return response()->json([
-            'success'=> true,
-            'path' => $path,
-            'url' => asset('storage/' . $path)
-    ]);
+            'success' => true,
+            'path' => 'khs_files/' . $filename,
+            'url' => $fullUrl
+        ]);
     }
 }

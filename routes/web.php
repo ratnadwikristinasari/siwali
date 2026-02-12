@@ -23,9 +23,9 @@ Route::get('/login', [CLandingpage::class, 'index'])->name('login');
 
 
 Route::prefix('auth')->group(function () {
-  Route::get('/login', [OAuthController::class, 'redirect'])->name('auth.login');
-  Route::get('/callback', [OAuthController::class, 'callback'])->name('auth.callback');
-  Route::post('/logout', [OAuthController::class, 'logout'])->name('auth.logout');
+    Route::get('/login', [OAuthController::class, 'redirect'])->name('auth.login');
+    Route::get('/callback', [OAuthController::class, 'callback'])->name('auth.callback');
+    Route::post('/logout', [OAuthController::class, 'logout'])->name('auth.logout');
 });
 
 // Route::get('/', function () {
@@ -33,35 +33,50 @@ Route::prefix('auth')->group(function () {
 // });
 //dashboard
 Route::middleware('auth')->group(function () {
-Route::get('dashboard', [CDashboard::class, 'index'])->name('content.dashboard.dashboard-main');
-Route::get('my/dashboard', [CDashboard::class, 'mydashboard'])->name('content.dashboard.partials.dashboard-dsn');
-Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
-//page
-Route::get('page/mahasiswa', [CMahasiswa::class,'index'])->name('datamahasiswa');
-Route::get('page/dosen', [CDosen::class,'index'])->name('datadosen');
-Route::get('page/prodi', [CProdi::class,'getProdiById'])->name('dataprodi');
+    Route::get('dashboard', [CDashboard::class, 'index'])->name('content.dashboard.dashboard-main');
+    Route::get('my/dashboard', [CDashboard::class, 'mydashboard'])->name('content.dashboard.partials.dashboard-dsn');
+    Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
 
-Route::get('page/form', [CFormwali::class,'index'])->name('form-perwalian');
-Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
-Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
-Route::post('/perwalian', [CPerwalian::class, 'store'])->name('perwalian.store');
+    Route::get('page/dosen', [CDosen::class, 'index'])->name('datadosen');
+    Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
 
-Route::get('page/nonkhs', [CFormNonKHS::class,'index'])->name('form-perwalian-nonkhs');
-Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+    Route::prefix('student')->group(function () {
+        Route::middleware('role:lecturer')->group(function () {
+            Route::get('', [CMahasiswa::class, 'index'])->name('datamahasiswa');
+            Route::get('history', [CHistoryPerwalianDosen::class, 'index'])->name('dataperwaliandosen');
+        });
+    });
 
-Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
-Route::put('/perwalian/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
-Route::get('/perwalian/{id}/detail', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
+    Route::prefix('advising')->group(function () {
+        Route::middleware('role:student')->group(function () {
+            Route::get('', [CFormwali::class, 'index'])->name('form-perwalian');
+            Route::get('history', [CHistoryPerwalian::class, 'index'])->name('dataperwalian');
+        });
 
-Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
-Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
-Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+        Route::middleware('role:lecturer')->group(function () {
+            Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
+            Route::put('/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
+        });
+    });
 
-Route::get('history/perwalian', [CHistoryPerwalian::class,'index'])->name('dataperwalian');
-Route::get('history/perwaliandosen', [CHistoryPerwalianDosen::class,'index'])->name('dataperwaliandosen');
+    Route::middleware('role:kajur')->group(function () {
+        Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
+        Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
+    });
 
-        Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
+    Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
+    Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
+    Route::post('/perwalian', [CPerwalian::class, 'store'])->name('perwalian.store');
 
+    Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
+    Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+
+    Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
+
+    // Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+    Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
+    // Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+
+
+    Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
 });
-
-
