@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('advising')->group(function () {
         Route::middleware('role:student')->group(function () {
             Route::get('', [CFormwali::class, 'index'])->name('form-perwalian');
+            Route::post('/', [CPerwalian::class, 'store'])->name('perwalian.store');
             Route::get('history', [CHistoryPerwalian::class, 'index'])->name('dataperwalian');
         });
 
@@ -66,7 +67,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
     Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
-    Route::post('/perwalian', [CPerwalian::class, 'store'])->name('perwalian.store');
 
     Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
     Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');

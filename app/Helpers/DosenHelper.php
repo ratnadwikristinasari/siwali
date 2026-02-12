@@ -32,7 +32,7 @@ class DosenHelper
     public static function getLectureByUserId(string $token, string $userId)
     {
         $response = GlobalHelper::requestWithToken(
-            config('app.super_app_url') . '/employees/user/' . $userId,
+            '/employees/user/' . $userId,
             $token,
             'GET'
         );

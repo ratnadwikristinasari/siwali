@@ -22,7 +22,7 @@ class SemesterApiHelper
     public static function getById(string $token, string $id): ?array
     {
         $response = GlobalHelper::requestWithToken(
-            config('app.super_app_url') . '/semesters/' . $id,
+            '/semesters/' . $id,
             $token,
             'GET'
         );

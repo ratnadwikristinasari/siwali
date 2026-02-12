@@ -19,6 +19,14 @@ class MahasiswaHelper
             ->withQueryParameters($queryParams)
             ->get(config('app.super_app_url') . '/supervisor-lectures/by-lecture');
 
+        $response = GlobalHelper::requestWithToken(
+            '/supervisor-lectures/by-lecture',
+            $token,
+            'GET',
+            [],
+            $queryParams
+        );
+
         return $response->json();
     }
 
@@ -46,7 +54,7 @@ class MahasiswaHelper
         ];
 
         $response = GlobalHelper::requestWithToken(
-            config('app.super_app_url') . '/grades/history',
+            '/grades/history',
             $token,
             'GET',
             [

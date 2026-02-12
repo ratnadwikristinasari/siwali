@@ -13,9 +13,9 @@ class GlobalHelper
         ])->withQueryParameters($queryParams);
 
         if (strtoupper($method) === 'POST') {
-            $response = $response->post($url, $data);
+            $response = $response->post(config('app.super_app_url_internal') . $url, $data);
         } else {
-            $response = $response->get($url, $data);
+            $response = $response->get(config('app.super_app_url_internal') . $url, $data);
         }
 
         return $response;

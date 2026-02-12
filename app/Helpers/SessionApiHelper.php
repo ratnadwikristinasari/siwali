@@ -19,7 +19,7 @@ class SessionApiHelper
     public static function getById(string $token, string $id)
     {
         $response = GlobalHelper::requestWithToken(
-            config('app.super_app_url') . '/sessions/' . $id,
+            '/sessions/' . $id,
             $token,
             'GET'
         );

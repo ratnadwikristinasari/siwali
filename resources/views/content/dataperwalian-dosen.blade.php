@@ -12,6 +12,10 @@
                     $('#form-filter').submit();
                 }, 1000);
             });
+
+            $('#type, #status').on('change', function() {
+                $('#form-filter').submit();
+            });
         });
     </script>
 @endsection
@@ -33,6 +37,37 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('dataperwaliandosen') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="type" id="type">
+                                            <option value="">Semua Jenis</option>
+                                            <option value="gpa_advising"
+                                                {{ request('type') == 'gpa_advising' ? 'selected' : '' }}>
+                                                Perwalian KHS
+                                            </option>
+                                            <option value="non_gpa_advising"
+                                                {{ request('type') == 'non_gpa_advising' ? 'selected' : '' }}>
+                                                Perwalian Non KHS
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="status" id="status">
+                                            <option value="">Semua Status</option>
+                                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                                Pending
+                                            </option>
+                                            <option value="signed" {{ request('status') == 'signed' ? 'selected' : '' }}>
+                                                Menunggu Tanda Tangan Kajur
+                                            </option>
+                                            <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>
+                                                Selesai
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari..." id="search"
@@ -97,16 +132,20 @@
                                         @if ($historydosenwali->status === 'pending')
                                             <span class="badge bg-label-warning rounded-pill">Pending</span>
                                         @elseif ($historydosenwali->status === 'signed')
-                                            <span class="badge bg-label-info rounded-pill">Signed</span>
+                                            <span class="badge bg-label-info rounded-pill">Menunggu Tanda Tangan
+                                                Kajur</span>
                                         @else
-                                            <span class="badge bg-label-success rounded-pill">Done</span>
+                                            <span class="badge bg-label-success rounded-pill">Selesai</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('perwalian.detail', $historydosenwali->id) }}"
-                                            class="btn btn-icon btn-sm btn-outline-primary" title="Detail">
-                                            <i class="ri-folder-info-fill"></i>
-                                        </a>
+                                        @if ($historydosenwali->status !== 'done')
+                                            <a href="{{ route('perwalian.detail', $historydosenwali->id) }}"
+                                                class="btn btn-icon btn-sm btn-outline-primary" title="Detail">
+                                                <i class="ri-folder-info-fill"></i>
+                                            </a>
+                                        @endif
+
                                         @if ($historydosenwali->khs)
                                             <a class="btn btn-icon btn-sm btn-outline-primary"
                                                 href="{{ \App\Helpers\FileHelper::get("khs_files/{$historydosenwali->khs}") }}"

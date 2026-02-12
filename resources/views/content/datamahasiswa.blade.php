@@ -80,9 +80,13 @@
                                             <span class="badge bg-label-warning rounded-pill">
                                                 Pending
                                             </span>
-                                        @else
+                                        @elseif ($listmahasiswa['status_perwalian'] === 'signed')
+                                            <span class="badge bg-label-info rounded-pill">
+                                                Menunggu Tanda Tangan Kajur
+                                            </span>
+                                        @elseif ($listmahasiswa['status_perwalian'] === 'done')
                                             <span class="badge bg-label-success rounded-pill">
-                                                Done
+                                                Selesai
                                             </span>
                                         @endif
                                     </td>

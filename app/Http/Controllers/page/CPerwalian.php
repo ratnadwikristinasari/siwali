@@ -55,8 +55,6 @@ class CPerwalian extends Controller
             ]);
         }
 
-        $status = empty($request->masukan) ? 'Pending' : 'Done';
-
         $activeSemester = array_values(array_filter(
             $dataAuth['data']['student_detail']['student_semester'],
             fn($s) => $s['is_active'] === true
@@ -84,10 +82,8 @@ class CPerwalian extends Controller
 
         $wali->load('student', 'lecture');
 
-        if ($status === 'Pending') {
-            Mail::to($lectureUser->email)
-                ->queue(new AjukanPerwalianMail($wali));
-        }
+        Mail::to($lectureUser->email)
+            ->queue(new AjukanPerwalianMail($wali));
 
         return redirect()
             ->route('dataperwalian')
