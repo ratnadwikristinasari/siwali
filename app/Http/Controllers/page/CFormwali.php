@@ -4,6 +4,7 @@ namespace App\Http\Controllers\page;
 
 use App\Helpers\AuthHelper;
 use App\Helpers\MahasiswaHelper;
+use App\Helpers\SemesterApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Advise;
 use Illuminate\Support\Facades\Auth;
@@ -18,31 +19,67 @@ class CFormwali extends Controller
         $student = $dataAuth['data']['student_detail'] ?? null;
         $programStudi = $student['study_program_name'] ?? '_';
 
-        $semesterAktif = '-';
-        $kelas = '-';
+        $semesters = [];
+        $gpaData = [];
+        $khsDoneStatus = [];
+
         if (!empty($student['student_semester']) && is_array($student['student_semester'])) {
             foreach ($student['student_semester'] as $sem) {
-                if (!empty($sem['is_active']) && $sem['is_active'] === true) {
-                    $semesterAktif = $sem['semester_id'];
-                    $kelas = $sem['semester'];
-                    break;
-                }
+                $semId = $sem['semester_id'];
+                
+                // Simpan daftar semester
+                $semesters[] = [
+                    'semester_id' => $semId,
+                    'semester'    => $sem['semester'],
+                    'is_active'   => $sem['is_active'] ?? false
+                ];
+
+                // Cek apakah pengajuan KHS di semester ini sudah "done"
+                $advisingDone = Advise::where('student_user_id', Auth::user()->id)
+                    ->where('semester_id', $semId)
+                    ->where('type', 'gpa_advising')
+                    ->where('status', 'done') // Pastikan field 'status' sesuai dengan database Anda
+                    ->exists();
+
+                $khsDoneStatuses[$semId] = $advisingDone;
+
+                $studentScore = MahasiswaHelper::getStudentScore($token, $student['id'] ?? '', $semId);
+                $gpaData[$semId] = MahasiswaHelper::calculateGPA($studentScore['data']['semesters'][0]['subjects'] ?? []);
             }
         }
+        return view('content.form-perwalian', compact(
+            'programStudi', 
+            'semesters', 
+            'gpaData', 
+            'khsDoneStatuses'
+        ));
 
-        $studentScore = MahasiswaHelper::getStudentScore(
-            $token,
-            $student['id'] ?? '',
-            $semesterAktif
-        );
+        // $semesterAktif = '-';
+        // $kelas = '-';
+        // if (!empty($student['student_semester']) && is_array($student['student_semester'])) {
+        //     foreach ($student['student_semester'] as $sem) {
+        //         if (!empty($sem['is_active']) && $sem['is_active'] === true) {
+        //             $semesterAktif = $sem['semester_id'];
+        //             $kelas = $sem['semester'];
+        //             break;
+        //         }
+        //     }
+        // }
 
-        $currentGPA = MahasiswaHelper::calculateGPA($studentScore['data']['semesters'][0]['subjects'] ?? []);
+        // $studentScore = MahasiswaHelper::getStudentScore(
+        //     $token,
+        //     $student['id'] ?? '',
+        //     $semesterAktif
 
-        $hasAdvising = Advise::where('student_user_id', Auth::user()->id)
-            ->where('semester_id', $semesterAktif)
-            ->where('type', 'gpa_advising')
-            ->exists();
+        // );
 
-        return view('content.form-perwalian', compact('programStudi', 'semesterAktif', 'kelas', 'currentGPA', 'hasAdvising'));
+        // $currentGPA = MahasiswaHelper::calculateGPA($studentScore['data']['semesters'][0]['subjects'] ?? []);
+
+        // $hasAdvising = Advise::where('student_user_id', Auth::user()->id)
+        //     ->where('semester_id', $semesterAktif)
+        //     ->where('type', 'gpa_advising')
+        //     ->exists();
+
+        // return view('content.form-perwalian', compact('programStudi', 'semesterAktif', 'kelas', 'currentGPA', 'hasAdvising'));
     }
 }

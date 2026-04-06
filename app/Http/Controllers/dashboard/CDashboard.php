@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\dashboard;
 
+use App\Helpers\AuthHelper;
 use App\Helpers\DashboardHelper;
 use App\Helpers\SemesterApiHelper;
 use App\Helpers\SessionApiHelper;
@@ -15,11 +16,12 @@ class CDashboard extends Controller
     {
         $token = $request->user()->token;
         //DASHBOARD MAHASISWA
-
+        $studentUser = Auth::user();
         $rataIPK = DashboardHelper::rataIpkMahasiswa();
         $totalwali = DashboardHelper::totalPerwalian();
 
         $grafik = DashboardHelper::grafikIpkPerSemester($token);
+        $dataAuth = AuthHelper::getauth('', $studentUser->token);
         //Grafik IPK
         $semesterLabels = [];
         $valueipk = [];

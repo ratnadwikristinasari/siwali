@@ -33,7 +33,7 @@ class CPerwalian extends Controller
 
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
-
+       
         $advisor = collect($dataAuth['data']['student_detail']['supervisor_lectures'])->firstWhere('position', 'ACADEMIC_ADVISOR');
         if (!$advisor) {
             return back()->withErrors('Dosen Wali tidak ditemukan');
@@ -79,7 +79,7 @@ class CPerwalian extends Controller
             'semester_id' => $semesterId,
             'type' => $request->type,
         ]);
-
+ 
         $wali->load('student', 'lecture');
 
         Mail::to($lectureUser->email)
