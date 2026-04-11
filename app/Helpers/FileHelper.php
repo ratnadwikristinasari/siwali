@@ -32,18 +32,18 @@ class FileHelper
         return $filename;
     }
 
-    public static function deleteFile(string $path, ?string $filename): string
+    public static function deleteFile(string $path, ?string $filename): bool
     {
-        if ($filename === null) return '';
+        if ($filename === null) return false;
 
         $fullPath = $path . '/' . $filename;
 
-        if (Storage::disk('s3')->exists($fullPath)) { // Check existence in S3
-            Storage::disk('s3')->delete($fullPath); // Delete from S3
-
-            return $filename;
+        try {
+            Storage::disk('s3')->delete($fullPath);
+            return true;
+        } catch (\Throwable $e) {
+            report($e);
+            return false;
         }
-
-        return '';
     }
 }

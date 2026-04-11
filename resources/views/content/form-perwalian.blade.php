@@ -30,6 +30,7 @@
                 <div class="card-body">
                     <form action="{{ route('perwalian.store') }}" method="POST">
                         @csrf
+                        <input type="hidden" name="semester" id="semester">
                         <label for="type">Jenis Perwalian</label>
                         <div class="mb-3">
                             <select name="type" id="type" class="form-select form-control" required>
@@ -49,23 +50,25 @@
                         <div class="mb-3">
                             <select name="semester_id" id="semester_id" class="form-select form-control" required>
                                 <option value="" selected>Pilih Semester</option>
-                                @foreach($semesters as $sem)
+                                @foreach ($semesters as $sem)
                                     <option value="{{ $sem['semester_id'] }}">
                                         {{ $sem['semester'] }} {{ $sem['is_active'] ? '(Semester Aktif)' : '' }}
                                     </option>
                                 @endforeach
                             </select>
-                            <small id="semester-warning" class="text-danger" style="display: none;">Anda sudah menyelesaikan Perwalian KHS untuk semester ini.</small>
+                            <small id="semester-warning" class="text-danger" style="display: none;">Anda sudah menyelesaikan
+                                Perwalian KHS untuk semester ini.</small>
                         </div>
                         <label for="name">Program Studi</label>
                         <div class="mb-3">
                             <input type="text" id="basic-icon-default-company2" class="form-control"
                                 value="{{ $programStudi }}" readonly />
                         </div>
-                       <div id="ipk-container" style="display: none;">
+                        <div id="ipk-container" style="display: none;">
                             <label for="ipk" id="label-ipk">IPK Semester</label>
                             <div class="mb-3">
-                                <input type="text" id="ipk" class="form-control" name="ipk" placeholder="IPK" readonly />
+                                <input type="text" id="ipk" class="form-control" name="ipk" placeholder="IPK"
+                                    readonly />
                             </div>
                         </div>
 
@@ -88,13 +91,14 @@
                             // Lempar data dari Controller ke JavaScript
                             const khsDoneStatuses = @json($khsDoneStatuses);
                             const gpaData = @json($gpaData);
-                            
+
                             const typeSelect = document.getElementById('type');
                             const semesterSelect = document.getElementById('semester_id');
                             const ipkContainer = document.getElementById('ipk-container');
                             const ipkInput = document.getElementById('ipk');
                             const labelIpk = document.getElementById('label-ipk');
                             const semesterWarning = document.getElementById('semester-warning');
+                            const semesterHiddenInput = document.getElementById('semester');
 
                             function updateFormBehavior() {
                                 const selectedType = typeSelect.value;
@@ -109,14 +113,14 @@
 
                                 // 2. Validasi status "Done" berdasarkan semester yang dipilih
                                 Array.from(semesterSelect.options).forEach(option => {
-                                    if(option.value === "") return; // Skip opsi default
+                                    if (option.value === "") return; // Skip opsi default
 
                                     // Disable opsi semester JIKA: tipe perwalian = KHS DAN status khsDone = true
                                     if (selectedType === 'gpa_advising' && khsDoneStatuses[option.value]) {
                                         option.disabled = true;
                                         // Tambahkan teks penanda untuk UX yang lebih baik
-                                        if(!option.text.includes('(Selesai)')) {
-                                            option.text += ' (Selesai)'; 
+                                        if (!option.text.includes('(Selesai)')) {
+                                            option.text += ' (Selesai)';
                                         }
                                     } else {
                                         option.disabled = false;
@@ -129,6 +133,7 @@
                                 if (selectedSemId && semesterSelect.options[semesterSelect.selectedIndex].disabled) {
                                     semesterSelect.value = "";
                                     ipkInput.value = "";
+                                    semesterHiddenInput.value = "";
                                     semesterWarning.style.display = 'block';
                                 } else {
                                     semesterWarning.style.display = 'none';
@@ -145,6 +150,8 @@
                                     ipkInput.value = '';
                                     labelIpk.innerText = 'IPK Semester';
                                 }
+
+                                semesterHiddenInput.value = semesterSelect.options[semesterSelect.selectedIndex].text.replace(' (Semester Aktif)', '').replace(' (Selesai)', '').trim();
                             }
 
                             // Trigger fungsi saat ada perubahan di dropdown Type atau Semester

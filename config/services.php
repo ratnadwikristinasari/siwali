@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'interservice' => [
+        'api_key' => env('INTERSERVICE_API_KEY'),
+    ],
+
+    'jtiform' => [
+        'base_url' => env('JTIFORM_SERVICE_URL'),
+    ],
+
 ];

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\page;
 
-use App\Helpers\AuthHelper;
 use App\Helpers\DosenHelper;
 use App\Helpers\ESignApiHelper;
 use App\Helpers\FileHelper;
@@ -11,6 +10,7 @@ use App\Helpers\MajorHelper;
 use App\Helpers\SemesterApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Advise;
+use App\Services\NotificationPublisher;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -133,6 +133,24 @@ class CNeedSign extends Controller
             'status' => 'done',
             'khs' => $filename
         ]);
+
+        $publisher = app(NotificationPublisher::class);
+        $publisher->send([
+            'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
+            'event' => 'advise-signed-by-kajur-for-student',
+            'recipient' => [
+                'email' => strtolower($advise->student->email),
+            ],
+            'channels' => ['email'],
+            'subject' => 'Perwalian Disetujui - Tanda Tangan Kajur Telah Diterapkan',
+            'data' => [
+                'name' => $advise->student->name ?? '',
+                'advisor_note' => $advise->masukan ?? '',
+                'form_url' => route('dataperwalian'),
+            ],
+        ]);
+
+        // todo: send notif to parent if email exists
 
         return redirect()->route('page.need_sign')->with('success', 'Dokumen perwalian telah ditandatangani.');
     }

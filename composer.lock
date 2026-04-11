@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ab57440c74bc9b896fd08a9ebf6613b",
+    "content-hash": "abcb9fec4b085d5805ec0add191149b6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3100,6 +3100,206 @@
             "time": "2026-02-16T23:10:27+00:00"
         },
         {
+            "name": "paragonie/constant_time_encoding",
+            "version": "v3.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/constant_time_encoding.git",
+                "reference": "d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77",
+                "reference": "d5b01a39b3415c2cd581d3bd3a3575c1ebbd8e77",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8"
+            },
+            "require-dev": {
+                "infection/infection": "^0",
+                "nikic/php-fuzzer": "^0",
+                "phpunit/phpunit": "^9|^10|^11",
+                "vimeo/psalm": "^4|^5|^6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ParagonIE\\ConstantTime\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Steve 'Sc00bz' Thomas",
+                    "email": "steve@tobtu.com",
+                    "homepage": "https://www.tobtu.com",
+                    "role": "Original Developer"
+                }
+            ],
+            "description": "Constant-time Implementations of RFC 4648 Encoding (Base-64, Base-32, Base-16)",
+            "keywords": [
+                "base16",
+                "base32",
+                "base32_decode",
+                "base32_encode",
+                "base64",
+                "base64_decode",
+                "base64_encode",
+                "bin2hex",
+                "encoding",
+                "hex",
+                "hex2bin",
+                "rfc4648"
+            ],
+            "support": {
+                "email": "info@paragonie.com",
+                "issues": "https://github.com/paragonie/constant_time_encoding/issues",
+                "source": "https://github.com/paragonie/constant_time_encoding"
+            },
+            "time": "2025-09-24T15:06:41+00:00"
+        },
+        {
+            "name": "paragonie/random_compat",
+            "version": "v9.99.100",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "polyfill",
+                "pseudorandom",
+                "random"
+            ],
+            "support": {
+                "email": "info@paragonie.com",
+                "issues": "https://github.com/paragonie/random_compat/issues",
+                "source": "https://github.com/paragonie/random_compat"
+            },
+            "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "php-amqplib/php-amqplib",
+            "version": "v3.7.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-amqplib/php-amqplib.git",
+                "reference": "381b6f7c600e0e0c7463cdd7f7a1a3bc6268e5fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/381b6f7c600e0e0c7463cdd7f7a1a3bc6268e5fd",
+                "reference": "381b6f7c600e0e0c7463cdd7f7a1a3bc6268e5fd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "ext-sockets": "*",
+                "php": "^7.2||^8.0",
+                "phpseclib/phpseclib": "^2.0|^3.0"
+            },
+            "conflict": {
+                "php": "7.4.0 - 7.4.1"
+            },
+            "replace": {
+                "videlalvaro/php-amqplib": "self.version"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "nategood/httpful": "^0.2.20",
+                "phpunit/phpunit": "^7.5|^9.5",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpAmqpLib\\": "PhpAmqpLib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Alvaro Videla",
+                    "role": "Original Maintainer"
+                },
+                {
+                    "name": "Raúl Araya",
+                    "email": "nubeiro@gmail.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Luke Bakken",
+                    "email": "luke@bakken.io",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Ramūnas Dronga",
+                    "email": "github@ramuno.lt",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Formerly videlalvaro/php-amqplib.  This library is a pure PHP implementation of the AMQP protocol. It's been tested against RabbitMQ.",
+            "homepage": "https://github.com/php-amqplib/php-amqplib/",
+            "keywords": [
+                "message",
+                "queue",
+                "rabbitmq"
+            ],
+            "support": {
+                "issues": "https://github.com/php-amqplib/php-amqplib/issues",
+                "source": "https://github.com/php-amqplib/php-amqplib/tree/v3.7.4"
+            },
+            "time": "2025-11-23T17:00:56+00:00"
+        },
+        {
             "name": "phpoption/phpoption",
             "version": "1.9.5",
             "source": {
@@ -3173,6 +3373,116 @@
                 }
             ],
             "time": "2025-12-27T19:41:33+00:00"
+        },
+        {
+            "name": "phpseclib/phpseclib",
+            "version": "3.0.51",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpseclib/phpseclib.git",
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/constant_time_encoding": "^1|^2|^3",
+                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
+                "php": ">=5.6.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "suggest": {
+                "ext-dom": "Install the DOM extension to load XML formatted public keys.",
+                "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
+                "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
+                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
+                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "phpseclib/bootstrap.php"
+                ],
+                "psr-4": {
+                    "phpseclib3\\": "phpseclib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jim Wigginton",
+                    "email": "terrafrost@php.net",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Patrick Monnerat",
+                    "email": "pm@datasphere.ch",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Andreas Fischer",
+                    "email": "bantu@phpbb.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Hans-Jürgen Petrich",
+                    "email": "petrich@tronic-media.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Graham Campbell",
+                    "email": "graham@alt-three.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
+            "homepage": "http://phpseclib.sourceforge.net",
+            "keywords": [
+                "BigInteger",
+                "aes",
+                "asn.1",
+                "asn1",
+                "blowfish",
+                "crypto",
+                "cryptography",
+                "encryption",
+                "rsa",
+                "security",
+                "sftp",
+                "signature",
+                "signing",
+                "ssh",
+                "twofish",
+                "x.509",
+                "x509"
+            ],
+            "support": {
+                "issues": "https://github.com/phpseclib/phpseclib/issues",
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.51"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/terrafrost",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpseclib",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpseclib/phpseclib",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-04-10T01:33:53+00:00"
         },
         {
             "name": "predis/predis",
@@ -6770,6 +7080,70 @@
             "time": "2025-12-02T11:56:42+00:00"
         },
         {
+            "name": "vladimir-yuldashev/laravel-queue-rabbitmq",
+            "version": "v14.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vyuldashev/laravel-queue-rabbitmq.git",
+                "reference": "d6ae7804055e6ea3ecd77549e7053933c19dab19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vyuldashev/laravel-queue-rabbitmq/zipball/d6ae7804055e6ea3ecd77549e7053933c19dab19",
+                "reference": "d6ae7804055e6ea3ecd77549e7053933c19dab19",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/queue": "^10.0|^11.0|^12.0",
+                "php": "^8.0",
+                "php-amqplib/php-amqplib": "^v3.6"
+            },
+            "require-dev": {
+                "laravel/framework": "^9.0|^10.0|^11.0|^12.0",
+                "laravel/horizon": "^5.0",
+                "laravel/pint": "^1.2",
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^10.0|^11.0"
+            },
+            "suggest": {
+                "ext-pcntl": "Required to use all features of the queue consumer."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "VladimirYuldashev\\LaravelQueueRabbitMQ\\LaravelQueueRabbitMQServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "13.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "VladimirYuldashev\\LaravelQueueRabbitMQ\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladimir Yuldashev",
+                    "email": "misterio92@gmail.com"
+                }
+            ],
+            "description": "RabbitMQ driver for Laravel Queue. Supports Laravel Horizon.",
+            "support": {
+                "issues": "https://github.com/vyuldashev/laravel-queue-rabbitmq/issues",
+                "source": "https://github.com/vyuldashev/laravel-queue-rabbitmq/tree/v14.4.0"
+            },
+            "time": "2025-11-13T02:56:17+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v5.6.3",
             "source": {
@@ -7264,6 +7638,108 @@
                 }
             ],
             "time": "2025-08-08T12:00:00+00:00"
+        },
+        {
+            "name": "fruitcake/laravel-debugbar",
+            "version": "v4.2.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fruitcake/laravel-debugbar.git",
+                "reference": "4f62913c865023ccd2c34d8d2d13916d2c5720f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/4f62913c865023ccd2c34d8d2d13916d2c5720f8",
+                "reference": "4f62913c865023ccd2c34d8d2d13916d2c5720f8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/routing": "^11|^12|^13.0",
+                "illuminate/session": "^11|^12|^13.0",
+                "illuminate/support": "^11|^12|^13.0",
+                "php": "^8.2",
+                "php-debugbar/php-debugbar": "^3.7.2",
+                "php-debugbar/symfony-bridge": "^1.1"
+            },
+            "replace": {
+                "barryvdh/laravel-debugbar": "self.version"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3",
+                "laravel/octane": "^2",
+                "laravel/pennant": "^1",
+                "laravel/pint": "^1",
+                "laravel/telescope": "^5.16",
+                "livewire/livewire": "^3.7|^4",
+                "mockery/mockery": "^1.3.3",
+                "orchestra/testbench-dusk": "^9|^10|^11",
+                "php-debugbar/twig-bridge": "^2.0",
+                "phpstan/phpstan-phpunit": "^2",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^11",
+                "shipmonk/phpstan-rules": "^4.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Debugbar": "Fruitcake\\LaravelDebugbar\\Facades\\Debugbar"
+                    },
+                    "providers": [
+                        "Fruitcake\\LaravelDebugbar\\ServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "4.2-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Fruitcake\\LaravelDebugbar\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fruitcake",
+                    "homepage": "https://fruitcake.nl"
+                },
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "PHP Debugbar integration for Laravel",
+            "keywords": [
+                "barryvdh",
+                "debug",
+                "debugbar",
+                "dev",
+                "laravel",
+                "profiler",
+                "webprofiler"
+            ],
+            "support": {
+                "issues": "https://github.com/fruitcake/laravel-debugbar/issues",
+                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.2.5"
+            },
+            "funding": [
+                {
+                    "url": "https://fruitcake.nl",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/barryvdh",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-08T09:39:15+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -8404,6 +8880,174 @@
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
             "time": "2022-02-21T01:04:05+00:00"
+        },
+        {
+            "name": "php-debugbar/php-debugbar",
+            "version": "v3.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-debugbar/php-debugbar.git",
+                "reference": "ea965a77f10b3824881b0ae7dba70d2038a9df84"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/ea965a77f10b3824881b0ae7dba70d2038a9df84",
+                "reference": "ea965a77f10b3824881b0ae7dba70d2038a9df84",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "psr/log": "^1|^2|^3",
+                "symfony/var-dumper": "^5.4|^6|^7|^8"
+            },
+            "replace": {
+                "maximebf/debugbar": "self.version"
+            },
+            "require-dev": {
+                "dbrekelmans/bdi": "^1.4",
+                "friendsofphp/php-cs-fixer": "^3.92",
+                "monolog/monolog": "^3.9",
+                "php-debugbar/doctrine-bridge": "^3@dev",
+                "php-debugbar/monolog-bridge": "^1@dev",
+                "php-debugbar/symfony-bridge": "^1@dev",
+                "php-debugbar/twig-bridge": "^2@dev",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^10",
+                "predis/predis": "^3.3",
+                "shipmonk/phpstan-rules": "^4.3",
+                "symfony/browser-kit": "^6.4|7.0",
+                "symfony/dom-crawler": "^6.4|^7",
+                "symfony/event-dispatcher": "^5.4|^6.4|^7.3|^8.0",
+                "symfony/http-foundation": "^5.4|^6.4|^7.3|^8.0",
+                "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+                "symfony/panther": "^1|^2.1",
+                "twig/twig": "^3.11.2"
+            },
+            "suggest": {
+                "php-debugbar/doctrine-bridge": "To integrate Doctrine with php-debugbar.",
+                "php-debugbar/monolog-bridge": "To integrate Monolog with php-debugbar.",
+                "php-debugbar/symfony-bridge": "To integrate Symfony with php-debugbar.",
+                "php-debugbar/twig-bridge": "To integrate Twig with php-debugbar."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DebugBar\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maxime Bouroumeau-Fuseau",
+                    "email": "maxime.bouroumeau@gmail.com",
+                    "homepage": "http://maximebf.com"
+                },
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "Debug bar in the browser for php application",
+            "homepage": "https://github.com/php-debugbar/php-debugbar",
+            "keywords": [
+                "debug",
+                "debug bar",
+                "debugbar",
+                "dev",
+                "profiler",
+                "toolbar"
+            ],
+            "support": {
+                "issues": "https://github.com/php-debugbar/php-debugbar/issues",
+                "source": "https://github.com/php-debugbar/php-debugbar/tree/v3.7.3"
+            },
+            "funding": [
+                {
+                    "url": "https://fruitcake.nl",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/barryvdh",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-04-08T07:22:30+00:00"
+        },
+        {
+            "name": "php-debugbar/symfony-bridge",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-debugbar/symfony-bridge.git",
+                "reference": "e37d2debe5d316408b00d0ab2688d9c2cf59b5ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-debugbar/symfony-bridge/zipball/e37d2debe5d316408b00d0ab2688d9c2cf59b5ad",
+                "reference": "e37d2debe5d316408b00d0ab2688d9c2cf59b5ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2",
+                "php-debugbar/php-debugbar": "^3.1",
+                "symfony/http-foundation": "^5.4|^6.4|^7.3|^8.0"
+            },
+            "require-dev": {
+                "dbrekelmans/bdi": "^1.4",
+                "phpunit/phpunit": "^10",
+                "symfony/browser-kit": "^6|^7",
+                "symfony/dom-crawler": "^6|^7",
+                "symfony/mailer": "^5.4|^6.4|^7.3|^8.0",
+                "symfony/panther": "^1|^2.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DebugBar\\Bridge\\Symfony\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maxime Bouroumeau-Fuseau",
+                    "email": "maxime.bouroumeau@gmail.com",
+                    "homepage": "http://maximebf.com"
+                },
+                {
+                    "name": "Barry vd. Heuvel",
+                    "email": "barryvdh@gmail.com"
+                }
+            ],
+            "description": "Symfony bridge for PHP Debugbar",
+            "homepage": "https://github.com/php-debugbar/php-debugbar",
+            "keywords": [
+                "debugbar",
+                "dev",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/php-debugbar/symfony-bridge/issues",
+                "source": "https://github.com/php-debugbar/symfony-bridge/tree/v1.1.0"
+            },
+            "time": "2026-01-15T14:47:34+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -10285,5 +10929,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
