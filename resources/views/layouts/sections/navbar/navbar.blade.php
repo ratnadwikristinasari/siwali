@@ -75,12 +75,12 @@
                 <li>
                     <div class="dropdown-divider"></div>
                 </li>
-                {{-- <li>
-                <a class="dropdown-item" href="javascript:void(0);">
+                <li>
+                <a class="dropdown-item" href="{{ route('biodata') }}">
                   <i class="ri-user-3-line ri-22px me-2"></i>
-                  <span class="align-middle">My Profile</span>
+                  <span class="align-middle">Biodata</span>
                 </a>
-              </li> --}}
+              </li>
                 <li>
                     <div class="dropdown-divider"></div>
                 </li>

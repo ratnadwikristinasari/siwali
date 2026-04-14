@@ -51,6 +51,7 @@
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIM</th>
                                 <th class="text-truncate">Program Studi</th>
+                                <th class="text-truncate">Status Perwalian</th>
                                 <th class="text-truncate">Status</th>
                             </tr>
                         </thead>

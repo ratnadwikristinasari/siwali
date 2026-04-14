@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
+use App\Http\Controllers\page\Cbiodata;
 use App\Http\Controllers\page\CDetailPerwalian;
 use App\Http\Controllers\page\CFormNonKHS;
 use App\Http\Controllers\page\CperwalianNonKHS;
@@ -36,9 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard', [CDashboard::class, 'index'])->name('content.dashboard.dashboard-main');
     Route::get('my/dashboard', [CDashboard::class, 'mydashboard'])->name('content.dashboard.partials.dashboard-dsn');
     Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
+    Route::get('biodata', [Cbiodata::class, 'Biodata'])->name('biodata');
 
     Route::get('page/dosen', [CDosen::class, 'index'])->name('datadosen');
     Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
+    
 
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
@@ -48,11 +51,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('advising')->group(function () {
-        Route::middleware('role:student')->group(function () {
+        // Route::middleware('role:student|orang-tua')->group(function () {
             Route::get('', [CFormwali::class, 'index'])->name('form-perwalian');
             Route::post('/', [CPerwalian::class, 'store'])->name('perwalian.store');
             Route::get('history', [CHistoryPerwalian::class, 'index'])->name('dataperwalian');
-        });
+        // });
 
         Route::middleware('role:lecturer')->group(function () {
             Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');

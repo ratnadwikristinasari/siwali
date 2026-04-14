@@ -35,4 +35,7 @@
                  @include('content.dashboard.partials.dashboard-dsn')
             @endnotrole
         @endrole
+        @role('orang_tua')
+             @include('content.dashboard.partials.dashboard-ortu')
+        @endrole
     @endsection
