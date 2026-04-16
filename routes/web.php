@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
+use App\Http\Controllers\page\CAllMahasiswa;
 use App\Http\Controllers\page\Cbiodata;
 use App\Http\Controllers\page\CDetailPerwalian;
 use App\Http\Controllers\page\CFormNonKHS;
@@ -67,6 +68,8 @@ Route::middleware('auth')->group(function () {
         Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
         Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
     });
+
+    Route::get('allstudent', [CAllMahasiswa::class, 'DataMahasiswa'])->name('alldatamahasiswa');
 
     Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
     Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');

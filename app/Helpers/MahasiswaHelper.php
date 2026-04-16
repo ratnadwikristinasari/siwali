@@ -30,7 +30,7 @@ class MahasiswaHelper
         return $response->json();
     }
 
-    public static function getMahasiswaByProdi(string $token, ?string $prodiId = null, ?int $page = 1): array
+    public static function getMahasiswaByProdi(string $token, ?string $prodiId = null, ?int $page = 1, ?string $majorId = null): array
     {
 
         $queryParams = [
@@ -38,7 +38,10 @@ class MahasiswaHelper
         ];
 
         if (!empty($prodiId)) {
-            $queryParams['study_program_id'] = $prodiId;
+            $queryParams['m_study_program_id'] = $prodiId;
+        }
+        if (!empty($majorId)) {
+            $queryParams['m_major_id'] = $majorId;
         }
 
         $response = Http::withToken($token)

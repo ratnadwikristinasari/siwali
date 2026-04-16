@@ -30,7 +30,7 @@
             <div class="card overflow-hidden">
                 <div class="row g-2 align-items-center my-3 mx-1">
                     <div class="col-12 col-md">
-                        <form action="{{ route('datamahasiswa') }}" method="GET" id="form-filter">
+                        <form action="{{ route('alldatamahasiswa') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
@@ -56,66 +56,66 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($mahasiswas as $index => $listmahasiswa)
+                            @foreach ($mahasiswaall as $index => $allmahasiswa)
                                 <tr>
-                                    <td>{{ $mahasiswas->firstItem() + $index }}</td>
+                                    <td>{{ $mahasiswaall->firstItem() + $index }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div>
-                                                <h6 class="mb-0 text-truncate">{{ $listmahasiswa['name'] }}</h6>
+                                                <h6 class="mb-0 text-truncate">{{ $allmahasiswa['name'] }}</h6>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-truncate">{{ $listmahasiswa['nim'] }}</td>
+                                    <td class="text-truncate">{{ $allmahasiswa['nim'] }}</td>
                                     <td class="text-truncate">
                                         <div class="d-flex align-items-center">
-                                            <span>{{ $listmahasiswa['study_program_name'] }}</span>
+                                            {{-- <span>{{ $allmahasiswa['study_program_name'] }}</span> --}}
                                         </div>
                                     </td>
-                                    <td>
-                                        @if ($listmahasiswa['status_perwalian'] === null)
+                                    {{-- <td>
+                                        @if ($allmahasiswa['status_perwalian'] === null)
                                             <span class="badge bg-label-secondary rounded-pill">
                                                 Belum Perwalian
                                             </span>
-                                        @elseif ($listmahasiswa['status_perwalian'] === 'pending')
+                                        @elseif ($allmahasiswa['status_perwalian'] === 'pending')
                                             <span class="badge bg-label-warning rounded-pill">
                                                 Pending
                                             </span>
-                                        @elseif ($listmahasiswa['status_perwalian'] === 'signed')
+                                        @elseif ($allmahasiswa['status_perwalian'] === 'signed')
                                             <span class="badge bg-label-info rounded-pill">
                                                 Menunggu Tanda Tangan Kajur
                                             </span>
-                                        @elseif ($listmahasiswa['status_perwalian'] === 'done')
+                                        @elseif ($allmahasiswa['status_perwalian'] === 'done')
                                             <span class="badge bg-label-success rounded-pill">
                                                 Selesai
                                             </span>
                                         @endif
                                     </td>
  <td>
-                                        @if ($listmahasiswa['status'] === null)
+                                        @if ($allmahasiswa['status'] === null)
                                             <span class="badge bg-label-secondary rounded-pill">
                                                 Tanpa Keterangan
                                             </span>
-                                        @elseif ($listmahasiswa['status'] === 'CUTI')
+                                        @elseif ($allmahasiswa['status'] === 'CUTI')
                                             <span class="badge bg-label-warning rounded-pill">
                                                 Cuti
                                             </span>
-                                        @elseif ($listmahasiswa['status'] === 'DO')
+                                        @elseif ($allmahasiswa['status'] === 'DO')
                                             <span class="badge bg-label-info rounded-pill">
                                                 Drop Out
                                             </span>
-                                        @elseif ($listmahasiswa['status'] === 'ACTIVE')
+                                        @elseif ($allmahasiswa['status'] === 'ACTIVE')
                                             <span class="badge bg-label-success rounded-pill">
                                                 Active
                                             </span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                {{ $mahasiswas->links('vendor.pagination.bootstrap-5') }}
+                {{ $mahasiswaall->links('vendor.pagination.bootstrap-5') }}
             </div>
         </div>
     </div>

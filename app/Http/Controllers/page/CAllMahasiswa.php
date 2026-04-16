@@ -7,20 +7,31 @@ use App\Http\Controllers\Controller;
 use App\Models\Advise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-
-class CMahasiswa extends Controller
+class CAllMahasiswa extends Controller
 {
-    public function index(Request $request)
+    public function DataMahasiswa(Request $request)
     {
+        $user = Auth::user();
+   
+        $token = $user->token;
 
-        $token = Auth::user()->token;
-        $majorId = Auth::user()->major_id;
         $page = $request->query('page', 1);
-        $search = $request->query('search', '');
 
-        $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page, $search);
-        //dd($response);
+        $prodiId = null;
+        $majorId = null;
+
+        $userRoles = is_array($user->roles) ? json_encode($user->roles) : $user->roles;
+//dd($userRoles);
+        if (str_contains($userRoles, 'kajur')) {
+            $majorId = $user->major_id;
+        } elseif (str_contains($userRoles, 'kaprodi')) {
+            $prodiId = $user->study_program_id; 
+        }
+//dd($majorId);
+        $response = MahasiswaHelper::getMahasiswaByProdi($token, $prodiId, $page, $majorId);
+//dd($response);
 
         if (!isset($response['data']) || empty($response['data'])) {
             $data = collect();
@@ -30,8 +41,10 @@ class CMahasiswa extends Controller
             $meta = $response['meta'] ?? ['total' => count($data), 'per_page' => 10, 'page' => $page];
         }
 
+        //Status perwalian
         if ($data->isNotEmpty()) {
-            $studentIds = $data->pluck('student_id')->toArray();
+            $apiStudentKey = 'id'; 
+            $studentIds = $data->pluck($apiStudentKey)->toArray(); 
 
             $advises = Advise::whereIn('student_id', $studentIds)
                 ->where('type', 'gpa_advising')
@@ -44,13 +57,14 @@ class CMahasiswa extends Controller
                     return $first ? strtolower($first->status) : null;
                 });
 
-            $data = $data->map(function ($mhs) use ($advises) {
-                $mhs['status_perwalian'] = $advises[$mhs['student_id']] ?? null;
+            $data = $data->map(function ($mhs) use ($advises, $apiStudentKey) {
+                $mhs['status_perwalian'] = $advises[$mhs[$apiStudentKey]] ?? null;
                 return $mhs;
             });
+            
         }
 
-        $mahasiswas = new \Illuminate\Pagination\LengthAwarePaginator(
+        $mahasiswaall = new LengthAwarePaginator(
             $data,
             $meta['total'] ?? 0,
             $meta['per_page'] ?? 10,
@@ -61,6 +75,6 @@ class CMahasiswa extends Controller
             ]
         );
 
-        return view('content.datamahasiswa', compact('mahasiswas'));
+        return view('content.data-allmahasiswa', compact('mahasiswaall'));
     }
 }

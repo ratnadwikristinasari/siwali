@@ -28,7 +28,7 @@
                     <h5 class="mb-0">Data Perwalian</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('perwalian.store') }}" method="POST">
+                    <form id="formPerwalian" action="{{ route('perwalian.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="semester" id="semester">
                         <label for="type">Jenis Perwalian</label>
@@ -107,8 +107,10 @@
                                 // 1. Tampilkan IPK jika memilih Perwalian KHS
                                 if (selectedType === 'gpa_advising') {
                                     ipkContainer.style.display = 'block';
+                                    ipkInput.disabled = false;
                                 } else {
                                     ipkContainer.style.display = 'none';
+                                    ipkInput.disabled = true;
                                 }
 
                                 // 2. Validasi status "Done" berdasarkan semester yang dipilih
@@ -146,6 +148,8 @@
                                     // Bersihkan label dari teks tambahan agar rapi
                                     semText = semText.replace(' (Semester Aktif)', '').replace(' (Selesai)', '').trim();
                                     labelIpk.innerText = 'IPK Semester ' + semText;
+
+                                    semesterHiddenInput.value = semText;
                                 } else {
                                     ipkInput.value = '';
                                     labelIpk.innerText = 'IPK Semester';
@@ -167,5 +171,5 @@
         </div>
     </div>
     </div>
-
+@include('_partials.alert')
 @endsection

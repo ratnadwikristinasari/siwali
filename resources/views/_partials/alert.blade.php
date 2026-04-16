@@ -26,92 +26,76 @@
     @endif
 
     document.addEventListener('DOMContentLoaded', function() {
-        //ambil form perwalian 
-        const form = document.querySelector('form[action="{{ route('perwalian.store') }}"]');
-        //ambil button submit
+        // Ambil form utama
+        const form = document.getElementById('formPerwalian');
         const btnSubmit = document.getElementById('btn-submit');
+        const selectType = document.getElementById('type');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); //mencegah form langsung kirim server
-            Swal.fire({
-                title: 'Yakin ajukan perwalian?',
-                text: 'Pastikan data dan KHS sudah benar',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Ajukan',
-                cancelButtonText: 'Batal',
-                reverseButtons: true,
-                backdrop: 'rgba(0,0,0,0.6)',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
+        // Pastikan elemen-elemen ada agar tidak error di halaman lain
+        if (form && btnSubmit && selectType) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Mencegah form langsung dikirim
 
-            }).then((result) => {
-                if (result.isConfirmed) {
+                // Ambil nilai jenis perwalian yang dipilih
+                const jenisPerwalian = selectType.value;
+                let alertTitle = '';
+                let alertText = '';
 
-                    // 🔥 POPUP LOADING
-                    Swal.fire({
-                        title: 'Memproses...',
-                        text: 'Mohon tunggu',
-                        backdrop: 'rgba(0,0,0,0.6)',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    // Disable button biar tidak double submit
-                    btnSubmit.disabled = true;
-
-                    // submit form asli
-                    form.submit();
+                // Sesuaikan teks alert berdasarkan pilihan dropdown
+                if (jenisPerwalian === 'gpa_advising') {
+                    alertTitle = 'Yakin ajukan perwalian?';
+                    alertText = 'Pastikan data dan KHS sudah benar';
+                } else if (jenisPerwalian === 'non_gpa_advising') {
+                    alertTitle = 'Yakin ajukan perwalian Non KHS?';
+                    alertText = 'Pastikan data Anda sudah benar';
+                } else {
+                    Swal.fire('Perhatian', 'Silakan pilih Jenis Perwalian terlebih dahulu', 'warning');
+                    return; // Hentikan proses jika belum memilih
                 }
-            });
-        });
-    });
-     document.addEventListener('DOMContentLoaded', function() {
-        //ambil form perwalian 
-        const form = document.querySelector('form[action="{{ route('perwalian.nonkhs') }}"]');
-        //ambil button submit
-        const btnSubmit = document.getElementById('btn-submit-nonkhs');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); //mencegah form langsung kirim server
-            Swal.fire({
-                title: 'Yakin ajukan perwalian Non KHS?',
-                text: 'Pastikan data Anda sudah benar',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Ajukan',
-                cancelButtonText: 'Batal',
-                reverseButtons: true,
-                backdrop: 'rgba(0,0,0,0.6)',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
+                Swal.fire({
+                    title: alertTitle,
+                    text: alertText,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Ajukan',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    backdrop: 'rgba(0,0,0,0.6)',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
 
-            }).then((result) => {
-                if (result.isConfirmed) {
+                }).then((result) => {
+                    if (result.isConfirmed) {
 
-                    // 🔥 POPUP LOADING
-                    Swal.fire({
-                        title: 'Memproses...',
-                        text: 'Mohon tunggu',
-                        backdrop: 'rgba(0,0,0,0.6)',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        didOpen: () => {
-                            Swal.showLoading();
+                        // 🔥 POPUP LOADING
+                        Swal.fire({
+                            title: 'Memproses...',
+                            text: 'Mohon tunggu',
+                            backdrop: 'rgba(0,0,0,0.6)',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        btnSubmit.disabled = true;
+
+                        // 💡 OPSIONAL: Jika rute (action) untuk Non-KHS berbeda dengan KHS,
+                        // kita ubah action form-nya secara dinamis di sini sebelum disubmit
+                        if (jenisPerwalian === 'non_gpa_advising') {
+                            form.action = "{{ route('perwalian.nonkhs') }}";
+                        } else {
+                            form.action = "{{ route('perwalian.store') }}";
                         }
-                    });
 
-                    // Disable button biar tidak double submit
-                    btnSubmit.disabled = true;
-
-                    // submit form asli
-                    form.submit();
-                }
+                        // Submit form asli
+                        form.submit();
+                    }
+                });
             });
-        });
+        }
     });
 </script>
 
