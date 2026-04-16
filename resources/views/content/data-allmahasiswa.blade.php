@@ -69,7 +69,7 @@
                                     <td class="text-truncate">{{ $allmahasiswa['nim'] }}</td>
                                     <td class="text-truncate">
                                         <div class="d-flex align-items-center">
-                                            {{-- <span>{{ $allmahasiswa['study_program_name'] }}</span> --}}
+                                            <span>{{ $allmahasiswa['study_program']['name'] }}</span>
                                         </div>
                                     </td>
                                     {{-- <td>
