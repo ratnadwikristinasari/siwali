@@ -37,6 +37,16 @@ const LibsCssFiles = GetFilesArray('resources/assets/vendor/libs/**/*.css');
 const FontsScssFiles = GetFilesArray('resources/assets/vendor/fonts/**/!(_)*.scss');
 
 export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions']
+      }
+    }
+  },
+  build: {
+    chunkSizeWarningLimit: 1200
+  },
   plugins: [
     laravel({
       input: [

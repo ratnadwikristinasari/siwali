@@ -1,5 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     @if (session('success'))
         Swal.fire({
@@ -25,8 +23,8 @@
         });
     @endif
 
-     document.addEventListener('DOMContentLoaded', function() {
-        //ambil form perwalian 
+    document.addEventListener('DOMContentLoaded', function() {
+        //ambil form perwalian
         const form = document.querySelector('form[action="{{ route('perwalian.nonkhs') }}"]');
         //ambil button submit
         const btnSubmit = document.getElementById('btn-submit-nonkhs');

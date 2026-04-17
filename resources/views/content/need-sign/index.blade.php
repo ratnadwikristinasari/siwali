@@ -5,12 +5,41 @@
 @section('page-script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = @json(session('success'));
+
+            if (successMessage && typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: successMessage,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+
             $('#search').on('keyup', function() {
                 let debounceTimer;
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function() {
                     $('#form-filter').submit();
                 }, 1000);
+            });
+
+            $('.js-sign-form').on('submit', function(e) {
+                const $form = $(this);
+
+                if ($form.data('submitted')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                $form.data('submitted', true);
+
+                const $button = $form.find('.js-sign-button');
+                const $icon = $button.find('.js-sign-icon');
+
+                $button.prop('disabled', true);
+                $icon.removeClass('ri-check-line').addClass('ri-loader-4-line ri-spin');
             });
         });
     </script>
@@ -75,11 +104,12 @@
                                     <td>
                                         @if ($needSign->khs)
                                             <form action="{{ route('page.need_sign.sign', $needSign->id) }}" method="POST"
-                                                style="display:inline;">
+                                                style="display:inline;" class="js-sign-form">
                                                 @csrf
-                                                <button type="submit" class="btn btn-icon btn-sm btn-outline-primary"
+                                                <button type="submit"
+                                                    class="btn btn-icon btn-sm btn-outline-primary js-sign-button"
                                                     title="Tanda Tangani">
-                                                    <i class="ri-check-line"></i>
+                                                    <i class="ri-check-line js-sign-icon"></i>
                                                 </button>
                                             </form>
 

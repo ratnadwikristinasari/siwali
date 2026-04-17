@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('page/dosen', [CDosen::class, 'index'])->name('datadosen');
     Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
-    
+
 
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
@@ -52,11 +52,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('advising')->group(function () {
-        // Route::middleware('role:student|orang-tua')->group(function () {
+        Route::middleware('role:student|orang_tua')->group(function () {
             Route::get('', [CFormwali::class, 'index'])->name('form-perwalian');
             Route::post('/', [CPerwalian::class, 'store'])->name('perwalian.store');
             Route::get('history', [CHistoryPerwalian::class, 'index'])->name('dataperwalian');
-        // });
+        });
 
         Route::middleware('role:lecturer')->group(function () {
             Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
