@@ -30,22 +30,17 @@ class MahasiswaHelper
         return $response->json();
     }
 
-    public static function getMahasiswaByProdi(string $token, ?string $prodiId = null, ?int $page = 1, ?string $majorId = null): array
-    {
-
-        $queryParams = [
-            'page' => $page
-        ];
-
-        if (!empty($prodiId)) {
-            $queryParams['m_study_program_id'] = $prodiId;
-        }
-        if (!empty($majorId)) {
-            $queryParams['m_major_id'] = $majorId;
-        }
-
-        $response = Http::withToken($token)
-            ->get(config('app.super_app_url') . '/students', $queryParams);
+    public static function getAllStudents(
+        string $token,
+        array $queryParams = []
+    ): array {
+        $response = GlobalHelper::requestWithToken(
+            '/students',
+            $token,
+            'GET',
+            [],
+            $queryParams
+        );
 
         return $response->json();
     }

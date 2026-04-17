@@ -40,13 +40,19 @@ Route::middleware('auth')->group(function () {
     Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
     Route::get('biodata', [Cbiodata::class, 'Biodata'])->name('biodata');
 
-    Route::get('page/dosen', [CDosen::class, 'index'])->name('datadosen');
-
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
             Route::get('', [CMahasiswa::class, 'index'])->name('datamahasiswa');
             Route::get('history', [CHistoryPerwalianDosen::class, 'index'])->name('dataperwaliandosen');
         });
+
+        Route::middleware('role:kajur|kaprodi')->group(function () {
+            Route::get('all', [CAllMahasiswa::class, 'DataMahasiswa'])->name('alldatamahasiswa');
+        });
+    });
+
+    Route::middleware('role:kajur|kaprodi')->group(function () {
+        Route::get('page/dosen', [CDosen::class, 'index'])->name('datadosen');
     });
 
     Route::prefix('advising')->group(function () {
@@ -67,8 +73,6 @@ Route::middleware('auth')->group(function () {
         Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
         Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
     });
-
-    Route::get('allstudent', [CAllMahasiswa::class, 'DataMahasiswa'])->name('alldatamahasiswa');
 
     Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
     Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');

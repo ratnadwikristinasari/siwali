@@ -91,7 +91,7 @@
                                             </span>
                                         @endif
                                     </td>
- <td>
+                                    <td>
                                         @if ($listmahasiswa['status'] === null)
                                             <span class="badge bg-label-secondary rounded-pill">
                                                 Tanpa Keterangan

@@ -34,18 +34,18 @@
             "roles": ["kaprodi", "kajur"]
         },
         {
+            "name": "Data Mahasiswa",
+            "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
+            "slug": "alldatamahasiswa",
+            "url": "student/all",
+            "roles": ["kaprodi", "kajur"]
+        },
+        {
             "name": "Data Mahasiswa Wali",
             "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
             "slug": "datamahasiswa",
             "url": "student",
             "roles": ["kaprodi", "lecturer", "kajur"]
-        },
-                {
-            "name": "Data Mahasiswa",
-            "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
-            "slug": "alldatamahasiswa",
-            "url": "allstudent",
-            "roles": ["kaprodi", "kajur"]
         },
         {
             "name": "Biodata Mahasiswa",

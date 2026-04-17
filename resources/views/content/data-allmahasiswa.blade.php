@@ -5,12 +5,77 @@
 @section('page-script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let initialSessionId = '{{ request('session_id') }}';
+            let initialSemesterId = '{{ request('semester_id') }}';
+            if (initialSessionId) {
+                $.ajax({
+                    url: '{{ route('api.semester.option') }}',
+                    method: 'GET',
+                    data: {
+                        session_id: initialSessionId
+                    },
+                    success: function(response) {
+                        let semesterSelect = $('#semester_id');
+                        semesterSelect.empty();
+                        semesterSelect.append('<option value="">Pilih Semester</option>');
+                        response.data.forEach(function(semester) {
+                            let selected = (semester.value == initialSemesterId) ? 'selected' :
+                                '';
+                            semesterSelect.append('<option value="' + semester.value + '" ' +
+                                selected + '>' + semester.label + '</option>');
+                        });
+                        semesterSelect.prop('disabled', false);
+                    }
+                });
+            }
+
             $('#search').on('keyup', function() {
                 let debounceTimer;
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function() {
                     $('#form-filter').submit();
                 }, 1000);
+            });
+
+            $('#study_program_id').on('change', function() {
+                $('#form-filter').submit();
+            });
+
+            $('#class').on('change', function() {
+                $('#form-filter').submit();
+            });
+
+            $('#session_id').on('change', function() {
+                let sessionId = $(this).val();
+                if (sessionId) {
+                    $.ajax({
+                        url: '{{ route('api.semester.option') }}',
+                        method: 'GET',
+                        data: {
+                            session_id: sessionId
+                        },
+                        success: function(response) {
+                            let semesterSelect = $('#semester_id');
+                            semesterSelect.empty();
+                            semesterSelect.append('<option value="">Pilih Semester</option>');
+                            response.data.forEach(function(semester) {
+                                semesterSelect.append('<option value="' + semester
+                                    .value + '">' + semester.label + '</option>');
+                            });
+                            semesterSelect.prop('disabled', false);
+                        },
+                        error: function() {
+                            alert('Gagal mengambil data semester');
+                        }
+                    });
+                } else {
+                    $('#semester_id').empty().append('<option value="">Pilih Semester</option>').prop(
+                        'disabled', true);
+                }
+            });
+
+            $('#semester_id').on('change', function() {
+                $('#form-filter').submit();
             });
         });
     </script>
@@ -32,7 +97,55 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('alldatamahasiswa') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                @role('kajur')
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-select" name="study_program_id" id="study_program_id">
+                                                <option value="">Pilih Program Studi</option>
+                                                @foreach ($studyPrograms as $studyProgram)
+                                                    <option value="{{ $studyProgram['id'] }}"
+                                                        {{ request('study_program_id') == $studyProgram['id'] ? 'selected' : '' }}>
+                                                        {{ $studyProgram['name'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endrole
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="class" id="class">
+                                            <option value="">Pilih Kelas</option>
+                                            @foreach (App\Helpers\ClassHelper::getClasses() as $class)
+                                                <option value="{{ $class }}"
+                                                    {{ request('class') == $class ? 'selected' : '' }}>
+                                                    {{ $class }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="session_id" id="session_id">
+                                            <option value="">Pilih Tahun Ajaran</option>
+                                            @foreach ($sessions as $session)
+                                                <option value="{{ $session['value'] }}"
+                                                    {{ request('session_id') == $session['value'] ? 'selected' : '' }}>
+                                                    {{ $session['label'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="semester_id" id="semester_id" disabled>
+                                            <option value="">Pilih Semester</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari berdasarkan nama"
                                             id="search" name="search" value="{{ request('search') }}">
@@ -51,12 +164,12 @@
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIM</th>
                                 <th class="text-truncate">Program Studi</th>
+                                {{-- <th class="text-truncate">Status</th> --}}
                                 <th class="text-truncate">Status Perwalian</th>
-                                <th class="text-truncate">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($mahasiswaall as $index => $allmahasiswa)
+                            @forelse ($mahasiswaall as $index => $allmahasiswa)
                                 <tr>
                                     <td>{{ $mahasiswaall->firstItem() + $index }}</td>
                                     <td>
@@ -72,7 +185,7 @@
                                             <span>{{ $allmahasiswa['study_program']['name'] }}</span>
                                         </div>
                                     </td>
-                                    {{-- <td>
+                                    <td>
                                         @if ($allmahasiswa['status_perwalian'] === null)
                                             <span class="badge bg-label-secondary rounded-pill">
                                                 Belum Perwalian
@@ -91,31 +204,16 @@
                                             </span>
                                         @endif
                                     </td>
- <td>
-                                        @if ($allmahasiswa['status'] === null)
-                                            <span class="badge bg-label-secondary rounded-pill">
-                                                Tanpa Keterangan
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'CUTI')
-                                            <span class="badge bg-label-warning rounded-pill">
-                                                Cuti
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'DO')
-                                            <span class="badge bg-label-info rounded-pill">
-                                                Drop Out
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'ACTIVE')
-                                            <span class="badge bg-label-success rounded-pill">
-                                                Active
-                                            </span>
-                                        @endif
-                                    </td> --}}
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">Tidak ada data mahasiswa yang ditemukan.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
+                    {{ $mahasiswaall->links('vendor.pagination.bootstrap-5') }}
                 </div>
-                {{ $mahasiswaall->links('vendor.pagination.bootstrap-5') }}
             </div>
         </div>
     </div>

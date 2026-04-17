@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\page;
 
 use App\Helpers\MahasiswaHelper;
+use App\Helpers\ProdiHelper;
+use App\Helpers\SessionApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Advise;
 use Illuminate\Http\Request;
@@ -14,37 +16,44 @@ class CAllMahasiswa extends Controller
     public function DataMahasiswa(Request $request)
     {
         $user = Auth::user();
-   
         $token = $user->token;
 
-        $page = $request->query('page', 1);
+        $studyProgramId = $request->query('study_program_id', '');
 
-        $prodiId = null;
-        $majorId = null;
-
-        $userRoles = is_array($user->roles) ? json_encode($user->roles) : $user->roles;
-//dd($userRoles);
-        if (str_contains($userRoles, 'kajur')) {
-            $majorId = $user->major_id;
-        } elseif (str_contains($userRoles, 'kaprodi')) {
-            $prodiId = $user->study_program_id; 
-        }
-//dd($majorId);
-        $response = MahasiswaHelper::getMahasiswaByProdi($token, $prodiId, $page, $majorId);
-//dd($response);
-
-        if (!isset($response['data']) || empty($response['data'])) {
-            $data = collect();
-            $meta = ['total' => 0, 'per_page' => 10, 'page' => 1];
+        if ($user->hasRole('kajur')) {
+            $studyPrograms = ProdiHelper::getprodi($token, $user->major_id)['data'];
         } else {
-            $data = collect($response['data']);
-            $meta = $response['meta'] ?? ['total' => count($data), 'per_page' => 10, 'page' => $page];
+            $studyPrograms = [];
+            $studyProgramId = $user->study_program_id;
         }
 
-        //Status perwalian
+        $filter = [
+            'major_id' => $user->major_id,
+            'study_program_id' => $studyProgramId,
+            'class' => $request->query('class', ''),
+            'semester_id' => $request->query('semester_id', $request->query('semester', '')),
+        ];
+
+        $queryParams = [
+            'search' => $request->query('search', ''),
+            'sort' => $request->query('sort', ''),
+            'per_page' => (int) $request->query('per_page', 10),
+            'page' => (int) $request->query('page', 1),
+            'last_page' => (int) $request->query('last_page', 1),
+            'filter' => json_encode($filter),
+        ];
+
+        $response = MahasiswaHelper::getAllStudents($token, $queryParams);
+        $data = collect($response['data'] ?? []);
+        $meta = $response['meta'] ?? [
+            'total' => count($data),
+            'per_page' => $queryParams['per_page'],
+            'page' => $queryParams['page'],
+        ];
+
         if ($data->isNotEmpty()) {
-            $apiStudentKey = 'id'; 
-            $studentIds = $data->pluck($apiStudentKey)->toArray(); 
+            $apiStudentKey = 'id';
+            $studentIds = $data->pluck($apiStudentKey)->toArray();
 
             $advises = Advise::whereIn('student_id', $studentIds)
                 ->where('type', 'gpa_advising')
@@ -61,7 +70,6 @@ class CAllMahasiswa extends Controller
                 $mhs['status_perwalian'] = $advises[$mhs[$apiStudentKey]] ?? null;
                 return $mhs;
             });
-            
         }
 
         $mahasiswaall = new LengthAwarePaginator(
@@ -75,6 +83,8 @@ class CAllMahasiswa extends Controller
             ]
         );
 
-        return view('content.data-allmahasiswa', compact('mahasiswaall'));
+        $sessions = SessionApiHelper::getAsOptions($token);
+
+        return view('content.data-allmahasiswa', compact('mahasiswaall', 'studyPrograms', 'sessions'));
     }
 }
