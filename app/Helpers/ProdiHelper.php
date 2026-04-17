@@ -13,11 +13,13 @@ class ProdiHelper
             'page' => $page,
             'search' => $search
         ];
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])
-            ->withQueryParameters($queryParams)
-            ->get(config('app.super_app_url_internal') . '/study-programs');
+
+        $response = GlobalHelper::requestWithToken(
+            '/study-programs',
+            $token,
+            'GET',
+            $queryParams
+        );
 
         return $response->json();
     }
