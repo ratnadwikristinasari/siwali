@@ -73,7 +73,7 @@ class CDashboard extends Controller
         }
 
         // Statistik perwalian untuk dosen, bisa terfilter semester_id.
-        if ($user->hasRole('lecturer') && $user->hasNoRole(['kaprodi', 'kajur'])) {
+        if ($user->hasRole('lecturer') && !$user->hasAnyRole(['kaprodi', 'kajur'])) {
             $totalperwalian = DashboardHelper::totalPerwalianMahasiswa(
                 $request->query('semester_id')
             );
@@ -102,10 +102,14 @@ class CDashboard extends Controller
         }
 
         // Dashboard student: semua data diambil dari tabel advise.
-        if ($user->hasRole('student')) {
-            $chart = DashboardHelper::grafikIpkPerSemester($token);
-            $rataIPK = DashboardHelper::rataIpkMahasiswa();
-            $totalwali = DashboardHelper::totalPerwalian();
+        $dashboardStudentName = null;
+
+        if ($user->hasAnyRole(['student', 'orang_tua'])) {
+            $dashboardStudent = DashboardHelper::getDashboardStudentUser();
+            $dashboardStudentName = $dashboardStudent?->name;
+            $chart = DashboardHelper::grafikIpkPerSemester($dashboardStudent?->id);
+            $rataIPK = DashboardHelper::rataIpkMahasiswa($dashboardStudent?->id);
+            $totalwali = DashboardHelper::totalPerwalian($dashboardStudent?->id);
             $semesterLabels = $chart->pluck('semester')->values()->all();
             $valueipk = $chart->pluck('ipk')->values()->all();
         }
@@ -122,7 +126,8 @@ class CDashboard extends Controller
             'sessions',
             'prodiList',
             'analytics',
-            'analyticsSummary'
+            'analyticsSummary',
+            'dashboardStudentName'
 
         ));
     }

@@ -3,13 +3,40 @@
 namespace App\Helpers;
 
 use App\Models\Advise;
+use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardHelper
 {
-    public static function rataIpkMahasiswa()
+    public static function getDashboardStudentUser(): ?User
     {
-        $avgIpk = Advise::where('student_user_id', Auth::id())
+        $user = Auth::user();
+
+        if (!$user) {
+            return null;
+        }
+
+        if ($user->hasRole('student')) {
+            return $user;
+        }
+
+        if ($user->hasRole('orang_tua')) {
+            return User::where('id_parent', $user->id)->first();
+        }
+
+        return null;
+    }
+
+    public static function rataIpkMahasiswa(?string $studentUserId = null)
+    {
+        $studentUserId ??= self::getDashboardStudentUser()?->id;
+
+        if (empty($studentUserId)) {
+            return 0;
+        }
+
+        $avgIpk = Advise::where('student_user_id', $studentUserId)
             ->where('type', 'gpa_advising')
             ->whereIn('status', ['done', 'signed'])
             ->whereNotNull('ipk')
@@ -17,9 +44,15 @@ class DashboardHelper
 
         return min(round($avgIpk ?? 0, 2), 4.00);
     }
-    public static function totalPerwalian()
+    public static function totalPerwalian(?string $studentUserId = null)
     {
-        return Advise::where('student_user_id', Auth::id())
+        $studentUserId ??= self::getDashboardStudentUser()?->id;
+
+        if (empty($studentUserId)) {
+            return 0;
+        }
+
+        return Advise::where('student_user_id', $studentUserId)
             ->where('type', 'gpa_advising')
             ->count();
     }
@@ -114,12 +147,15 @@ class DashboardHelper
     }
 
 
-    public static function grafikIpkPerSemester(string $token)
+    public static function grafikIpkPerSemester(?string $studentUserId = null): Collection
     {
-        $user = Auth::user();
+        $studentUserId ??= self::getDashboardStudentUser()?->id;
 
-        // Ambil data advise yang valid untuk grafik IPK student.
-        return Advise::where('student_user_id', $user->id)
+        if (empty($studentUserId)) {
+            return collect([]);
+        }
+
+        return Advise::where('student_user_id', $studentUserId)
             ->where('type', 'gpa_advising')
             ->whereIn('status', ['done', 'signed'])
             ->whereNotNull('ipk')

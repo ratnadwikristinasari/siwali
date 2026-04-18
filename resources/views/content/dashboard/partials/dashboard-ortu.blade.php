@@ -1,188 +1,87 @@
 @section('content')
-    <div class="row gy-6">
-        <!-- Congratulations card -->
-        <div class="col-md-12 col-lg-7">
-            <div class="card">
-                <div class="card-body text-nowrap">
-                    <h5 class="card-title mb-0 flex-wrap text-nowrap">CONGRATULATIONS Anak Anda {{ Auth::user()->name }}</h5>
-                    <p class="mb-2">Rata - Rata IPK</p>
-                    <h4 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h4>
-                    <a href="/history/perwalian" class="btn btn-sm btn-primary">Detail</a>
-                </div>
-                <img src="{{ asset('assets/img/illustrations/trophy.png') }}"
-                    class="position-absolute bottom-0 end-0 me-8 mb-8" width="83" alt="view sales">
-            </div>
-        </div>
-        <!--/ Congratulations card -->
-
-        <!-- Total Perwalian -->
-        <div class="col-lg-5">
-            <div class="card h-74">
-                <div class="card-header">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Total Perwalian</h5>
-                        <div class="dropdown">
-                        </div>
-                    </div>
-                    <div class="card-body pt-lg-10">
-                        <div class="row g-6">
-                            <div class="col-md-6 col-6">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar">
-                                        <div class="avatar-initial bg-primary rounded shadow-xs">
-                                            <i class="ri-pie-chart-2-line ri-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ms-4">
-                                        <p class="mb-0">Kartu Hasil Study</p>
-                                        <h5 class="mb-0">{{ $totalwali }}</h5>
-                                    </div>
+    <div class="row gy-4">
+        <div class="col-12 col-xl-8">
+            <div class="card h-100 overflow-hidden student-hero-card">
+                <div class="card-body position-relative p-4 p-md-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-12 col-md-8">
+                            <p class="text-muted mb-1">Dashboard Orang Tua</p>
+                            <h4 class="mb-2 text-wrap">Ringkasan akademik {{ $dashboardStudentName ?? 'mahasiswa' }}</h4>
+                            <p class="mb-3 text-muted">Data ditampilkan dari riwayat perwalian mahasiswa dan biodata
+                                mahasiswa dinonaktifkan sementara.</p>
+                            <div class="d-flex flex-wrap align-items-end gap-3">
+                                <div>
+                                    <small class="text-muted d-block">Rata-rata IPK</small>
+                                    <h2 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h2>
                                 </div>
+                                <a href="{{ url('advising/history') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
                             </div>
-                            {{-- <div class="col-md-6 col-6">
-            <div class="d-flex align-items-center">
-              <div class="avatar">
-                <div class="avatar-initial bg-success rounded shadow-xs">
-                  <i class="ri-group-line ri-24px"></i>
-                </div>
-              </div>
-              <div class="ms-4">
-                <p class="mb-0">Non Kartu Hasil Study</p>
-                <h5 class="mb-0">5</h5>
-              </div>
-            </div>
-          </div> --}}
+                        </div>
+                        <div class="col-12 col-md-4 text-md-end text-center">
+                            <img src="{{ asset('assets/img/illustrations/trophy.png') }}" class="student-hero-image"
+                                alt="Rata-rata IPK mahasiswa">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--/ Transactions -->
 
-        <!-- Overview -->
-        <div class="col-xl-12 col-md-6">
+        <div class="col-12 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted mb-2">Total Perwalian</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded shadow-xs">
+                                <i class="ri-book-marked-line ri-22px"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ $totalwali }}</h3>
+                            <small class="text-muted">Perwalian GPA Advising</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="mb-1">Grafik Pencapaian</h5>
-                    </div>
+                <div class="card-header pb-0">
+                    <h5 class="mb-1">Grafik Perkembangan IPK</h5>
+                    <small class="text-muted">Visualisasi IPK per semester dari tabel advise mahasiswa</small>
                 </div>
-                <div class="card-body pt-lg-2">
+                <div class="card-body pt-3">
                     <div id="weeklyOverviewChart"></div>
-                    <div class="mt-1 mt-md-3">
-                        <div class="d-flex align-items-center gap-4">
-                        </div>
-                        <div class="d-grid mt-3 mt-md-4">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Biodata Mahasiswa --}}
-<div class="col-xl-12 col-md-6">
-    <div class="card">
-        <div class="card-header bg-light d-flex align-items-center gap-3 flex-wrap">
-            <div class="avatar avatar-lg">
-                <div class="avatar-initial bg-primary rounded-circle fs-4">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                </div>
-            </div>
-            <div class="flex-grow-1">
-                <h5 class="mb-0">{{ Auth::user()->name }}</h5>
-                <small class="text-muted">NIM: {{ Auth::user()->nim }}</small>
-            </div>
-            <span class="badge bg-label-success">Aktif</span>
-        </div>
-
-        <div class="card-body">
-            {{-- Informasi Akademik --}}
-            <p class="text-uppercase fw-semibold text-muted small mb-2">Informasi Akademik</p>
-            <div class="row g-3 mb-4">
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Program Studi</small>
-                        <span class="fw-medium">{{ $mahasiswa->prodi ?? '-' }}</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Fakultas</small>
-                        <span class="fw-medium">{{ $mahasiswa->fakultas ?? '-' }}</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Dosen Wali</small>
-                        <span class="fw-medium">{{ $mahasiswa->dosen_wali ?? '-' }}</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Tahun Masuk</small>
-                        <span class="fw-medium">{{ $mahasiswa->tahun_masuk ?? '-' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Informasi Pribadi --}}
-            <p class="text-uppercase fw-semibold text-muted small mb-2">Informasi Pribadi</p>
-            <div class="row g-3 mb-4">
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Email</small>
-                        <span class="fw-medium text-primary">{{ Auth::user()->email }}</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">No. Telepon</small>
-                        <span class="fw-medium">{{ $mahasiswa->telepon ?? '-' }}</span>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Tanggal Lahir</small>
-                        {{-- <span class="fw-medium">{{ $mahasiswa->tanggal_lahir ? \Carbon\Carbon::parse($mahasiswa->tanggal_lahir)->isoFormat('D MMMM Y') : '-' }}</span> --}}
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="bg-light rounded p-3">
-                        <small class="text-muted d-block mb-1">Asal Kota</small>
-                        <span class="fw-medium">{{ $mahasiswa->asal_kota ?? '-' }}</span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Statistik Ringkas --}}
-            <div class="row g-3 pt-3 border-top">
-                <div class="col-4">
-                    <div class="text-center bg-label-primary rounded p-3">
-                        <h4 class="mb-0 text-primary">{{ number_format($rataIPK, 2) }}</h4>
-                        <small class="text-primary">IPK Terakhir</small>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="text-center bg-label-success rounded p-3">
-                        <h4 class="mb-0 text-success">{{ $totalSKS ?? '0' }}</h4>
-                        <small class="text-success">SKS Lulus</small>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div class="text-center bg-label-warning rounded p-3">
-                        <h4 class="mb-0 text-warning">{{ $totalwali }}</h4>
-                        <small class="text-warning">Semester Aktif</small>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-        <script>
-            window.weeklyOverviewData = {
-                semester: @json($semesterLabels),
-                ipk: @json($valueipk)
-            };
-        </script>
-    @endsection
+    @push('page-style')
+        <style>
+            .student-hero-image {
+                width: 92px;
+                max-width: 100%;
+                height: auto;
+            }
+
+            @media (max-width: 767.98px) {
+                .student-hero-card .card-body {
+                    padding: 1.25rem;
+                }
+
+                .student-hero-image {
+                    width: 76px;
+                }
+            }
+        </style>
+    @endpush
+
+    <script>
+        window.weeklyOverviewData = {
+            semester: @json($semesterLabels),
+            ipk: @json($valueipk)
+        };
+    </script>
+@endsection
