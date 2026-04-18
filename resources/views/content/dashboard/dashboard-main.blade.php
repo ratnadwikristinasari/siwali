@@ -12,7 +12,6 @@
 
     @section('page-script')
         @vite('resources/assets/js/dashboards-analytics.js')
-        <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     @endsection
 
     {{-- setelah ini baru load dashboard.js --}}
@@ -32,10 +31,10 @@
 
         @role('lecturer')
             @notrole('kaprodi', 'kajur', 'student')
-                 @include('content.dashboard.partials.dashboard-dsn')
+                @include('content.dashboard.partials.dashboard-dsn')
             @endnotrole
         @endrole
         @role('orang_tua')
-             @include('content.dashboard.partials.dashboard-ortu')
+            @include('content.dashboard.partials.dashboard-ortu')
         @endrole
     @endsection

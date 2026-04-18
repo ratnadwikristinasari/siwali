@@ -56,7 +56,7 @@ class DashboardHelper
             ->where('type', 'gpa_advising')
             ->count();
     }
-    public static function topIpkMahasiswa(?string $semester = null): array
+    public static function topIpkMahasiswa(?string $semester = null, bool $isFromMyDashboard = false): array
     {
         $user = Auth::user();
 
@@ -73,6 +73,12 @@ class DashboardHelper
         // DOSEN WALI
         if ($user->hasAnyRole(['lecturer']) && $user->hasNoRole(['kaprodi', 'kajur'])) {
             $query->where('lecture_user_id', $user->id);
+        }
+
+        if ($isFromMyDashboard) {
+            if ($user->hasRole('lecturer')) {
+                $query->where('lecture_user_id', $user->id);
+            }
         }
 
         // FILTER PRODI (for kajur)

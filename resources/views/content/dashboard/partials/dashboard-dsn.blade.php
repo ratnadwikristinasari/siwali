@@ -229,7 +229,8 @@
                             method: 'GET',
                             dataType: 'json',
                             data: {
-                                semester_id: semesterId
+                                semester_id: semesterId,
+                                is_from_my_dashboard: {{ $isFromMyDashboard ?? 0 }}
                             }
                         })
                     ).done(function(analyticsRes, leaderboardRes) {

@@ -152,7 +152,8 @@ class CDashboard extends Controller
     public function getTopTenStudent(Request $request)
     {
         $semesterId = $request->input('semester_id');
-        $ipkTopData = DashboardHelper::topIpkMahasiswa($semesterId);
+        $isFromMyDashboard = (int) $request->input('is_from_my_dashboard', 0);
+        $ipkTopData = DashboardHelper::topIpkMahasiswa($semesterId, $isFromMyDashboard === 1);
 
         return response()->json([
             'categories' => $ipkTopData['categories']->values(),
