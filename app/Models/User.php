@@ -47,6 +47,15 @@ class User extends Authenticatable
         'permissions' => 'array',
     ];
 
+    public function studentParents()
+    {
+        return $this->hasMany(StudentParent::class, 'parent_id');
+    }
+
+    public function parentOf()
+    {
+        return $this->hasMany(StudentParent::class, 'student_id');
+    }
 
     protected function normalizedRoles(): array
     {

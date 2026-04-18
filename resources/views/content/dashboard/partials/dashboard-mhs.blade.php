@@ -13,7 +13,7 @@
                                     <small class="text-muted d-block">Rata-rata IPK</small>
                                     <h2 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h2>
                                 </div>
-                                <a href="{{ url('student/history') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
+                                <a href="{{ route('dataperwalian') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
                             </div>
                         </div>
                         <div class="col-12 col-md-4 text-md-end text-center">
@@ -60,8 +60,8 @@
     @push('page-style')
         <style>
             /* .student-hero-card {
-                        background: linear-gradient(130deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.05));
-                    } */
+                                background: linear-gradient(130deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.05));
+                            } */
 
             .student-hero-image {
                 width: 92px;

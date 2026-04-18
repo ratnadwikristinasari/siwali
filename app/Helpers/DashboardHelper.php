@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Advise;
+use App\Models\StudentParent;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,8 @@ class DashboardHelper
         }
 
         if ($user->hasRole('orang_tua')) {
-            return User::where('id_parent', $user->id)->first();
+            $studentParent = StudentParent::where('parent_id', $user->id)->first();
+            return $studentParent?->student;
         }
 
         return null;

@@ -52,11 +52,16 @@ class OAuthController extends Controller
             $majorName = $authData['data']['employee_detail']['major_name'] ?? null;
             $studyProgramId = $authData['data']['employee_detail']['m_study_program_id'] ?? null;
             $studyProgramName = $authData['data']['employee_detail']['study_program_name'] ?? null;
-        } else {
+        } else if (isset($authData['data']['student_detail'])) {
             $majorId = $authData['data']['student_detail']['m_major_id'] ?? null;
             $majorName = $authData['data']['student_detail']['major_name'] ?? null;
             $studyProgramId = $authData['data']['student_detail']['m_study_program_id'] ?? null;
             $studyProgramName = $authData['data']['student_detail']['study_program_name'] ?? null;
+        } else {
+            $majorId = null;
+            $majorName = null;
+            $studyProgramId = null;
+            $studyProgramName = null;
         }
 
         $user = User::updateOrCreate(
@@ -73,6 +78,49 @@ class OAuthController extends Controller
                 'permissions' => $dto->user->permissions ? $dto->user->permissions : null,
             ]
         );
+
+        if (isset($authData['data']['student_detail'])) {
+            $idParent = $authData['data']['student_detail']['parent']['parent_id'] ?? null;
+            $userParentExternalId = $authData['data']['student_detail']['parent']['user_id'] ?? null;
+
+            $userParent = User::updateOrCreate(
+                ['external_id' => $userParentExternalId],
+                [
+                    'name' => 'Orang Tua dari ' . $dto->user->name,
+                    'email' => 'ortu-' . explode('@', $dto->user->email)[0] . '@polije.ac.id',
+                    'roles' => ['orang_tua'],
+                ]
+            );
+
+            $userParent->studentParents()->updateOrCreate([
+                'student_id' => $user->id,
+                'parent_external_id' => $idParent,
+                'parent_id' => $userParent->id,
+            ]);
+        }
+
+        if (isset($authData['data']['parent_detail'])) {
+            $children = $authData['data']['parent_detail']['students'] ?? [];
+            $userParentExternalId = $authData['data']['parent_detail']['id'] ?? null;
+            foreach ($children as $child) {
+                $studentExternalId = $child['user_id'] ?? null;
+                $student = User::updateOrCreate(
+                    ['external_id' => $studentExternalId],
+                    [
+                        'name' => $child['name'] ?? 'Anak dari ' . $dto->user->name,
+                        'email' => $child['nim'] . '@student.polije.ac.id' ?? 'anak-' . explode('@', $dto->user->email)[0] . '@student.polije.ac.id',
+                        'roles' => ['student'],
+                    ]
+                );
+
+                $student->parentOf()->updateOrCreate([
+                    'parent_id' => $user->id,
+                    'parent_external_id' => $userParentExternalId,
+                    'student_id' => $student->id,
+                ]);
+            }
+        }
+
 
         Auth::login($user);
         return redirect()->route('content.dashboard.dashboard-main');
