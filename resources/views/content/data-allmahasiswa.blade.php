@@ -164,7 +164,7 @@
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIM</th>
                                 <th class="text-truncate">Program Studi</th>
-                                {{-- <th class="text-truncate">Status</th> --}}
+                                <th class="text-truncate">Status Akademik</th>
                                 <th class="text-truncate">Status Perwalian</th>
                             </tr>
                         </thead>
@@ -184,6 +184,45 @@
                                         <div class="d-flex align-items-center">
                                             <span>{{ $allmahasiswa['study_program']['name'] }}</span>
                                         </div>
+                                    </td>
+                                    <td>
+                                        @if ($allmahasiswa['status'] === null || $allmahasiswa['status'] === 'TANPA KETERANGAN')
+                                            <span class="badge bg-label-secondary rounded-pill">
+                                                Tanpa Keterangan
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'AKTIF')
+                                            <span class="badge bg-label-success rounded-pill">
+                                                Aktif
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'CUTI')
+                                            <span class="badge bg-label-warning rounded-pill">
+                                                Cuti
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'DO')
+                                            <span class="badge bg-label-info rounded-pill">
+                                                Drop Out
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'MENGUNDURKAN_DIRI')
+                                            <span class="badge bg-label-danger rounded-pill">
+                                                Mengundurkan Diri
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'LULUS')
+                                            <span class="badge bg-label-primary rounded-pill">
+                                                Lulus
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'MENINGGAL')
+                                            <span class="badge bg-label-dark rounded-pill">
+                                                Meninggal
+                                            </span>
+                                        @elseif ($allmahasiswa['status'] === 'STUDENT EXCHANGE')
+                                            <span class="badge bg-label-info rounded-pill">
+                                                Student Exchange
+                                            </span>
+                                        @else
+                                            <span class="badge bg-label-success rounded-pill">
+                                                {{ $allmahasiswa['status'] }}
+                                            </span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if ($allmahasiswa['status_perwalian'] === null)
