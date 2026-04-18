@@ -2,20 +2,16 @@
 
 namespace App\Helpers;
 
-
-use App\Http\Controllers\page\CProdi;
 use App\Models\Advise;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 
 class DashboardHelper
 {
     public static function rataIpkMahasiswa()
     {
-
         $avgIpk = Advise::where('student_user_id', Auth::id())
-            ->where('status', 'Done')
+            ->where('type', 'gpa_advising')
+            ->whereIn('status', ['done', 'signed'])
             ->whereNotNull('ipk')
             ->avg('ipk');
 
@@ -24,7 +20,7 @@ class DashboardHelper
     public static function totalPerwalian()
     {
         return Advise::where('student_user_id', Auth::id())
-            ->where('status', 'Done')
+            ->where('type', 'gpa_advising')
             ->count();
     }
     public static function topIpkMahasiswa(?string $semester = null): array
@@ -42,7 +38,7 @@ class DashboardHelper
         }
 
         // DOSEN WALI
-        if ($user->hasAnyRole(['lecturer', 'lecture'])) {
+        if ($user->hasAnyRole(['lecturer']) && $user->hasNoRole(['kaprodi', 'kajur'])) {
             $query->where('lecture_user_id', $user->id);
         }
 
@@ -120,39 +116,25 @@ class DashboardHelper
 
     public static function grafikIpkPerSemester(string $token)
     {
-
-        if (empty($token)) {
-            return collect([]);
-        }
-
         $user = Auth::user();
 
-        $auth = AuthHelper::getauth('', $user->token);
-        $datasemester = collect($auth['data']['student_detail']['student_semester'] ?? [])
-
-            ->pluck('semester')   // ambil semester_id
-            ->filter()               // buang null
-            ->map(fn($s) => (int) $s)
-            ->unique()
-            ->sort()
-            ->values();
-
-        //Ambil IPK dari DB
-        $ipk = Advise::where('student_user_id', $user->id)
-            ->where('status', 'Done')
+        // Ambil data advise yang valid untuk grafik IPK student.
+        return Advise::where('student_user_id', $user->id)
+            ->where('type', 'gpa_advising')
+            ->whereIn('status', ['done', 'signed'])
             ->whereNotNull('ipk')
-            ->get()
-            ->mapWithKeys(function ($row) {
-                return [(int) $row->semester => $row->ipk];
-            });
-
-        //Sinkronkan semester + IPK
-        return $datasemester->map(function ($semester) use ($ipk) {
-            return [
-                'semester' => 'Semester ' . $semester,
-                'ipk' => min(max(round($ipk[$semester] ?? 0, 2), 0), 4),
-            ];
-        });
+            ->whereNotNull('semester')
+            ->orderBy('semester')
+            ->get(['semester', 'ipk'])
+            ->groupBy('semester')
+            ->map(function ($items, $semester) {
+                $latest = $items->last();
+                return [
+                    'semester' => 'Semester ' . $semester,
+                    'ipk' => min(max(round((float) ($latest->ipk ?? 0), 2), 0), 4),
+                ];
+            })
+            ->values();
     }
     //DASHBOARD DOSEN
 

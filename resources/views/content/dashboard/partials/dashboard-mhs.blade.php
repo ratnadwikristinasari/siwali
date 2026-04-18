@@ -1,88 +1,90 @@
 @section('content')
-    <div class="row gy-6">
-        <!-- Congratulations card -->
-        <div class="col-md-12 col-lg-7">
-            <div class="card">
-                <div class="card-body text-nowrap">
-                    <h5 class="card-title mb-0 flex-wrap text-nowrap">CONGRATULATIONS {{ Auth::user()->name }}</h5>
-                    <p class="mb-2">Rata - Rata IPK</p>
-                    <h4 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h4>
-                    <a href="/history/perwalian" class="btn btn-sm btn-primary">Detail</a>
-                </div>
-                <img src="{{ asset('assets/img/illustrations/trophy.png') }}"
-                    class="position-absolute bottom-0 end-0 me-8 mb-8" width="83" alt="view sales">
-            </div>
-        </div>
-        <!--/ Congratulations card -->
-
-        <!-- Total Perwalian -->
-        <div class="col-lg-5">
-            <div class="card h-74">
-                <div class="card-header">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="card-title m-0 me-2">Total Perwalian</h5>
-                        <div class="dropdown">
-                        </div>
-                    </div>
-                    <div class="card-body pt-lg-10">
-                        <div class="row g-6">
-                            <div class="col-md-6 col-6">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar">
-                                        <div class="avatar-initial bg-primary rounded shadow-xs">
-                                            <i class="ri-pie-chart-2-line ri-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ms-4">
-                                        <p class="mb-0">Kartu Hasil Study</p>
-                                        <h5 class="mb-0">{{ $totalwali }}</h5>
-                                    </div>
+    <div class="row gy-4">
+        <div class="col-12 col-xl-8">
+            <div class="card h-100 overflow-hidden student-hero-card">
+                <div class="card-body position-relative p-4 p-md-5">
+                    <div class="row align-items-center g-4">
+                        <div class="col-12 col-md-8">
+                            <p class="text-muted mb-1">Dashboard Mahasiswa</p>
+                            <h4 class="mb-2 text-wrap">Halo, {{ Auth::user()->name }}</h4>
+                            <p class="mb-3 text-muted">Ringkasan akademik diambil langsung dari riwayat perwalian kamu.</p>
+                            <div class="d-flex flex-wrap align-items-end gap-3">
+                                <div>
+                                    <small class="text-muted d-block">Rata-rata IPK</small>
+                                    <h2 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h2>
                                 </div>
+                                <a href="{{ url('student/history') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
                             </div>
-                            {{-- <div class="col-md-6 col-6">
-            <div class="d-flex align-items-center">
-              <div class="avatar">
-                <div class="avatar-initial bg-success rounded shadow-xs">
-                  <i class="ri-group-line ri-24px"></i>
-                </div>
-              </div>
-              <div class="ms-4">
-                <p class="mb-0">Non Kartu Hasil Study</p>
-                <h5 class="mb-0">5</h5>
-              </div>
-            </div>
-          </div> --}}
+                        </div>
+                        <div class="col-12 col-md-4 text-md-end text-center">
+                            <img src="{{ asset('assets/img/illustrations/trophy.png') }}" class="student-hero-image"
+                                alt="Rata-rata IPK">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--/ Transactions -->
 
-        <!-- Overview -->
-        <div class="col-xl-12 col-md-6">
+        <div class="col-12 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted mb-2">Total Perwalian</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded shadow-xs">
+                                <i class="ri-book-marked-line ri-22px"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ $totalwali }}</h3>
+                            <small class="text-muted">Perwalian GPA Advising</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="mb-1">Grafik Pencapaian</h5>
-                    </div>
+                <div class="card-header pb-0">
+                    <h5 class="mb-1">Grafik Perkembangan IPK</h5>
+                    <small class="text-muted">Visualisasi IPK per semester dari tabel advise</small>
                 </div>
-                <div class="card-body pt-lg-2">
+                <div class="card-body pt-3">
                     <div id="weeklyOverviewChart"></div>
-                    <div class="mt-1 mt-md-3">
-                        <div class="d-flex align-items-center gap-4">
-                        </div>
-                        <div class="d-grid mt-3 mt-md-4">
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            window.weeklyOverviewData = {
-                semester: @json($semesterLabels),
-                ipk: @json($valueipk)
-            };
-        </script>
-    @endsection
+    @push('page-style')
+        <style>
+            /* .student-hero-card {
+                        background: linear-gradient(130deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.05));
+                    } */
+
+            .student-hero-image {
+                width: 92px;
+                max-width: 100%;
+                height: auto;
+            }
+
+            @media (max-width: 767.98px) {
+                .student-hero-card .card-body {
+                    padding: 1.25rem;
+                }
+
+                .student-hero-image {
+                    width: 76px;
+                }
+            }
+        </style>
+    @endpush
+
+    <script>
+        window.weeklyOverviewData = {
+            semester: @json($semesterLabels),
+            ipk: @json($valueipk)
+        };
+    </script>
+@endsection

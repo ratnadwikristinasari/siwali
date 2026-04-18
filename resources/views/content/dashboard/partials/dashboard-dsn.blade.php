@@ -7,7 +7,7 @@
                         <h5 class="card-title mb-1">Dashboard Perwalian Dosen</h5>
                         <small class="text-muted" id="session-info">Pilih tahun ajaran untuk melihat data</small>
                     </div>
-                    <div class="d-flex gap-2 flex-wrap">
+                    <div class="d-flex gap-2 flex-wrap dashboard-filter-wrap">
                         <select id="session_id" class="form-select form-select-sm" style="width: 220px;">
                             <option value="">-- Pilih Tahun Ajaran --</option>
                             @foreach ($sessions as $session)
@@ -127,6 +127,20 @@
                 background-color: #f0f0f0;
                 color: #666;
             }
+
+            @media (max-width: 767.98px) {
+                .dashboard-filter-wrap {
+                    width: 100%;
+                }
+
+                .dashboard-filter-wrap .form-select {
+                    width: 100% !important;
+                }
+
+                #analytics-cards .col-6 {
+                    width: 100%;
+                }
+            }
         </style>
     @endpush
 
@@ -225,7 +239,7 @@
                     }).fail(function() {
                         resetAnalytics();
                         $('#leaderboard-podium').html(
-                        '<div class="col-12 text-danger">Gagal memuat data</div>');
+                            '<div class="col-12 text-danger">Gagal memuat data</div>');
                         $('#leaderboard-table').html(
                             '<tr><td colspan="3" class="text-center text-danger">Gagal memuat data</td></tr>'
                         );

@@ -75,6 +75,16 @@ class User extends Authenticatable
         return count(array_intersect($required, $own)) > 0;
     }
 
+    public function hasNoRole(array|string $roles): bool
+    {
+        $required = is_array($roles) ? $roles : explode('|', $roles);
+        $required = array_filter(array_map(fn($r) => strtolower(trim($r)), $required));
+        if (empty($required)) return true;
+
+        $own = $this->normalizedRoles();
+        return count(array_intersect($required, $own)) === 0;
+    }
+
     public function hasAllRoles(array|string $roles): bool
     {
         $required = is_array($roles) ? $roles : explode('|', $roles);
