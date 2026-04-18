@@ -102,4 +102,15 @@ class MahasiswaHelper
 
         return round($totalMutu / $totalCredits, 2);
     }
+
+    public static function getStudentDetails(string $token, string $studentId): array
+    {
+        $response = GlobalHelper::requestWithToken(
+            '/students/' . $studentId,
+            $token,
+            'GET'
+        );
+
+        return $response->json();
+    }
 }

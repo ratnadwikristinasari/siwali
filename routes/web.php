@@ -39,7 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::get('my/dashboard', [CDashboard::class, 'mydashboard'])->name('content.dashboard.partials.dashboard-dsn');
     Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
     Route::get('my/dashboard/analytics', [CDashboard::class, 'getLecturerAnalytics'])->name('dashboard.lecturer-analytics');
-    Route::get('biodata', [Cbiodata::class, 'Biodata'])->name('biodata');
+
+    Route::get('biodata', [Cbiodata::class, 'biodata'])->middleware('role:student|orang_tua')->name('biodata');
 
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {

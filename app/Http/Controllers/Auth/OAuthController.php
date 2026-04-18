@@ -52,21 +52,25 @@ class OAuthController extends Controller
             $majorName = $authData['data']['employee_detail']['major_name'] ?? null;
             $studyProgramId = $authData['data']['employee_detail']['m_study_program_id'] ?? null;
             $studyProgramName = $authData['data']['employee_detail']['study_program_name'] ?? null;
+            $studentEmployeeId = $authData['data']['employee_detail']['id'] ?? null;
         } else if (isset($authData['data']['student_detail'])) {
             $majorId = $authData['data']['student_detail']['m_major_id'] ?? null;
             $majorName = $authData['data']['student_detail']['major_name'] ?? null;
             $studyProgramId = $authData['data']['student_detail']['m_study_program_id'] ?? null;
             $studyProgramName = $authData['data']['student_detail']['study_program_name'] ?? null;
+            $studentEmployeeId = $authData['data']['student_detail']['id'] ?? null;
         } else {
             $majorId = null;
             $majorName = null;
             $studyProgramId = null;
             $studyProgramName = null;
+            $studentEmployeeId = null;
         }
 
         $user = User::updateOrCreate(
             ['external_id' => $dto->user->id],
             [
+                'student_employee_id' => $studentEmployeeId,
                 'name' => $dto->user->name,
                 'email' => $dto->user->email,
                 'token' => $dto->token,
@@ -107,6 +111,7 @@ class OAuthController extends Controller
                 $student = User::updateOrCreate(
                     ['external_id' => $studentExternalId],
                     [
+                        'student_employee_id' => $child['student_id'] ?? null,
                         'name' => $child['name'] ?? 'Anak dari ' . $dto->user->name,
                         'email' => $child['nim'] . '@student.polije.ac.id' ?? 'anak-' . explode('@', $dto->user->email)[0] . '@student.polije.ac.id',
                         'roles' => ['student'],
