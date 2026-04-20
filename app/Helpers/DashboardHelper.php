@@ -56,6 +56,20 @@ class DashboardHelper
 
         return Advise::where('student_user_id', $studentUserId)
             ->where('type', 'gpa_advising')
+            ->whereIn('status', ['done', 'signed'])
+            ->count();
+    }
+        public static function totalNonPerwalian(?string $studentUserId = null)
+    {
+        $studentUserId ??= self::getDashboardStudentUser()?->id;
+
+        if (empty($studentUserId)) {
+            return 0;
+        }
+
+        return Advise::where('student_user_id', $studentUserId)
+            ->where('type', 'non_gpa_advising')
+            ->whereIn('status', ['done'])
             ->count();
     }
     public static function topIpkMahasiswa(?string $semester = null, bool $isFromMyDashboard = false): array

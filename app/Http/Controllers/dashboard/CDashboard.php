@@ -38,7 +38,9 @@ class CDashboard extends Controller
             'totalBelum' => 0,
             'totalPending' => 0,
             'totalDone' => 0,
+
         ];
+        $totalNonPerwalian = 0;
         $semester = $request->query('semester');
         $ipkTopData = [
             'categories' => collect([]),
@@ -110,6 +112,7 @@ class CDashboard extends Controller
             $chart = DashboardHelper::grafikIpkPerSemester($dashboardStudent?->id);
             $rataIPK = DashboardHelper::rataIpkMahasiswa($dashboardStudent?->id);
             $totalwali = DashboardHelper::totalPerwalian($dashboardStudent?->id);
+            $totalNonPerwalian = DashboardHelper::totalNonPerwalian($dashboardStudent?->id);
             $semesterLabels = $chart->pluck('semester')->values()->all();
             $valueipk = $chart->pluck('ipk')->values()->all();
         }
@@ -120,6 +123,7 @@ class CDashboard extends Controller
             'semesterLabels',
             'valueipk',
             'totalperwalian',
+            'totalNonPerwalian',
             'ipkTopData',
             'listSemester',
             'semester',

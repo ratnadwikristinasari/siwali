@@ -6,16 +6,16 @@
                     <div class="row align-items-center g-4">
                         <div class="col-12 col-md-8">
                             <p class="text-muted mb-1">Dashboard Orang Tua</p>
-                            <h4 class="mb-2 text-wrap">Ringkasan akademik {{ $dashboardStudentName ?? 'mahasiswa' }}</h4>
-                            <p class="mb-3 text-muted">Data ditampilkan dari riwayat perwalian mahasiswa dan biodata
-                                mahasiswa dinonaktifkan sementara.</p>
+                            <h4 class="mb-2 text-wrap">SELAMAT DATANG, ORANG TUA {{ $dashboardStudentName ?? 'mahasiswa' }}. </h4>
+                            <p class="mb-3 text-muted">Berikut adalah ringkasan akademik dari anak Anda.</p>
                             <div class="d-flex flex-wrap align-items-end gap-3">
                                 <div>
                                     <small class="text-muted d-block">Rata-rata IPK</small>
                                     <h2 class="text-primary mb-0">{{ number_format($rataIPK, 2) }}</h2>
                                 </div>
-                                <a href="{{ url('advising/history') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
+
                             </div>
+                            <a href="{{ route('dataperwalian') }}" class="btn btn-sm btn-primary">Lihat Riwayat</a>
                         </div>
                         <div class="col-12 col-md-4 text-md-end text-center">
                             <img src="{{ asset('assets/img/illustrations/trophy.png') }}" class="student-hero-image"
@@ -29,7 +29,7 @@
         <div class="col-12 col-xl-4">
             <div class="card h-100">
                 <div class="card-body p-4">
-                    <p class="text-muted mb-2">Total Perwalian</p>
+                    <p class="text-muted mb-2">Total Perwalian KHS</p>
                     <div class="d-flex align-items-center gap-3">
                         <div class="avatar">
                             <div class="avatar-initial bg-label-primary rounded shadow-xs">
@@ -38,7 +38,19 @@
                         </div>
                         <div>
                             <h3 class="mb-0">{{ $totalwali }}</h3>
-                            <small class="text-muted">Perwalian GPA Advising</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-2">Total Perwalian Non KHS</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="avatar">
+                            <div class="avatar-initial bg-label-primary rounded shadow-xs">
+                                <i class="ri-book-marked-line ri-22px"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ $totalNonPerwalian }}</h3>
                         </div>
                     </div>
                 </div>
