@@ -51,7 +51,7 @@
                             <select name="semester_id" id="semester_id" class="form-select form-control" required>
                                 <option value="" selected>Pilih Semester</option>
                                 @foreach ($semesters as $sem)
-                                    <option value="{{ $sem['semester_id'] }}">
+                                    <option value="{{ $sem['semester_id'] }}" {{ $sem['is_active'] ? 'data-active="true"' : '' }}>
                                         {{ $sem['semester'] }} {{ $sem['is_active'] ? '(Semester Aktif)' : '' }}
                                     </option>
                                 @endforeach
@@ -74,7 +74,7 @@
 
                         <label for="name">Catatan atau keluhan</label>
                         <div class="mb-3">
-                            <textarea id="basic-icon-default-message" class="form-control @error('keluhan') is-invalid @enderror" name="keluhan"
+                            <textarea id="basic-icon-default-message" minlength="10" class="form-control @error('keluhan') is-invalid @enderror" name="keluhan" placeholder="Masukkan keluhan Anda Minimal 10 Karakter"
                                 style="height: 100px;" required></textarea>
                             @error('keluhan')
                                 <div class="invalid-feedback">
@@ -102,6 +102,7 @@
 
                             function updateFormBehavior() {
                                 const selectedType = typeSelect.value;
+                                
                                 const selectedSemId = semesterSelect.value;
 
                                 // 1. Tampilkan IPK jika memilih Perwalian KHS

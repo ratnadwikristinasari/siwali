@@ -24,7 +24,7 @@
                         <h5>Data Perwalian</h5>
                     </div>
                     <div>
-                        <form action="{{ route('perwalian.update', $perwalian->id) }}" method="POST">
+                        <form action="{{ route('perwalian.update', $perwalian->id) }}" method="POST" id="perwalian.update">
                             @csrf
                             @method('PUT')
 
@@ -40,7 +40,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Masukan Dosen Wali</label>
-                                <textarea name="masukan" class="form-control @error('masukan') is-invalid @enderror" rows="3" required>{{ old('masukan', $perwalian->masukan) }}</textarea>
+                                <textarea name="masukan" placeholder="Masukkan masukan Anda Minimal 10 Karakter" minlength="10" class="form-control @error('masukan') is-invalid @enderror" rows="3" required>{{ old('masukan', $perwalian->masukan) }}</textarea>
                                 @error('masukan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -51,8 +51,8 @@
                                     Kembali
                                 </a>
                                 @if ($perwalian->status === 'pending')
-                                    <button type="submit" class="btn btn-primary">
-                                        Terima dan TTD KHS
+                                    <button type="button" class="btn btn-primary" id="btn-submit-terima">
+                                        Terima Perwalian
                                     </button>
                                 @endif
                             </div>
@@ -62,4 +62,5 @@
             </div>
         </div>
     </div>
+    @include('_partials.alert')
 @endsection

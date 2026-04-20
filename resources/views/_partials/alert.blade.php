@@ -95,24 +95,68 @@
             });
         }
     });
+
+    //Alert untuk tombol "Terima Perwalian" di halaman detail perwalian dosen
+    document.addEventListener('DOMContentLoaded', function() {
+        const formTerima = document.getElementById('perwalian.update');
+        const btnSubmitTerima = document.getElementById('btn-submit-terima');
+        // Kita berasumsi textarea bernama "masukan" wajib diisi
+        const inputMasukan = document.querySelector('textarea[name="masukan"]');
+
+        if (formTerima && btnSubmitTerima) {
+            btnSubmitTerima.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Validasi agar Dosen mengisi masukan terlebih dahulu
+                if (inputMasukan) {
+                const nilaiMasukan = inputMasukan.value.trim();
+                if (nilaiMasukan === '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Perhatian',
+                        text: 'Silakan isi Masukan Dosen Wali terlebih dahulu!'
+                    });
+                    return; // Hentikan eksekusi
+                } else if (nilaiMasukan.length < 10) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Perhatian',
+                        text: 'Masukan Dosen Wali harus minimal 10 karakter!'
+                    });
+                    return; // Hentikan eksekusi
+                }
+            }
+
+                Swal.fire({
+                    title: 'Yakin terima perwalian?',
+                    text: 'Data perwalian akan disetujui dan disimpan.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Terima',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    backdrop: 'rgba(0,0,0,0.6)',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Memproses...',
+                            text: 'Mohon tunggu',
+                            backdrop: 'rgba(0,0,0,0.6)',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => { Swal.showLoading(); }
+                        });
+
+                        btnSubmitTerima.disabled = true;
+
+                        // Form langsung disubmit ke rute yang sudah tertulis di HTML (perwalian.update)
+                        formTerima.submit();
+                    }
+                });
+            });
+        }
+    });
 </script>
 
-{{-- ALERT ERROR
-@if ($errors->any())
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <ul class="mb-0">
-      @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-      @endforeach
-    </ul>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-@endif
-
-{{-- ALERT SUCCESS --}}
-{{-- @if (session('success'))
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-@endif --}}
