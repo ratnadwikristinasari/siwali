@@ -52,17 +52,17 @@
 
                             <div class="mb-3">
                                 <label class="form-label">IPK</label>
-                                <input type="text" class="form-control" value="{{ $perwalian->ipk }}" readonly>
+                                <input type="text" class="form-control" value="{{ $perwalian->ipk }}" readonly disabled>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Keluhan</label>
-                                <textarea class="form-control" rows="3" readonly>{{ $perwalian->keluhan }}</textarea>
+                                <textarea class="form-control" rows="3" readonly disabled>{{ $perwalian->keluhan }}</textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Masukan Dosen Wali</label>
-                                <textarea name="masukan" placeholder="Masukkan masukan Anda Minimal 10 Karakter" minlength="10"class="form-control" placeholder="Masukan Dosen Maksimal 10 Karakter" maxlength="10" @error('masukan') is-invalid @enderror" rows="3" required>{{ old('masukan', $perwalian->masukan) }}</textarea>
+                                <textarea name="masukan" placeholder="Masukkan masukan Anda Minimal 10 Karakter" minlength="10"class="form-control" placeholder="Masukan Dosen Maksimal 10 Karakter" @error('masukan') is-invalid @enderror" rows="3" required>{{ old('masukan', $perwalian->masukan) }}</textarea>
                                 @error('masukan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

@@ -16,7 +16,7 @@
         },
 
         {
-            "menuHeader": "Perwalian"
+            "menuHeader": "Page"
         },
 
         {
@@ -55,6 +55,9 @@
             "roles": ["student", "orang_tua"]
         },
         {
+            "menuHeader": "Perwalian"
+        },
+        {
             "name": "Form Perwalian",
             "icon": "menu-icon tf-icons ri-list-view",
             "slug": "form-perwalian",
@@ -76,7 +79,7 @@
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
-            "name": "KHS Perlu Tanda Tangan",
+            "name": "Pengesahan KHS",
             "icon": "menu-icon tf-icons ri-file-list-3-line",
             "slug": "page.need_sign",
             "url": "need-sign",
