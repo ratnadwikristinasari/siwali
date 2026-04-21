@@ -44,7 +44,7 @@
                     alertTitle = 'Yakin ajukan perwalian?';
                     alertText = 'Pastikan data dan KHS sudah benar';
                 } else if (jenisPerwalian === 'non_gpa_advising') {
-                    alertTitle = 'Yakin ajukan perwalian Non KHS?';
+                    alertTitle = 'Yakin ajukan Konseling?';
                     alertText = 'Pastikan data Anda sudah benar';
                 } else {
                     Swal.fire('Perhatian', 'Silakan pilih Jenis Perwalian terlebih dahulu', 'warning');

@@ -47,7 +47,7 @@
                                             </option>
                                             <option value="non_gpa_advising"
                                                 {{ request('type') == 'non_gpa_advising' ? 'selected' : '' }}>
-                                                Perwalian Non KHS
+                                                Konseling
                                             </option>
                                         </select>
                                     </div>
@@ -102,7 +102,7 @@
                                         @if ($historydosenwali->type === 'gpa_advising')
                                             Perwalian KHS
                                         @else
-                                            Perwalian Non KHS
+                                            Konseling
                                         @endif
                                     </td>
                                     <td>

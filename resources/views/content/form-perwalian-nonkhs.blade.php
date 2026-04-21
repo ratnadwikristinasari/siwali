@@ -12,7 +12,7 @@
             <div class="card mb-12">
 
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Data Perwalian Non KHS</h5>
+                    <h5 class="mb-0">Data Konseling</h5>
                 
                 </div>
                 <div class="card-body">

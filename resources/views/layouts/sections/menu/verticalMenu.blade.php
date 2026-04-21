@@ -70,6 +70,16 @@
                 @isset($menu->badge)
                   <div class="badge bg-{{ $menu->badge[0] }} rounded-pill ms-auto">{{ $menu->badge[1] }}</div>
                 @endisset
+
+                {{-- TAMPILKAN BADGE DINAMIS: PERWALIAN MAHASISWA --}}
+                @if (isset($menu->slug) && $menu->slug === 'dataperwaliandosen' && isset($pendingPerwalianCount) && $pendingPerwalianCount > 0)
+                  <div class="badge bg-danger rounded-pill ms-auto">{{ $pendingPerwalianCount }}</div>
+                @endif
+
+                {{-- TAMPILKAN BADGE DINAMIS: PENGESAHAN KHS --}}
+                @if (isset($menu->slug) && $menu->slug === 'page.need_sign' && isset($pendingKHSCount) && $pendingKHSCount > 0)
+                  <div class="badge bg-warning rounded-pill ms-auto">{{ $pendingKHSCount }}</div>
+                @endif
               </a>
 
               {{-- submenu --}}

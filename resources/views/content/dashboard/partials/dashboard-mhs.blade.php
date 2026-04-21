@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <p class="text-muted mb-2">Total Perwalian Non KHS</p>
+                    <p class="text-muted mb-2">Total Konseling</p>
                     <div class="d-flex align-items-center gap-3">
                         <div class="avatar">
                             <div class="avatar-initial bg-label-primary rounded shadow-xs">

@@ -50,11 +50,19 @@
     <ul class="navbar-nav flex-row align-items-center ms-auto">
         <!-- User -->
         <li class="nav-item navbar-dropdown dropdown-user dropdown">
-            <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+            <a class="nav-link dropdown-toggle hide-arrow p-0 d-flex align-items-center" href="javascript:void(0);"
+                data-bs-toggle="dropdown">
+
+                <div class="me-2 d-none d-sm-block text-end">
+                    <span class="fw-semibold d-block" style="line-height: 1.2;">{{ Auth()->user()->name }}</span>
+                    <small class="text-muted">{{ Auth()->user()->role }}</small>
+                </div>
+
                 <div class="avatar avatar-online">
                     <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
                 </div>
             </a>
+
             <ul class="dropdown-menu dropdown-menu-end mt-3 py-2">
                 <li>
                     <a class="dropdown-item" href="javascript:void(0);">
@@ -76,11 +84,11 @@
                     <div class="dropdown-divider"></div>
                 </li>
                 <li>
-                <a class="dropdown-item" href="{{ route('biodata') }}">
-                  <i class="ri-user-3-line ri-22px me-2"></i>
-                  <span class="align-middle">Biodata</span>
-                </a>
-              </li>
+                    {{-- <a class="dropdown-item" href="{{ route('biodata') }}">
+            <i class="ri-user-3-line ri-22px me-2"></i>
+            <span class="align-middle">Biodata</span>
+        </a> --}}
+                </li>
                 <li>
                     <div class="dropdown-divider"></div>
                 </li>

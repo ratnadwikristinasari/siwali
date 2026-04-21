@@ -32,7 +32,7 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault(); //mencegah form langsung kirim server
             Swal.fire({
-                title: 'Yakin ajukan perwalian Non KHS?',
+                title: 'Yakin ajukan Konseling?',
                 text: 'Pastikan data Anda sudah benar',
                 icon: 'question',
                 showCancelButton: true,

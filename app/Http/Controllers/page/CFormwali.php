@@ -37,7 +37,7 @@ class CFormwali extends Controller
                 $advisingDone = Advise::where('student_user_id', Auth::user()->id)
                     ->where('semester_id', $semId)
                     ->where('type', 'gpa_advising')
-                    ->where('status', 'done') // Pastikan field 'status' sesuai dengan database Anda
+                    ->where('status', 'done')
                     ->exists();
 
                 $khsDoneStatuses[$semId] = $advisingDone;

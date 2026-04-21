@@ -36,14 +36,14 @@
                             <select name="type" id="type" class="form-select form-control" required>
                                 <option value="" selected>Pilih Jenis Perwalian</option>
                                 <option value="gpa_advising">Perwalian KHS</option>
-                                <option value="non_gpa_advising">Perwalian Non KHS</option>
+                                <option value="non_gpa_advising">Konseling</option>
                             </select>
                         </div>
 
                         <label for="name">Nama Lengkap</label>
                         <div class="mb-3">
                             <input type="text" class="form-control" id="basic-icon-default-fullname" name="nama_lengkap"
-                                value="{{ Auth::user()->name }}" readonly />
+                                value="{{ Auth::user()->name }}" readonly disabled />
                         </div>
 
                         <label for="semester_id">Semester</label>
@@ -51,7 +51,8 @@
                             <select name="semester_id" id="semester_id" class="form-select form-control" required>
                                 <option value="" selected>Pilih Semester</option>
                                 @foreach ($semesters as $sem)
-                                    <option value="{{ $sem['semester_id'] }}" {{ $sem['is_active'] ? 'data-active="true"' : '' }}>
+                                    <option value="{{ $sem['semester_id'] }}"
+                                        {{ $sem['is_active'] ? 'data-active="true"' : '' }}>
                                         {{ $sem['semester'] }} {{ $sem['is_active'] ? '(Semester Aktif)' : '' }}
                                     </option>
                                 @endforeach
@@ -62,7 +63,7 @@
                         <label for="name">Program Studi</label>
                         <div class="mb-3">
                             <input type="text" id="basic-icon-default-company2" class="form-control"
-                                value="{{ $programStudi }}" readonly />
+                                value="{{ $programStudi }}" readonly disabled />
                         </div>
                         <div id="ipk-container" style="display: none;">
                             <label for="ipk" id="label-ipk">IPK Semester</label>
@@ -74,8 +75,8 @@
 
                         <label for="name">Catatan atau keluhan</label>
                         <div class="mb-3">
-                            <textarea id="basic-icon-default-message" minlength="10" class="form-control @error('keluhan') is-invalid @enderror" name="keluhan" placeholder="Masukkan keluhan Anda Minimal 10 Karakter"
-                                style="height: 100px;" required></textarea>
+                            <textarea id="basic-icon-default-message" minlength="10" class="form-control @error('keluhan') is-invalid @enderror"
+                                name="keluhan" placeholder="Masukkan keluhan Anda Minimal 10 Karakter" style="height: 100px;" required></textarea>
                             @error('keluhan')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -88,7 +89,6 @@
                     </form>
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            // Lempar data dari Controller ke JavaScript
                             const khsDoneStatuses = @json($khsDoneStatuses);
                             const gpaData = @json($gpaData);
 
@@ -100,12 +100,33 @@
                             const semesterWarning = document.getElementById('semester-warning');
                             const semesterHiddenInput = document.getElementById('semester');
 
-                            function updateFormBehavior() {
+                            // Fungsi khusus untuk mengatur opsi Semester (Disable jika sudah KHS)
+                            function updateSemesterOptions() {
                                 const selectedType = typeSelect.value;
-                                
-                                const selectedSemId = semesterSelect.value;
 
-                                // 1. Tampilkan IPK jika memilih Perwalian KHS
+                                Array.from(semesterSelect.options).forEach(option => {
+                                    if (option.value === "") return; // Skip opsi default
+
+                                    // Disable opsi JIKA KHS dan sudah pernah diajukan
+                                    if (selectedType === 'gpa_advising' && khsDoneStatuses[option.value]) {
+                                        option.disabled = true;
+                                        if (!option.text.includes('(Sudah Pengajuan)')) {
+                                            option.text = option.text.replace(' (Selesai)', '').replace(
+                                                ' (Sudah Pengajuan)', '') + ' (Sudah Pengajuan)';
+                                        }
+                                    } else {
+                                        option.disabled = false;
+                                        option.text = option.text.replace(' (Sudah Pengajuan)', '').replace(' (Selesai)',
+                                            '');
+                                    }
+                                });
+                            }
+
+                            // Fungsi ketika 'Jenis Perwalian' diubah
+                            function updateTypeBehavior() {
+                                const selectedType = typeSelect.value;
+
+                                // 1. Tampilkan IPK jika KHS
                                 if (selectedType === 'gpa_advising') {
                                     ipkContainer.style.display = 'block';
                                     ipkInput.disabled = false;
@@ -114,57 +135,70 @@
                                     ipkInput.disabled = true;
                                 }
 
-                                // 2. Validasi status "Done" berdasarkan semester yang dipilih
-                                Array.from(semesterSelect.options).forEach(option => {
-                                    if (option.value === "") return; // Skip opsi default
+                                // 2. Perbarui status disable di dropdown semester
+                                updateSemesterOptions();
 
-                                    // Disable opsi semester JIKA: tipe perwalian = KHS DAN status khsDone = true
-                                    if (selectedType === 'gpa_advising' && khsDoneStatuses[option.value]) {
-                                        option.disabled = true;
-                                        // Tambahkan teks penanda untuk UX yang lebih baik
-                                        if (!option.text.includes('(Selesai)')) {
-                                            option.text += ' (Selesai)';
-                                        }
-                                    } else {
-                                        option.disabled = false;
-                                        // Bersihkan teks penanda
-                                        option.text = option.text.replace(' (Selesai)', '');
+                                // 3. Auto-select semester aktif jika Konseling
+                                if (selectedType === 'non_gpa_advising') {
+                                    // Cari option yang memiliki data-active (lebih aman menggunakan hasAttribute)
+                                    const activeOption = Array.from(semesterSelect.options).find(opt => opt.hasAttribute(
+                                        'data-active'));
+
+                                    if (activeOption) {
+                                        semesterSelect.value = activeOption.value;
                                     }
-                                });
+                                } else if (selectedType === 'gpa_advising') {
+                                    // Jika kembali ke KHS dan semester yang sedang dipilih ternyata ter-disable, reset dropdown
+                                    if (semesterSelect.value && semesterSelect.options[semesterSelect.selectedIndex].disabled) {
+                                        semesterSelect.value = "";
+                                    }
+                                }
 
-                                // Jika user merubah "Jenis" dan semester yang sedang dipilih ternyata di-disable, reset pilihannya
-                                if (selectedSemId && semesterSelect.options[semesterSelect.selectedIndex].disabled) {
-                                    semesterSelect.value = "";
-                                    ipkInput.value = "";
-                                    semesterHiddenInput.value = "";
+                                // 4. Update data IPK & input hidden berdasarkan semester yang terpilih saat ini
+                                updateDetails();
+                            }
+
+                            // Fungsi ketika 'Semester' diubah (atau dipanggil setelah ganti Jenis Perwalian)
+                            function updateDetails() {
+                                const selectedType = typeSelect.value;
+
+                                // Munculkan warning jika pilih KHS dan semesternya ternyata disable
+                                if (selectedType === 'gpa_advising' && semesterSelect.value && semesterSelect.options[semesterSelect
+                                        .selectedIndex].disabled) {
+                                    semesterSelect.value = ""; // Force reset
+                                    semesterWarning.innerText = "Anda sudah melakukan pengajuan Perwalian KHS untuk semester ini.";
                                     semesterWarning.style.display = 'block';
                                 } else {
                                     semesterWarning.style.display = 'none';
                                 }
 
-                                // 3. Update Nilai IPK secara dinamis saat dropdown semester diubah
-                                if (semesterSelect.value && gpaData[semesterSelect.value] !== undefined) {
-                                    ipkInput.value = gpaData[semesterSelect.value];
-                                    let semText = semesterSelect.options[semesterSelect.selectedIndex].text;
-                                    // Bersihkan label dari teks tambahan agar rapi
-                                    semText = semText.replace(' (Semester Aktif)', '').replace(' (Selesai)', '').trim();
-                                    labelIpk.innerText = 'IPK Semester ' + semText;
+                                // Ambil data nilai IPK dan update hidden input
+                                if (semesterSelect.value) {
+                                    if (gpaData[semesterSelect.value] !== undefined) {
+                                        ipkInput.value = gpaData[semesterSelect.value];
+                                    } else {
+                                        ipkInput.value = '';
+                                    }
 
+                                    let semText = semesterSelect.options[semesterSelect.selectedIndex].text;
+                                    // Bersihkan text dari embel-embel agar rapi masuk ke database
+                                    semText = semText.replace(' (Semester Aktif)', '').replace(' (Sudah Pengajuan)', '').trim();
+
+                                    labelIpk.innerText = 'IPK Semester ' + semText;
                                     semesterHiddenInput.value = semText;
                                 } else {
                                     ipkInput.value = '';
                                     labelIpk.innerText = 'IPK Semester';
+                                    semesterHiddenInput.value = '';
                                 }
-
-                                semesterHiddenInput.value = semesterSelect.options[semesterSelect.selectedIndex].text.replace(' (Semester Aktif)', '').replace(' (Selesai)', '').trim();
                             }
 
-                            // Trigger fungsi saat ada perubahan di dropdown Type atau Semester
-                            typeSelect.addEventListener('change', updateFormBehavior);
-                            semesterSelect.addEventListener('change', updateFormBehavior);
+                            // Event listener dipisah agar tidak tabrakan
+                            typeSelect.addEventListener('change', updateTypeBehavior);
+                            semesterSelect.addEventListener('change', updateDetails);
 
-                            // Panggil sekali untuk menyesuaikan state form saat halaman dimuat
-                            updateFormBehavior();
+                            // Jalankan sekali saat halaman pertama kali dimuat
+                            updateTypeBehavior();
                         });
                     </script>
                 </div>
@@ -172,5 +206,5 @@
         </div>
     </div>
     </div>
-@include('_partials.alert')
+    @include('_partials.alert')
 @endsection

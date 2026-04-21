@@ -27,12 +27,20 @@ class CPerwalian extends Controller
         $request->validate([
             'type' => 'required|string|in:gpa_advising,non_gpa_advising',
             'keluhan' => 'required|string',
+            'semester_id' => 'required_if:type,gpa_advising'
         ]);
 
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
 
         if ($request->type === 'gpa_advising') {
+            $hasSubmitedKhs = Advise::where('student_user_id', $studentUser->id)
+            ->where('type', 'gpa_advising')
+            ->where('semester_id', $request->semester_id)
+            ->exists();
+            if ($hasSubmitedKhs) {
+                return back()->withErrors('Anda sudah melakukan pengajuan Perwalian KHS untuk semester ini. Pengajuan KHS hanya dapat dilakukan 1x per semester.');
+            }
             $studentSemester = collect($dataAuth['data']['student_detail']['student_semester'] ?? [])
                 ->firstWhere('semester_id', $request->semester_id);
 
