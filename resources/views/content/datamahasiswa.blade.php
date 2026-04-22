@@ -57,7 +57,8 @@
                         </thead>
                         <tbody>
                             @foreach ($mahasiswas as $index => $listmahasiswa)
-                                <tr>
+                                <tr style="cursor: pointer;"
+                                    onclick="window.location.href='{{ route('detailmahasiswa') }}'">
                                     <td>{{ $mahasiswas->firstItem() + $index }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">

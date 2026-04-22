@@ -15,7 +15,14 @@ class CHistoryPerwalian extends Controller
         $type = $request->input('type');
         $status = $request->input('status');
         $user = Auth::user();
-        $perwalian = Advise::where('student_user_id', $user->id)
+
+        if ($user->hasRole('student')) {
+            $studentId = $user->id;
+        } else {
+            $studentId = $user->studentParents[0]->student_id;
+        }
+        
+        $perwalian = Advise::where('student_user_id', $studentId)
             ->orderBy('created_at', 'desc')
             ->when($type, function ($query, $type) {
                 $query->where('type', $type);

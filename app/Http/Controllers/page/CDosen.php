@@ -28,7 +28,7 @@ class CDosen extends Controller
         }
 
         $response = DosenHelper::getdosen($token, $loggedUser->major_id, $page, $search, $studyProgramId);
-
+//dd($response);
         $meta = $response['meta'];
 
         $dosens = new LengthAwarePaginator(

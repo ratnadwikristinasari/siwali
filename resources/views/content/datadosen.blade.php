@@ -73,6 +73,7 @@
                                 <th class="text-truncate">No</th>
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIP</th>
+                                
                             </tr>
                         </thead>
                         <tbody>

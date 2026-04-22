@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\CDetailMahasiswa;
 use App\Http\Controllers\CSuperappApi;
 use App\Http\Controllers\history\CHistoryPerwalianDosen;
 use App\Http\Controllers\page\CAllMahasiswa;
@@ -74,6 +75,10 @@ Route::middleware('auth')->group(function () {
         Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
         Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
         Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
+    });
+
+        Route::middleware('role:kajur|kaprodi|lecture')->group(function () {
+        Route::get('detail/mahasiswa{id}', [CDetailMahasiswa::class, 'index'])->name('detailmahasiswa');
     });
 
     Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');

@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CNotifikasi extends Controller
+class CDetailMahasiswa extends Controller
 {
     public function index() {
-        $token = Auth::user()->token;
-        return view('content.notifikasi');
+        $user = Auth::user();
+        
+        return view('content.detailmahasiswa');
     }
      
 }
