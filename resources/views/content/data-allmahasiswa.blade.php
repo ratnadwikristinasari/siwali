@@ -170,7 +170,8 @@
                         </thead>
                         <tbody>
                             @forelse ($mahasiswaall as $index => $allmahasiswa)
-                                <tr>
+                                <tr style="cursor: pointer;"
+                                    onclick="window.location.href='{{ route('detailmahasiswa', $allmahasiswa['id']) }}'">
                                     <td>{{ $mahasiswaall->firstItem() + $index }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
