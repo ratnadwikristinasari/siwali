@@ -59,7 +59,7 @@ class DashboardHelper
             ->whereIn('status', ['done', 'signed'])
             ->count();
     }
-        public static function totalNonPerwalian(?string $studentUserId = null)
+    public static function totalNonPerwalian(?string $studentUserId = null)
     {
         $studentUserId ??= self::getDashboardStudentUser()?->id;
 
@@ -117,17 +117,20 @@ class DashboardHelper
          * Ambil data TERAKHIR per mahasiswa
          */
         $data = $query
-            ->whereIn('id', function ($sub) {
-                $sub->selectRaw('MAX(id)')
+            ->whereIn('advise.id', function ($sub) {
+                $sub->selectRaw('MAX(advise.id)')
                     ->from('advise')
                     ->where('status', 'done')
                     ->where('type', 'gpa_advising')
                     ->whereNotNull('ipk')
                     ->groupBy('student_id');
             })
-            ->orderByDesc('ipk')
+            ->join('users', 'advise.student_user_id', '=', 'users.id')
+            ->orderByDesc('advise.ipk')
+            ->orderBy('users.name', 'asc')
             ->limit(10)
             ->with('student:id,name')
+            ->select('advise.*')
             ->get();
 
         return [

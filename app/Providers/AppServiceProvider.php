@@ -25,15 +25,15 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Blade::if('role', function (string $roles, string $mode = 'any') {
-      if (!Auth::check()) return false;
-      return Auth::user()->matchesRoles($roles, $mode);
-    });
+            if (!Auth::check()) return false;
+            return Auth::user()->matchesRoles($roles, $mode);
+        });
 
-    Blade::if('notrole', function (string $roles, string $mode = 'any') {
-      if (!Auth::check()) return true;
-      return !Auth::user()->matchesRoles($roles, $mode);
-    });
-    View::composer('*', function ($view) {
+        Blade::if('notrole', function (string $roles, string $mode = 'any') {
+            if (!Auth::check()) return true;
+            return !Auth::user()->matchesRoles($roles, $mode);
+        });
+        View::composer('*', function ($view) {
             if (Auth::check()) {
                 $user = Auth::user();
 
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
 
                 // Hitung Pengesahan KHS (Tampil di Pengesahan KHS)
                 // (Sesuaikan filter where-nya jika ada spesifik untuk role/user tertentu)
-                $pendingKHSCount = Advise::where('status', 'signed')
+                $pendingKHSCount = Advise::where('status', 'signed')->where('type', 'gpa_advising')
                     ->count();
 
                 // Passing variabel ke semua view (bisa diakses di file blade sidebar menu)
