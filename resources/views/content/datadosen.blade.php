@@ -73,7 +73,8 @@
                                 <th class="text-truncate">No</th>
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIP</th>
-                                
+                                <th class="text-truncate">Prodi</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -91,7 +92,10 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-truncate">{{ $listdosen['nip'] }}</td>
+                                    <td class="text-truncate">{{ $listdosen['nip'] !== '' ? $listdosen['nip'] : '-' }}</td>
+                                    <td class="text-truncate">
+                                        {{ $listdosen['study_program']['name'] !== '' ? $listdosen['study_program']['name'] : '-' }}
+                                    </td>
                                 @empty
                                     <td colspan="3" class="text-center">Data tidak ditemukan</td>
                                 </tr>
