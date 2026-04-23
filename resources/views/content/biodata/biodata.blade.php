@@ -9,21 +9,21 @@
 
 <div class="row g-4 mb-4">
     {{-- Profile Card --}}
-    <div class="col-xl-4 col-md-5">
+    <div class="col-xl-4">
         <div class="card h-100">
             <div class="card-body text-center pt-5 pb-4">
-                <div class="avatar avatar-xl mx-auto mb-3">
+                <div class="avatar avatar-xl mx-auto mb-0">
                     <div class="avatar-initial bg-label-primary rounded-circle" style="font-size: 2rem;">
                         {{ strtoupper(substr($data['name'], 0, 2)) }}
                     </div>
                 </div>
                 <h5 class="mb-1">{{ $data['name'] }}</h5>
-                <p class="text-muted mb-2">{{ $student['nim'] ?? '-' }}</p>
+                <p class="text-muted mb-0">{{ $student['nim'] ?? '-' }}</p>
                 <span class="badge bg-label-{{ $statusColor }} rounded-pill px-3 py-1 mb-3">
                     {{ $data['status'] }}
                 </span>
 
-                <div class="d-flex justify-content-center gap-3 mt-3">
+                <div class="d-flex justify-content-center gap-4 mt-0">
                     <div class="text-center">
                         <h6 class="mb-0">{{ $student['generation'] ?? '-' }}</h6>
                         <small class="text-muted">Angkatan</small>
@@ -41,11 +41,17 @@
                 </div>
                 <div class="card-footer bg-transparent">
                     <ul class="list-unstyled mb-0">
-                        <li class="d-flex align-items-center gap-2 py-2 border-bottom">
+                        <li class="d-flex align-items-center gap-2 py-0">
                             <i class="bx bx-envelope text-primary"></i>
                             <div>
                                 <small class="text-muted d-block">Email</small>
-                                <span class="fw-medium small">{{ $data['email'] }}</span>
+                                <span class="fw-medium small"></span>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-center gap-2 py-2 border-bottom">
+                            <i class="bx bx-phone text-primary"></i>
+                            <div>
+                                <span class="fw-medium small">{{ $data['email'] ?? '-' }}</span>
                             </div>
                         </li>
                         <li class="d-flex align-items-center gap-2 py-2 border-bottom">
@@ -57,10 +63,10 @@
                         </li>
                         <li class="d-flex align-items-center gap-2 py-2">
                             <i class="bx bx-map text-primary"></i>
-                            <div>
+                            {{-- <div>
                                 <small class="text-muted d-block">Alamat</small>
                                 <span class="fw-medium small">{{ $data['address'] ?? '-' }}</span>
-                            </div>
+                            </div> --}}
                         </li>
                     </ul>
                 </div>
@@ -80,7 +86,7 @@
                 <div class="card h-100">
                     <div class="card-header">
                         <h6 class="mb-0">
-                            <i class="bx bx-book-open me-2 text-primary"></i>Informasi Akademik
+                            <i class="bx bx-book-open me-2 text-primary"></i>INFORMASI AKADEMIK
                         </h6>
                     </div>
                     <div class="card-body">
@@ -115,7 +121,7 @@
                 <div class="card h-100">
                     <div class="card-header">
                         <h6 class="mb-0">
-                            <i class="bx bx-user me-2 text-primary"></i>Informasi Pribadi
+                            <i class="bx bx-user me-2 text-primary"></i>INFORMASI PRIBADI
                         </h6>
                     </div>
                     <div class="card-body">
@@ -148,19 +154,25 @@
                                     style="font-size: 0.7rem;">Kewarganegaraan</small>
                                 <p class="mb-0 fw-medium">{{ ucfirst(strtolower($data['nationality'] ?? '-')) }}</p>
                             </div>
+                            <div class="col-md-6">
+                                <small class="text-muted text-uppercase fw-semibold"
+                                    style="font-size: 0.7rem;">Alamat</small>
+                                <p class="mb-0 fw-medium">{{ $data['address'] ?? '-' }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {{-- Riwayat Semester --}}
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h6 class="mb-0">
-                            <i class="bx bx-calendar me-2 text-primary"></i>Riwayat Semester
-                        </h6>
-                    </div>
+        </div>
+    </div>
+    {{-- Riwayat Semester --}}
+    <div class="col-12">
+        <div class="card overflow-hidden">
+            <div class="row g-2 align-items-center my-3 mx-1">
+                <div class="col-12 col-md">
+                    <h6 class="mb-0">
+                        <i class="bx bx-calendar me-2 text-primary"></i>Riwayat Semester
+                    </h6>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead>
@@ -181,20 +193,25 @@
                                             @if ($sem['is_active'])
                                                 <span class="badge bg-label-success rounded-pill">Aktif</span>
                                             @else
-                                                <span class="badge bg-label-secondary rounded-pill">Tidak Aktif</span>
+                                                <span class="badge bg-label-secondary rounded-pill">Tidak
+                                                    Aktif</span>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted">Belum ada data semester</td>
+                                        <td colspan="4" class="text-center text-muted">Belum ada data
+                                            semester</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>
