@@ -53,7 +53,7 @@ class CPerwalian extends Controller
             );
 
             if ($checkStatusJtiform === false && $request->type === 'gpa_advising') {
-                return back()->withErrors('Anda belum mengisi form Evaluasi Dosen untuk semester ini. Silakan isi form terlebih dahulu sebelum mengajukan perwalian.');
+                return back()->withErrors('Anda belum mengisi <a href="https://project-jti.polije.ac.id/" target="_blank" class="alert-link">Form Evaluasi Dosen</a>  untuk semester ini. Silakan isi Form terlebih dahulu sebelum mengajukan perwalian.');
             } elseif ($checkStatusJtiform === null && $request->type === 'gpa_advising') {
                 return back()->withErrors('Gagal memeriksa status JTIFORM. Silakan coba lagi nanti.');
             }
