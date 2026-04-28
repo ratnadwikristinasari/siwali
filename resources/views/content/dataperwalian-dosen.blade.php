@@ -130,7 +130,7 @@
 
                                     <td>
                                         @if ($historydosenwali->status === 'pending')
-                                            <span class="badge bg-label-warning rounded-pill">Pending</span>
+                                            <span class="badge bg-label-warning rounded-pill">Menunggu Tanda Tangan Dosen Wali</span>
                                         @elseif ($historydosenwali->status === 'signed')
                                             <span class="badge bg-label-info rounded-pill">Menunggu Tanda Tangan
                                                 Kajur</span>

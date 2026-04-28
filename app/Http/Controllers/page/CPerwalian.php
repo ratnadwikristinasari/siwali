@@ -95,24 +95,24 @@ class CPerwalian extends Controller
 
         $wali->load('student', 'lecture');
 
-        $publisher = app(NotificationPublisher::class);
+        // $publisher = app(NotificationPublisher::class);
 
-        $publisher->send([
-            'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
-            'event' => 'advise-submission-to-advisor',
-            'recipient' => [
-                'email' => strtolower($lectureUser->email),
-            ],
-            'channels' => ['email'],
-            'subject' => 'Pengajuan Perwalian Mahasiswa',
-            'data' => [
-                'name' => $lectureUser->name,
-                'studentName' => $wali->student->name ?? '',
-                'gpa' => $wali->ipk ?? '',
-                'complaint' => $wali->keluhan ?? '',
-                'form_url' => route('perwalian.detail', ['id' => $wali->id]),
-            ],
-        ]);
+        // $publisher->send([
+        //     'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
+        //     'event' => 'advise-submission-to-advisor',
+        //     'recipient' => [
+        //         'email' => strtolower($lectureUser->email),
+        //     ],
+        //     'channels' => ['email'],
+        //     'subject' => 'Pengajuan Perwalian Mahasiswa',
+        //     'data' => [
+        //         'name' => $lectureUser->name,
+        //         'studentName' => $wali->student->name ?? '',
+        //         'gpa' => $wali->ipk ?? '',
+        //         'complaint' => $wali->keluhan ?? '',
+        //         'form_url' => route('perwalian.detail', ['id' => $wali->id]),
+        //     ],
+        // ]);
 
         return redirect()
             ->route('dataperwalian')
@@ -238,24 +238,24 @@ class CPerwalian extends Controller
             ],
         ]);
 
-        if (!empty($majorHeadData['data']['head']['email'])) {
-            $publisher->send([
-                'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
-                'event' => 'advise-approved-by-advisor-for-kajur',
-                'recipient' => [
-                    'email' => strtolower($majorHeadData['data']['head']['email'] ?? ''),
-                ],
-                'channels' => ['email'],
-                'subject' => 'Perwalian Disetujui - Menunggu Tanda Tangan Kajur',
-                'data' => [
-                    'name' => $majorHeadData['data']['head']['name'] ?? '',
-                    'student_name' => $perwalian->student->name ?? '',
-                    'student_nim' => explode('@', $perwalian->student->email)[0] ?? '',
-                    'advisor_name' => $authData['name'] ?? '',
-                    'form_url' => route('page.need_sign'),
-                ],
-            ]);
-        }
+        // if (!empty($majorHeadData['data']['head']['email'])) {
+        //     $publisher->send([
+        //         'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
+        //         'event' => 'advise-approved-by-advisor-for-kajur',
+        //         'recipient' => [
+        //             'email' => strtolower($majorHeadData['data']['head']['email'] ?? ''),
+        //         ],
+        //         'channels' => ['email'],
+        //         'subject' => 'Perwalian Disetujui - Menunggu Tanda Tangan Kajur',
+        //         'data' => [
+        //             'name' => $majorHeadData['data']['head']['name'] ?? '',
+        //             'student_name' => $perwalian->student->name ?? '',
+        //             'student_nim' => explode('@', $perwalian->student->email)[0] ?? '',
+        //             'advisor_name' => $authData['name'] ?? '',
+        //             'form_url' => route('page.need_sign'),
+        //         ],
+        //     ]);
+        // }
 
         return redirect()
             ->route('dataperwaliandosen')

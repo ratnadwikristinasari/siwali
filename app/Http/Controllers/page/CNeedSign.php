@@ -142,7 +142,7 @@ class CNeedSign extends Controller
                 'email' => strtolower($advise->student->email),
             ],
             'channels' => ['email'],
-            'subject' => 'Perwalian Disetujui - Tanda Tangan Kajur Telah Diterapkan',
+            'subject' => 'Perwalian Selesai - Tanda Tangan Kajur Telah Diterapkan',
             'data' => [
                 'name' => $advise->student->name ?? '',
                 'advisor_note' => $advise->masukan ?? '',
