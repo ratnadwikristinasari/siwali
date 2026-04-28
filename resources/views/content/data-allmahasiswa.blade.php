@@ -232,7 +232,7 @@
                                             </span>
                                         @elseif ($allmahasiswa['status_perwalian'] === 'pending')
                                             <span class="badge bg-label-warning rounded-pill">
-                                                Pending
+                                                Menunggu Tanda Tangan Dosen Wali
                                             </span>
                                         @elseif ($allmahasiswa['status_perwalian'] === 'signed')
                                             <span class="badge bg-label-info rounded-pill">

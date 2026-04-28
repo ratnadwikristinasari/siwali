@@ -58,7 +58,7 @@
   {{-- STATUS --}}
   <td>
     @if ($historywali->status === 'pending')
-      <span class="badge bg-label-warning rounded-pill">Pending</span>
+      <span class="badge bg-label-warning rounded-pill">Menunggu Tanda Tangan Dosen Wali</span>
     @else
       <span class="badge bg-label-success rounded-pill">Done</span>
     @endif

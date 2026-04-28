@@ -46,7 +46,7 @@
                                     <select class="form-select" name="status" id="status">
                                         <option value="">Semua Status</option>
                                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
-                                            Pending
+                                            Menunggu Tanda Tangan Dosen Wali
                                         </option>
                                         <option value="signed" {{ request('status') == 'signed' ? 'selected' : '' }}>
                                             Menunggu Tanda Tangan Kajur
@@ -107,7 +107,7 @@
                                 </td>
                                 <td>
                                     @if ($historywali->status === 'pending')
-                                        <span class="badge bg-label-warning rounded-pill">Pending</span>
+                                        <span class="badge bg-label-warning rounded-pill">Menunggu Tanda Tangan Dosen Wali</span>
                                     @elseif ($historywali->status === 'signed')
                                         <span class="badge bg-label-info rounded-pill">Menunggu Tanda Tangan
                                             Kajur</span>

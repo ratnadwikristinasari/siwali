@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="p-3 rounded bg-label-info h-100">
-                            <p class="mb-1 text-body">Perwalian Pending</p>
+                            <p class="mb-1 text-body">Proses Perwalian</p>
                             <h4 class="mb-0" id="total-pending">{{ $totalperwalian['totalPending'] ?? 0 }}</h4>
                         </div>
                     </div>

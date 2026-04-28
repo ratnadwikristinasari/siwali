@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
     });
 
-    Route::middleware('role:kajur|kaprodi|lecture')->group(function () {
+    Route::middleware('role:kajur|kaprodi|lecture|sekjur')->group(function () {
         Route::get('detail/mahasiswa/{id}', [CDetailMahasiswa::class, 'index'])->name('detailmahasiswa');
     });
 
