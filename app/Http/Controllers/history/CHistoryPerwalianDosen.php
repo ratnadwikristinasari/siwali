@@ -14,6 +14,7 @@ class CHistoryPerwalianDosen extends Controller
         $search = $request->query('search', '');
         $type = $request->input('type');
         $status = $request->input('status');
+        $sort_ipk = $request->input('sort_ipk');
 
         $user = Auth::user();
         $perwaliandosen = Advise::where('lecture_user_id', $user->id)
@@ -33,7 +34,11 @@ class CHistoryPerwalianDosen extends Controller
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->when($sort_ipk, function ($query, $sort_ipk) {
+                 $query->orderBy('ipk', $sort_ipk);
+                })
             ->orderBy('status', 'desc')
+            ->orderBy('ipk', 'asc')
             ->paginate(10)
             ->withQueryString();
 

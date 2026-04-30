@@ -13,7 +13,7 @@
                 }, 1000);
             });
 
-            $('#type, #status').on('change', function() {
+            $('#type, #status, #sort_ipk').on('change', function() {
                 $('#form-filter').submit();
             });
         });
@@ -64,6 +64,19 @@
                                             </option>
                                             <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>
                                                 Selesai
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="sort_ipk" id="sort_ipk">
+                                            <option value="">Urutkan IPK</option>
+                                            <option value="asc" {{ request('sort_ipk') == 'asc' ? 'selected' : '' }}>
+                                                IPK Terendah ke Tertinggi
+                                            </option>
+                                            <option value="desc" {{ request('sort_ipk') == 'desc' ? 'selected' : '' }}>
+                                                IPK Tertinggi ke Terendah
                                             </option>
                                         </select>
                                     </div>
