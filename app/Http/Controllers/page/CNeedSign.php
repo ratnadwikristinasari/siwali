@@ -41,91 +41,66 @@ class CNeedSign extends Controller
 
     public function sign($id)
     {
+        $this->processSign($id);
+        return redirect()->route('page.need_sign')->with('success', 'Dokumen perwalian telah ditandatangani.');
+    }
+
+    // Fungsi Sign Massal (BARU)
+    public function signBulk(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:Advise,id',
+        ]);
+
+        // Opsional: Perpanjang batas waktu eksekusi jika proses butuh waktu lama
+        set_time_limit(120); 
+
+        foreach ($request->ids as $id) {
+            $this->processSign($id);
+        }
+
+        return redirect()->route('page.need_sign')->with('success', count($request->ids) . ' dokumen perwalian telah ditandatangani.');
+    }
+
+    // Pindahkan semua logika inti dari fungsi sign() lamamu ke sini
+    private function processSign($id)
+    {
         $advise = Advise::with('lecture')->findOrFail($id);
-
         $token = Auth::user()->token;
-        $supervisorData = DosenHelper::getLectureByUserId(
-            $token,
-            $advise->lecture->external_id ?? ''
-        );
 
-        $studentScore = MahasiswaHelper::getStudentScore(
-            $token,
-            $advise->student_id ?? '',
-            $advise->semester_id
-        );
-
-        $majorHeadData = MajorHelper::getById(
-            $token,
-            $advise->lecture->major_id ?? ''
-        );
-
-        $academicYear = SemesterApiHelper::getById(
-            $token,
-            $advise->semester_id ?? ''
-        );
+        $supervisorData = DosenHelper::getLectureByUserId($token, $advise->lecture->external_id ?? '');
+        $studentScore = MahasiswaHelper::getStudentScore($token, $advise->student_id ?? '', $advise->semester_id);
+        $majorHeadData = MajorHelper::getById($token, $advise->lecture->major_id ?? '');
+        $academicYear = SemesterApiHelper::getById($token, $advise->semester_id ?? '');
 
         $data = $studentScore['data'] ?? [];
-
         $filename = 'khs_' . $advise->student->external_id . '_' . $advise->semester . '_' . time() . '.pdf';
 
         FileHelper::deleteFile('khs_files', $advise->khs);
 
-        $eSign = ESignApiHelper::signDocument(
-            $token,
-            $filename,
-            $supervisorData['user']['name'] ?? 'N/A'
-        );
-
-        $eSignMajorHead = ESignApiHelper::signDocument(
-            $token,
-            $filename,
-            $majorHeadData['data']['head']['name'] ?? 'N/A'
-        );
+        $eSign = ESignApiHelper::signDocument($token, $filename, $supervisorData['user']['name'] ?? 'N/A');
+        $eSignMajorHead = ESignApiHelper::signDocument($token, $filename, $majorHeadData['data']['head']['name'] ?? 'N/A');
 
         $lectureName = $supervisorData['user']['name'] ?? 'N/A';
         $lecturerNip = $supervisorData['nip'] ?? 'N/A';
 
         $pdf = Pdf::loadView('content.khs.khs-pdf', compact(
-            'data',
-            'academicYear',
-            'majorHeadData',
-            'lectureName',
-            'lecturerNip',
-            'eSignMajorHead',
-            'eSign',
+            'data', 'academicYear', 'majorHeadData', 'lectureName', 'lecturerNip', 'eSignMajorHead', 'eSign'
         ))->setPaper('a4', 'portrait');
         $pdfContent = $pdf->output();
 
         if (isset($eSign['data']['id'])) {
-            ESignApiHelper::updateDocumentHash(
-                $token,
-                $eSign['data']['id'],
-                hash('sha256', $pdfContent)
-            );
+            ESignApiHelper::updateDocumentHash($token, $eSign['data']['id'], hash('sha256', $pdfContent));
         }
 
-        $signedPdfContent = ESignApiHelper::signPDF(
-            $token,
-            $pdfContent,
-            $lectureName,
-            'Dosen Wali'
-        );
+        $signedPdfContent = ESignApiHelper::signPDF($token, $pdfContent, $lectureName, 'Dosen Wali');
 
         if (isset($eSignMajorHead['data']['id'])) {
-            ESignApiHelper::updateDocumentHash(
-                $token,
-                $eSignMajorHead['data']['id'],
-                hash('sha256', $signedPdfContent)
-            );
+            ESignApiHelper::updateDocumentHash($token, $eSignMajorHead['data']['id'], hash('sha256', $signedPdfContent));
         }
 
-        $fullySignedPdfContent = ESignApiHelper::signPDF(
-            $token,
-            $signedPdfContent,
-            $majorHeadData['data']['head']['name'] ?? 'N/A',
-            'Ketua Jurusan'
-        );
+        $fullySignedPdfContent = ESignApiHelper::signPDF($token, $signedPdfContent, $majorHeadData['data']['head']['name'] ?? 'N/A', 'Ketua Jurusan');
 
         Storage::disk('s3')->put('khs_files/' . $filename, $fullySignedPdfContent);
 
@@ -138,9 +113,7 @@ class CNeedSign extends Controller
         $publisher->send([
             'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
             'event' => 'advise-signed-by-kajur-for-student',
-            'recipient' => [
-                'email' => strtolower($advise->student->email),
-            ],
+            'recipient' => ['email' => strtolower($advise->student->email)],
             'channels' => ['email'],
             'subject' => 'Perwalian Selesai - Tanda Tangan Kajur Telah Diterapkan',
             'data' => [

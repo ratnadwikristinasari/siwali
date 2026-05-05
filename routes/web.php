@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
         Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
         Route::post('need-sign/{id}/sign', [App\Http\Controllers\page\CNeedSign::class, 'sign'])->name('page.need_sign.sign');
+        Route::post('need-sign/bulk-sign', [App\Http\Controllers\page\CNeedSign::class, 'signBulk'])->name('page.need_sign.sign_bulk');
     });
 
     Route::middleware('role:kajur|kaprodi|lecture|sekjur')->group(function () {
