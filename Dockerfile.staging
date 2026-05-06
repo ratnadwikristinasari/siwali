@@ -61,3 +61,8 @@ EXPOSE 8000
 USER www-data
 
 CMD ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=8000", "--workers=auto"]
+
+
+# how to run
+# docker build -t siwali-staging -f Dockerfile.staging .
+# docker run -d --name siwali-staging -p 8003:8000 --restart unless-stopped siwali-staging

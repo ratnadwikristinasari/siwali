@@ -17,6 +17,7 @@
         "league/flysystem-aws-s3-v3": "^3.31",
         "livewire/livewire": "^4.2",
         "predis/predis": "^3.3",
+        "sentry/sentry-laravel": "^4.25",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.4"
     },
     "require-dev": {
