@@ -15,15 +15,15 @@ class OAuthController extends Controller
 {
     public function redirect()
     {
-        return redirect(config('app.super_app_url') . '/oauth/authorize?client_id=' . env('OAUTH_CLIENT_ID') . '&redirect_uri=' . route('auth.callback') . '&response_type=code');
+        return redirect(config('app.super_app_url') . '/oauth/authorize?client_id=' . config('auth.oauth.client_id') . '&redirect_uri=' . config('app.url') . '/auth/callback&response_type=code');
     }
 
     public function callback(Request $request)
     {
-        $response = Http::withoutVerifying()->asForm()->post(config('app.super_app_url') . '/oauth/token', [
+        $response = Http::asForm()->post(config('app.super_app_url_internal') . '/oauth/token', [
             'grant_type' => 'authorization_code',
-            'client_id' => env('OAUTH_CLIENT_ID'),
-            'client_secret' => env('OAUTH_CLIENT_SECRET'),
+            'client_id' => config('auth.oauth.client_id'),
+            'client_secret' => config('auth.oauth.client_secret'),
             'redirect_uri' => route('auth.callback'),
             'code' => $request->code,
         ]);

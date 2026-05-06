@@ -1,0 +1,71 @@
+FROM node:24-alpine AS build-js
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile
+
+COPY . .
+RUN npm run build
+
+FROM dunglas/frankenphp:php8.4-alpine AS php-base
+WORKDIR /app
+
+RUN apk add --no-cache \
+      libpng libzip zlib oniguruma \
+      freetype libjpeg-turbo ca-certificates \
+  && install-php-extensions \
+      pdo_mysql \
+      gd \
+      zip \
+      bcmath \
+      pcntl \
+      redis \
+      curl \
+  && rm -rf /var/cache/apk/*
+
+FROM php-base AS builder
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+COPY . .
+COPY .env.staging .env
+
+RUN composer install \
+      --no-dev \
+      --optimize-autoloader \
+      --no-interaction \
+      --ignore-platform-reqs \
+  && rm -rf /root/.composer/cache
+
+RUN php artisan config:cache \
+  && php artisan route:cache \
+  && php artisan view:cache \
+  && php artisan event:cache
+
+FROM php-base AS final
+WORKDIR /app
+
+RUN cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
+
+RUN mkdir -p /data/caddy /config/caddy storage bootstrap/cache \
+  && chown -R www-data:www-data /data/caddy /config/caddy /app \
+  && chmod -R ug+rw storage bootstrap/cache
+
+COPY --from=builder --chown=www-data:www-data /app /app
+
+COPY --from=build-js --chown=www-data:www-data /app/public/build /app/public/build
+
+EXPOSE 8000
+USER www-data
+
+CMD ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=8000", "--workers=auto"]
+
+
+# how to run
+# docker rm -f siwali-staging siwali-staging-worker
+# docker rmi siwali-staging
+# docker build -t siwali-staging -f Dockerfile.staging .
+# docker run -d --name siwali-staging -p 8003:8000 --restart unless-stopped siwali-staging
+# docker run -d --name siwali-staging-worker --restart unless-stopped siwali-staging php artisan queue:work --sleep=3 --tries=3
