@@ -1,0 +1,33 @@
+# Source control
+.git
+.gitignore
+
+# Composer & NPM dependencies
+# Usually installed inside the Dockerfile during the build
+vendor/
+node_modules/
+
+# Environment and sensitive data
+.env
+# .env.*
+!.env.example
+*.key
+
+# Laravel Logs and Cache
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+storage/framework/testing/*
+
+# Testing and development artifacts
+.phpunit.result.cache
+tests/
+phpunit.xml
+.idea/
+.vscode/
+
+# Docker-related files
+Dockerfile
+docker-compose.yml
+.dockerignore
