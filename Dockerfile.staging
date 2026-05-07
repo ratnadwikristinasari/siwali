@@ -64,6 +64,8 @@ CMD ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=8000", "--
 
 
 # how to run
+# cd siwali
+# git pull
 # docker rm -f siwali-staging siwali-staging-worker
 # docker rmi siwali-staging
 # docker build -t siwali-staging -f Dockerfile.staging .
