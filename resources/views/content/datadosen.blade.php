@@ -20,9 +20,6 @@
         });
     </script>
 @endsection
-@section('vendor-pagination')
-    @vite('resources/views/vendor/pagination/bootstrap-page.blade.php')
-@endsection
 
 @section('content')
     <nav aria-label="breadcrumb">
