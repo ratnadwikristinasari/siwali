@@ -50,7 +50,7 @@ class CNeedSign extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:Advise,id',
+            'ids.*' => 'exists:advise,id',
         ]);
 
         // Opsional: Perpanjang batas waktu eksekusi jika proses butuh waktu lama
