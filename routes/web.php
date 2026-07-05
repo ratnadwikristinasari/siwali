@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
             Route::get('', [CMahasiswa::class, 'index'])->name('datamahasiswa');
             Route::get('history', [CHistoryPerwalianDosen::class, 'index'])->name('dataperwaliandosen');
+            Route::get('preview-gpa/{studentId}/{semesterId}', [CMahasiswa::class, 'previewGPA'])->name('datamahasiswa.preview-gpa');
         });
 
         Route::middleware('role:kajur|kaprodi')->group(function () {

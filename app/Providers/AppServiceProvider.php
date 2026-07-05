@@ -39,20 +39,23 @@ class AppServiceProvider extends ServiceProvider
         });
         View::composer('*', function ($view) {
             if (Auth::check()) {
-                $user = Auth::user();
+                static $counts = null;
 
-                // Hitung Perwalian Pending (Tampil di Perwalian Mahasiswa)
-                $pendingPerwalianCount = Advise::where('lecture_user_id', $user->id)
-                    ->where('status', 'pending')
-                    ->count();
+                if ($counts === null) {
+                    $user = Auth::user();
 
-                // Hitung Pengesahan KHS (Tampil di Pengesahan KHS)
-                // (Sesuaikan filter where-nya jika ada spesifik untuk role/user tertentu)
-                $pendingKHSCount = Advise::where('status', 'signed')->where('type', 'gpa_advising')
-                    ->count();
+                    $counts = [
+                        'pendingPerwalianCount' => Advise::where('lecture_user_id', $user->id)
+                            ->where('status', 'pending')
+                            ->count(),
 
-                // Passing variabel ke semua view (bisa diakses di file blade sidebar menu)
-                $view->with(compact('pendingPerwalianCount', 'pendingKHSCount'));
+                        'pendingKHSCount' => Advise::where('status', 'signed')
+                            ->where('type', 'gpa_advising')
+                            ->count(),
+                    ];
+                }
+
+                $view->with($counts);
             }
         });
     }

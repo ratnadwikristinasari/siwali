@@ -181,6 +181,7 @@
                                     <th>Tahun Akademik</th>
                                     <th>Kelas</th>
                                     <th>Status</th>
+                                    <th>KHS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -197,10 +198,17 @@
                                                     Aktif</span>
                                             @endif
                                         </td>
+                                        <td>
+                                            <a class="btn btn-icon btn-sm btn-outline-primary"
+                                                href="{{ route('datamahasiswa.preview-gpa', ['studentId' => $id, 'semesterId' => $sem['id']]) }}"
+                                                title="Lihat KHS" target="_blank" rel="noopener">
+                                                <i class="ri-file-list-3-line"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted">Belum ada data
+                                        <td colspan="5" class="text-center text-muted">Belum ada data
                                             semester</td>
                                     </tr>
                                 @endforelse
