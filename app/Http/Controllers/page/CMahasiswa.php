@@ -4,9 +4,9 @@ namespace App\Http\Controllers\page;
 
 use App\Helpers\MahasiswaHelper;
 use App\Http\Controllers\Controller;
-use App\Models\Advise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Helpers\AuthHelper;
 use App\Helpers\DosenHelper;
 use App\Helpers\MajorHelper;
@@ -25,7 +25,6 @@ class CMahasiswa extends Controller
         $search = $request->query('search', '');
 
         $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page, $search);
-        //dd($response);
 
         if (!isset($response['data']) || empty($response['data'])) {
             $data = collect();
@@ -37,20 +36,50 @@ class CMahasiswa extends Controller
 
         if ($data->isNotEmpty()) {
             $studentIds = $data->pluck('student_id')->toArray();
+            $semesterIds = $data
+                ->map(function ($mhs) {
+                    return collect($mhs['student_semesters'] ?? [])
+                        ->firstWhere('is_active', true)['semester_id'] ?? null;
+                })
+                ->filter()
+                ->values()
+                ->toArray();
 
-            $advises = Advise::whereIn('student_id', $studentIds)
-                ->where('type', 'gpa_advising')
-                ->select('student_id', 'status', 'created_at')
-                ->orderBy('status', 'desc')
-                ->get()
-                ->groupBy('student_id')
-                ->map(function ($items) {
-                    $first = $items->first();
-                    return $first ? strtolower($first->status) : null;
-                });
+            $advises = collect();
+
+            if (!empty($studentIds) && !empty($semesterIds)) {
+                $studentPlaceholders = implode(',', array_fill(0, count($studentIds), '?'));
+                $semesterPlaceholders = implode(',', array_fill(0, count($semesterIds), '?'));
+
+                $rows = DB::select(
+                    "select student_id, semester_id, status, created_at
+                    from advise
+                    where type = ?
+                    and student_id in ($studentPlaceholders)
+                    and semester_id in ($semesterPlaceholders)
+                    order by created_at desc",
+                    array_merge(['gpa_advising'], $studentIds, $semesterIds)
+                );
+
+                $advises = collect($rows)
+                    ->groupBy(function ($advise) {
+                        return $advise->student_id . '|' . $advise->semester_id;
+                    })
+                    ->map(function ($items) {
+                        $first = $items->first();
+                        return $first ? strtolower($first->status) : null;
+                    });
+            }
 
             $data = $data->map(function ($mhs) use ($advises) {
-                $mhs['status_perwalian'] = $advises[$mhs['student_id']] ?? null;
+                $activeSemesterId = collect($mhs['student_semesters'] ?? [])
+                    ->firstWhere('is_active', true)['semester_id'] ?? null;
+
+                $lookupKey = $mhs['student_id'] . '|' . $activeSemesterId;
+
+                $mhs['status_perwalian'] = $activeSemesterId
+                    ? ($advises[$lookupKey] ?? null)
+                    : null;
                 return $mhs;
             });
         }
