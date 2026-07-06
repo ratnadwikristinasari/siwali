@@ -165,6 +165,17 @@
             </div>
         </div>
     </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h5 class="mb-1">Grafik Perkembangan IPK</h5>
+                <small class="text-muted">Visualisasi IPK per semester</small>
+            </div>
+            <div class="card-body pt-3">
+                <div id="weeklyOverviewChart"></div>
+            </div>
+        </div>
+    </div>
     {{-- Riwayat Semester --}}
     <div class="col-12">
         <div class="card overflow-hidden">
@@ -180,7 +191,8 @@
                                     <th>Semester</th>
                                     <th>Tahun Akademik</th>
                                     <th>Kelas</th>
-                                    <th>Status</th>
+                                    <th>Status Akademik</th>
+                                    <th>Status Perwalian</th>
                                     <th>KHS</th>
                                 </tr>
                             </thead>
@@ -198,6 +210,25 @@
                                                     Naik</span>
                                             @endif
                                         </td>
+                                        {{-- <td>
+                                            @if ($sem['status_perwalian'] === null)
+                                                <span class="badge bg-label-secondary rounded-pill">
+                                                    Belum Perwalian
+                                                </span>
+                                            @elseif ($sem['status_perwalian'] === 'pending')
+                                                <span class="badge bg-label-warning rounded-pill">
+                                                    Menunggu Tanda Tangan Dosen Wali
+                                                </span>
+                                            @elseif ($sem['status_perwalian'] === 'signed')
+                                                <span class="badge bg-label-info rounded-pill">
+                                                    Menunggu Tanda Tangan Kajur
+                                                </span>
+                                            @elseif ($sem['status_perwalian'] === 'done')
+                                                <span class="badge bg-label-success rounded-pill">
+                                                    Selesai
+                                                </span>
+                                            @endif
+                                        </td> --}}
                                         <td>
                                             <a class="btn btn-icon btn-sm btn-outline-primary"
                                                 href="{{ route('datamahasiswa.preview-gpa', ['studentId' => $id, 'semesterId' => $sem['id']]) }}"
@@ -208,7 +239,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted">Belum ada data
+                                        <td colspan="6" class="text-center text-muted">Belum ada data
                                             semester</td>
                                     </tr>
                                 @endforelse

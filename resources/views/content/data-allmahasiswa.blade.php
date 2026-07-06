@@ -77,6 +77,10 @@
             $('#semester_id').on('change', function() {
                 $('#form-filter').submit();
             });
+
+            $('#status_akademik').on('change', function() {
+                $('#form-filter').submit();
+            });
         });
     </script>
 @endsection
@@ -114,19 +118,6 @@
                                 @endrole
                                 <div class="col-12 col-sm-6 col-md-4 col-lg">
                                     <div class="input-group input-group-sm">
-                                        <select class="form-select" name="class" id="class">
-                                            <option value="">Pilih Kelas</option>
-                                            @foreach (App\Helpers\ClassHelper::getClasses() as $class)
-                                                <option value="{{ $class }}"
-                                                    {{ request('class') == $class ? 'selected' : '' }}>
-                                                    {{ $class }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg">
-                                    <div class="input-group input-group-sm">
                                         <select class="form-select" name="session_id" id="session_id">
                                             <option value="">Pilih Tahun Ajaran</option>
                                             @foreach ($sessions as $session)
@@ -142,6 +133,49 @@
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="semester_id" id="semester_id" disabled>
                                             <option value="">Pilih Semester</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="class" id="class">
+                                            <option value="">Pilih Kelas</option>
+                                            @foreach (App\Helpers\ClassHelper::getClasses() as $class)
+                                                <option value="{{ $class }}"
+                                                    {{ request('class') == $class ? 'selected' : '' }}>
+                                                    {{ $class }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="status_akademik" id="status_akademik">
+                                            <option value="">Pilih Status Akademik</option>
+                                            <option value="AKTIF"
+                                                {{ request('status_akademik') == 'AKTIF' ? 'selected' : '' }}>Naik
+                                            </option>
+                                            <option value="CUTI"
+                                                {{ request('status_akademik') == 'CUTI' ? 'selected' : '' }}>Cuti</option>
+                                            <option value="DO"
+                                                {{ request('status_akademik') == 'DO' ? 'selected' : '' }}>Drop Out
+                                            </option>
+                                            <option value="MENGUNDURKAN_DIRI"
+                                                {{ request('status_akademik') == 'MENGUNDURKAN_DIRI' ? 'selected' : '' }}>
+                                                Mengundurkan Diri</option>
+                                            <option value="LULUS"
+                                                {{ request('status_akademik') == 'LULUS' ? 'selected' : '' }}>Lulus
+                                            </option>
+                                            <option value="MENINGGAL"
+                                                {{ request('status_akademik') == 'MENINGGAL' ? 'selected' : '' }}>Meninggal
+                                            </option>
+                                            <option value="STUDENT EXCHANGE"
+                                                {{ request('status_akademik') == 'STUDENT EXCHANGE' ? 'selected' : '' }}>
+                                                Student Exchange</option>
+                                            <option value="TANPA_KETERANGAN"
+                                                {{ request('status_akademik') == 'TANPA_KETERANGAN' ? 'selected' : '' }}>
+                                                Tanpa Keterangan</option>
                                         </select>
                                     </div>
                                 </div>
@@ -247,7 +281,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center">Tidak ada data mahasiswa yang ditemukan.</td>
+                                    <td colspan="6" class="text-center">Tidak ada data mahasiswa yang ditemukan.</td>
                                 </tr>
                             @endforelse
                         </tbody>

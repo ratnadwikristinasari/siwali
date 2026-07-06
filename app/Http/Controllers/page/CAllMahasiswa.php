@@ -20,6 +20,7 @@ class CAllMahasiswa extends Controller
 
         $studyProgramId = $request->query('study_program_id', '');
 
+        $statusAkademikFilter = $request->query('status_akademik', '');
         if ($user->hasRole('kajur')) {
             $studyPrograms = ProdiHelper::getprodi($token, $user->major_id)['data'];
         } else {
@@ -70,6 +71,14 @@ class CAllMahasiswa extends Controller
                 $mhs['status_perwalian'] = $advises[$mhs[$apiStudentKey]] ?? null;
                 return $mhs;
             });
+            if ($statusAkademikFilter !== '') {
+                $data = $data->filter(function ($mhs) use ($statusAkademikFilter) {
+                    if ($statusAkademikFilter === 'TANPA_KETERANGAN') {
+                        return $mhs['status'] === null || $mhs['status'] === 'TANPA KETERANGAN';
+                    }
+                    return $mhs['status'] === $statusAkademikFilter;
+                })->values();
+            }
         }
 
         $mahasiswaall = new LengthAwarePaginator(
