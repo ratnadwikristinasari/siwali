@@ -4,7 +4,9 @@ namespace App\Http\Controllers\page;
 
 use App\Helpers\MahasiswaHelper;
 use App\Http\Controllers\Controller;
+use App\Services\NotificationPublisher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\AuthHelper;
@@ -76,10 +78,19 @@ class CMahasiswa extends Controller
                     ->firstWhere('is_active', true)['semester_id'] ?? null;
 
                 $lookupKey = $mhs['student_id'] . '|' . $activeSemesterId;
+                $reminderKey = $activeSemesterId
+                    ? 'student-reminder:' . $mhs['student_id'] . ':' . $activeSemesterId
+                    : null;
 
-                $mhs['status_perwalian'] = $activeSemesterId
+                $statusPerwalian = $activeSemesterId
                     ? ($advises[$lookupKey] ?? null)
                     : null;
+
+                $mhs['active_semester_id'] = $activeSemesterId;
+                $mhs['status_perwalian'] = $statusPerwalian;
+                $mhs['can_send_reminder'] = $activeSemesterId
+                    && $statusPerwalian === null
+                    && !Cache::has($reminderKey);
                 return $mhs;
             });
         }
@@ -96,6 +107,58 @@ class CMahasiswa extends Controller
         );
 
         return view('content.datamahasiswa', compact('mahasiswas'));
+    }
+
+    public function sendReminder(Request $request, string $studentId, string $semesterId)
+    {
+        $token = Auth::user()->token;
+        $cacheKey = 'student-reminder:' . $studentId . ':' . $semesterId;
+
+        if (!Cache::add($cacheKey, true, now()->addDay())) {
+            return redirect()
+                ->route('datamahasiswa')
+                ->with('error', 'Pengingat untuk mahasiswa ini sudah dikirim hari ini.');
+        }
+
+        try {
+            $studentDetails = MahasiswaHelper::getStudentDetails($token, $studentId);
+            $studentData = $studentDetails['data']['user'] ?? [];
+
+            $email = $studentData['email'] ?? null;
+
+            if (empty($email)) {
+                Cache::forget($cacheKey);
+
+                return redirect()
+                    ->route('datamahasiswa')
+                    ->with('error', 'Email mahasiswa tidak ditemukan.');
+            }
+
+            $publisher = app(NotificationPublisher::class);
+            $publisher->send([
+                'app_env' => config('app.env') == 'production' ? 'production' : 'dev',
+                'event' => 'advise-reminder-for-student',
+                'recipient' => ['email' => strtolower($email)],
+                'channels' => ['email'],
+                'subject' => 'Pengingat Perwalian - Mohon Segera Melakukan Perwalian',
+                'data' => [
+                    'name' => $studentData['name'] ?? '',
+                    'student_nim' => $studentDetails['data']['nim'] ?? '',
+                    'advisor_name' => Auth::user()->name ?? '',
+                    'form_url' => route('form-perwalian'),
+                ],
+            ]);
+        } catch (\Throwable $throwable) {
+            Cache::forget($cacheKey);
+
+            return redirect()
+                ->route('datamahasiswa')
+                ->with('error', 'Gagal mengirim pengingat. Silakan coba lagi.');
+        }
+
+        return redirect()
+            ->route('datamahasiswa')
+            ->with('success', 'Pengingat perwalian berhasil dikirim.');
     }
 
     public function previewGPA($studentId, $semesterId)

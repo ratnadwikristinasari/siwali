@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
             Route::get('', [CMahasiswa::class, 'index'])->name('datamahasiswa');
+            Route::post('{studentId}/reminder/{semesterId}', [CMahasiswa::class, 'sendReminder'])->name('datamahasiswa.reminder');
             Route::get('history', [CHistoryPerwalianDosen::class, 'index'])->name('dataperwaliandosen');
             Route::get('preview-gpa/{studentId}/{semesterId}', [CMahasiswa::class, 'previewGPA'])->name('datamahasiswa.preview-gpa');
         });
