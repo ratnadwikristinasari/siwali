@@ -69,7 +69,7 @@
                             <label for="ipk" id="label-ipk">IPK Semester</label>
                             <div class="mb-3">
                                 <input type="text" id="ipk" class="form-control" name="ipk" placeholder="IPK"
-                                    readonly />
+                                    readonly disabled />
                             </div>
                         </div>
 

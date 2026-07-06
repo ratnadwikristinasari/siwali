@@ -80,7 +80,7 @@
                                             </span>
                                         @elseif ($listmahasiswa['status'] === 'AKTIF')
                                             <span class="badge bg-label-success rounded-pill">
-                                                Aktif
+                                                Naik
                                             </span>
                                         @elseif ($listmahasiswa['status'] === 'CUTI')
                                             <span class="badge bg-label-warning rounded-pill">

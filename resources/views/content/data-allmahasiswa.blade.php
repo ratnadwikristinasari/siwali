@@ -193,7 +193,7 @@
                                             </span>
                                         @elseif ($allmahasiswa['status'] === 'AKTIF')
                                             <span class="badge bg-label-success rounded-pill">
-                                                Aktif
+                                                Naik
                                             </span>
                                         @elseif ($allmahasiswa['status'] === 'CUTI')
                                             <span class="badge bg-label-warning rounded-pill">

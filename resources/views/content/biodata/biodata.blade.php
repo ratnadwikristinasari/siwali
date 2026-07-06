@@ -194,8 +194,8 @@
                                             @if ($sem['is_active'])
                                                 <span class="badge bg-label-success rounded-pill">Aktif</span>
                                             @else
-                                                <span class="badge bg-label-secondary rounded-pill">Tidak
-                                                    Aktif</span>
+                                                <span class="badge bg-label-secondary rounded-pill">
+                                                    Naik</span>
                                             @endif
                                         </td>
                                         <td>
