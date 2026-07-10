@@ -13,6 +13,7 @@ use App\Helpers\AuthHelper;
 use App\Helpers\DosenHelper;
 use App\Helpers\MajorHelper;
 use App\Helpers\SemesterApiHelper;
+use App\Helpers\SessionApiHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
@@ -23,10 +24,26 @@ class CMahasiswa extends Controller
 
         $token = Auth::user()->token;
         $majorId = Auth::user()->major_id;
-        $page = $request->query('page', 1);
+        $page = (int) $request->query('page', 1);
         $search = $request->query('search', '');
+        $selectedSessionId = $request->query('session_id', '');
+        $selectedSemesterId = $request->query('semester_id', $request->query('semester', ''));
+        $statusAkademikFilter = $request->query('status_akademik', '');
+        $statusPerwalianFilter = strtolower($request->query('status_perwalian', ''));
 
-        $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page, $search);
+        $statusAkademikApi = $statusAkademikFilter === 'TANPA_KETERANGAN'
+            ? 'TANPA KETERANGAN'
+            : $statusAkademikFilter;
+
+        $response = MahasiswaHelper::getMahasiswa(
+            $token,
+            $majorId,
+            $page,
+            $search,
+            $selectedSessionId,
+            $selectedSemesterId,
+            $statusAkademikApi
+        );
 
         if (!isset($response['data']) || empty($response['data'])) {
             $data = collect();
@@ -38,12 +55,36 @@ class CMahasiswa extends Controller
 
         if ($data->isNotEmpty()) {
             $studentIds = $data->pluck('student_id')->toArray();
-            $semesterIds = $data
-                ->map(function ($mhs) {
-                    return collect($mhs['student_semesters'] ?? [])
-                        ->firstWhere('is_active', true)['semester_id'] ?? null;
-                })
+            $studentSemesterMap = $data->mapWithKeys(function ($mhs) use ($selectedSemesterId, $selectedSessionId) {
+                $studentSemesters = collect($mhs['student_semesters'] ?? []);
+
+                if (!empty($selectedSemesterId)) {
+                    return [$mhs['student_id'] => $selectedSemesterId];
+                }
+
+                if (!empty($selectedSessionId)) {
+                    $sessionSemester = $studentSemesters->first(function ($semester) use ($selectedSessionId) {
+                        return (string) ($semester['session_id'] ?? '') === (string) $selectedSessionId
+                            && ($semester['is_active'] ?? false);
+                    });
+
+                    if (empty($sessionSemester)) {
+                        $sessionSemester = $studentSemesters->first(function ($semester) use ($selectedSessionId) {
+                            return (string) ($semester['session_id'] ?? '') === (string) $selectedSessionId;
+                        });
+                    }
+
+                    return [$mhs['student_id'] => $sessionSemester['semester_id'] ?? null];
+                }
+
+                return [
+                    $mhs['student_id'] => $studentSemesters->firstWhere('is_active', true)['semester_id'] ?? null,
+                ];
+            });
+
+            $semesterIds = $studentSemesterMap
                 ->filter()
+                ->unique()
                 ->values()
                 ->toArray();
 
@@ -73,9 +114,8 @@ class CMahasiswa extends Controller
                     });
             }
 
-            $data = $data->map(function ($mhs) use ($advises) {
-                $activeSemesterId = collect($mhs['student_semesters'] ?? [])
-                    ->firstWhere('is_active', true)['semester_id'] ?? null;
+            $data = $data->map(function ($mhs) use ($advises, $studentSemesterMap) {
+                $activeSemesterId = $studentSemesterMap[$mhs['student_id']] ?? null;
 
                 $lookupKey = $mhs['student_id'] . '|' . $activeSemesterId;
                 $reminderKey = $activeSemesterId
@@ -93,6 +133,22 @@ class CMahasiswa extends Controller
                     && !Cache::has($reminderKey);
                 return $mhs;
             });
+
+            if ($statusPerwalianFilter !== '') {
+                $data = $data->filter(function ($mhs) use ($statusPerwalianFilter) {
+                    $statusPerwalian = strtolower($mhs['status_perwalian'] ?? '');
+
+                    if ($statusPerwalianFilter === 'belum') {
+                        return $statusPerwalian === '';
+                    }
+
+                    return $statusPerwalian === $statusPerwalianFilter;
+                })->values();
+            }
+        }
+
+        if ($statusPerwalianFilter !== '') {
+            $meta['total'] = count($data);
         }
 
         $mahasiswas = new \Illuminate\Pagination\LengthAwarePaginator(
@@ -106,7 +162,9 @@ class CMahasiswa extends Controller
             ]
         );
 
-        return view('content.datamahasiswa', compact('mahasiswas'));
+        $sessions = SessionApiHelper::getAsOptions($token);
+
+        return view('content.datamahasiswa', compact('mahasiswas', 'sessions'));
     }
 
     public function sendReminder(Request $request, string $studentId, string $semesterId)

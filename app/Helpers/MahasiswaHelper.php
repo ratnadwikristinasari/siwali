@@ -6,11 +6,21 @@ use Illuminate\Support\Facades\Http;
 
 class MahasiswaHelper
 {
-    public static function getMahasiswa(string $token, ?string $majorId = null, ?int $page = 1, ?string $search = ''): array
-    {
+    public static function getMahasiswa(
+        string $token,
+        ?string $majorId = null,
+        ?int $page = 1,
+        ?string $search = '',
+        ?string $sessionId = null,
+        ?string $semesterId = null,
+        ?string $status = null
+    ): array {
         $queryParams = [
             'search' => $search,
             'major_id' => $majorId,
+            'session_id' => $sessionId,
+            'semester_id' => $semesterId,
+            'status' => $status,
             'page' => $page
         ];
         $response = Http::withoutVerifying()->withHeaders([
@@ -107,6 +117,17 @@ class MahasiswaHelper
     {
         $response = GlobalHelper::requestWithToken(
             '/students/' . $studentId,
+            $token,
+            'GET'
+        );
+
+        return $response->json();
+    }
+
+    public static function getStudentGpa(string $token, string $studentId): array
+    {
+        $response = GlobalHelper::requestWithToken(
+            '/grades/gpa/' . $studentId,
             $token,
             'GET'
         );

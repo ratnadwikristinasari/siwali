@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Advise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CAllMahasiswa extends Controller
@@ -45,6 +46,7 @@ class CAllMahasiswa extends Controller
         ];
 
         $response = MahasiswaHelper::getAllStudents($token, $queryParams);
+        // dd($response);
         $data = collect($response['data'] ?? []);
         $meta = $response['meta'] ?? [
             'total' => count($data),
@@ -55,8 +57,9 @@ class CAllMahasiswa extends Controller
         if ($data->isNotEmpty()) {
             $apiStudentKey = 'id';
             $studentIds = $data->pluck($apiStudentKey)->toArray();
+            $selectedSemesterId = $request->query('semester_id', $request->query('semester', ''));
 
-            $advises = Advise::whereIn('student_id', $studentIds)
+            $advises = Advise::whereIn('student_id', $studentIds, 'and', false)
                 ->where('type', 'gpa_advising')
                 ->select('student_id', 'status', 'created_at')
                 ->orderBy('status', 'desc')
@@ -67,10 +70,32 @@ class CAllMahasiswa extends Controller
                     return $first ? strtolower($first->status) : null;
                 });
 
-            $data = $data->map(function ($mhs) use ($advises, $apiStudentKey) {
+            $data = $data->map(function ($mhs) use ($advises, $apiStudentKey, $selectedSemesterId) {
+                $activeSemesterId = $selectedSemesterId;
+                // dd($activeSemesterId);
+
+                if (empty($activeSemesterId)) {
+                    $activeSemesterId = collect($mhs['student_semesters'] ?? [])
+                        ->firstWhere('is_active', true)['semester_id'] ?? null;
+                }
+
                 $mhs['status_perwalian'] = $advises[$mhs[$apiStudentKey]] ?? null;
+
+                $reminderKey = $activeSemesterId
+                    ? 'student-reminder:' . $mhs[$apiStudentKey] . ':' . $activeSemesterId
+                    : null;
+
+                $mhs['active_semester_id'] = $activeSemesterId;
+                $mhs['can_send_reminder'] = $activeSemesterId
+                    && $mhs['status_perwalian'] === null
+                    && !Cache::has($reminderKey);
+
+                $mhs['phone_number'] = $mhs['phone_number']
+                    ?? ($mhs['phone'] ?? ($mhs['mobile_phone'] ?? ($mhs['user']['phone_number'] ?? null)));
+
                 return $mhs;
             });
+            // dd($data);
             if ($statusAkademikFilter !== '') {
                 $data = $data->filter(function ($mhs) use ($statusAkademikFilter) {
                     if ($statusAkademikFilter === 'TANPA_KETERANGAN') {

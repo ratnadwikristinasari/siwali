@@ -28,6 +28,8 @@ class CDetailMahasiswa extends Controller
         $semesters = collect($rawData['semesters'] ?? []);
         $lastSemester = $semesters->sortByDesc(fn($s) => $s['year'] * 10 + $s['semester'])->first();
 
+        $gpa = MahasiswaHelper::getStudentGpa($userToken, $id);
+
         $userData = [
             'message' => $raw['message'],
             'data' => [
@@ -79,6 +81,6 @@ class CDetailMahasiswa extends Controller
             ]);
         }
 
-        return view('content.detailmahasiswa', compact('userData', 'perwalian', 'id'));
+        return view('content.detailmahasiswa', compact('userData', 'perwalian', 'id', 'gpa'));
     }
 }

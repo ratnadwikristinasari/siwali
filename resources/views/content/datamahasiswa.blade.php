@@ -5,12 +5,84 @@
 @section('page-script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let initialSessionId = '{{ request('session_id') }}';
+            let initialSemesterId = '{{ request('semester_id') }}';
+
+            if (initialSessionId) {
+                $.ajax({
+                    url: '{{ route('api.semester.option') }}',
+                    method: 'GET',
+                    data: {
+                        session_id: initialSessionId
+                    },
+                    success: function(response) {
+                        let semesterSelect = $('#semester_id');
+                        semesterSelect.empty();
+                        semesterSelect.append('<option value="">Pilih Semester</option>');
+                        response.data.forEach(function(semester) {
+                            let selected = (semester.value == initialSemesterId) ? 'selected' :
+                                '';
+                            semesterSelect.append('<option value="' + semester.value + '" ' +
+                                selected + '>' +
+                                semester.label + '</option>');
+                        });
+                        semesterSelect.prop('disabled', false);
+                    }
+                });
+            }
+
             $('#search').on('keyup', function() {
                 let debounceTimer;
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(function() {
                     $('#form-filter').submit();
                 }, 1000);
+            });
+
+            $('#session_id').on('change', function() {
+                let sessionId = $(this).val();
+
+                if (sessionId) {
+                    $.ajax({
+                        url: '{{ route('api.semester.option') }}',
+                        method: 'GET',
+                        data: {
+                            session_id: sessionId
+                        },
+                        success: function(response) {
+                            let semesterSelect = $('#semester_id');
+                            semesterSelect.empty();
+                            semesterSelect.append('<option value="">Pilih Semester</option>');
+                            response.data.forEach(function(semester) {
+                                semesterSelect.append('<option value="' + semester
+                                    .value + '">' + semester
+                                    .label + '</option>');
+                            });
+                            semesterSelect.prop('disabled', false);
+                            $('#form-filter').submit();
+                        },
+                        error: function() {
+                            alert('Gagal mengambil data semester');
+                        }
+                    });
+                } else {
+                    $('#semester_id').empty().append('<option value="">Pilih Semester</option>').prop(
+                        'disabled',
+                        true);
+                    $('#form-filter').submit();
+                }
+            });
+
+            $('#semester_id').on('change', function() {
+                $('#form-filter').submit();
+            });
+
+            $('#status_akademik').on('change', function() {
+                $('#form-filter').submit();
+            });
+
+            $('#status_perwalian').on('change', function() {
+                $('#form-filter').submit();
             });
 
             const whatsappModalElement = document.getElementById('whatsappTemplateModal');
@@ -127,6 +199,78 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('datamahasiswa') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="session_id" id="session_id">
+                                            <option value="">Pilih Tahun Ajaran</option>
+                                            @foreach ($sessions as $session)
+                                                <option value="{{ $session['value'] }}"
+                                                    {{ request('session_id') == $session['value'] ? 'selected' : '' }}>
+                                                    {{ $session['label'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="semester_id" id="semester_id" disabled>
+                                            <option value="">Pilih Semester</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="status_akademik" id="status_akademik">
+                                            <option value="">Pilih Status Akademik</option>
+                                            <option value="AKTIF"
+                                                {{ request('status_akademik') == 'AKTIF' ? 'selected' : '' }}>Naik
+                                            </option>
+                                            <option value="CUTI"
+                                                {{ request('status_akademik') == 'CUTI' ? 'selected' : '' }}>Cuti</option>
+                                            <option value="DO"
+                                                {{ request('status_akademik') == 'DO' ? 'selected' : '' }}>Drop Out
+                                            </option>
+                                            <option value="MENGUNDURKAN_DIRI"
+                                                {{ request('status_akademik') == 'MENGUNDURKAN_DIRI' ? 'selected' : '' }}>
+                                                Mengundurkan Diri</option>
+                                            <option value="LULUS"
+                                                {{ request('status_akademik') == 'LULUS' ? 'selected' : '' }}>Lulus
+                                            </option>
+                                            <option value="MENINGGAL"
+                                                {{ request('status_akademik') == 'MENINGGAL' ? 'selected' : '' }}>Meninggal
+                                            </option>
+                                            <option value="STUDENT EXCHANGE"
+                                                {{ request('status_akademik') == 'STUDENT EXCHANGE' ? 'selected' : '' }}>
+                                                Student Exchange</option>
+                                            <option value="TANPA_KETERANGAN"
+                                                {{ request('status_akademik') == 'TANPA_KETERANGAN' ? 'selected' : '' }}>
+                                                Tanpa Keterangan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="status_perwalian" id="status_perwalian">
+                                            <option value="">Pilih Status Perwalian</option>
+                                            <option value="belum"
+                                                {{ request('status_perwalian') == 'belum' ? 'selected' : '' }}>Belum
+                                                Perwalian
+                                            </option>
+                                            <option value="pending"
+                                                {{ request('status_perwalian') == 'pending' ? 'selected' : '' }}>Menunggu
+                                                Tanda
+                                                Tangan Dosen Wali</option>
+                                            <option value="signed"
+                                                {{ request('status_perwalian') == 'signed' ? 'selected' : '' }}>Menunggu
+                                                Tanda
+                                                Tangan Kajur</option>
+                                            <option value="done"
+                                                {{ request('status_perwalian') == 'done' ? 'selected' : '' }}>Selesai
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari berdasarkan nama"
@@ -260,7 +404,8 @@
                                             @endphp
                                             <button type="button"
                                                 class="btn btn-sm {{ !empty($rawPhone) ? 'btn-outline-success' : 'btn-outline-secondary' }} btn-open-whatsapp-template"
-                                                data-phone="{{ $rawPhone }}" data-name="{{ $listmahasiswa['name'] }}"
+                                                data-phone="{{ $rawPhone }}"
+                                                data-name="{{ $listmahasiswa['name'] }}"
                                                 data-nim="{{ $listmahasiswa['nim'] }}"
                                                 {{ !empty($rawPhone) ? '' : 'disabled' }}
                                                 title="{{ !empty($rawPhone) ? 'Kirim WhatsApp' : 'Nomor WhatsApp tidak tersedia' }}"
