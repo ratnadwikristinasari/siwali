@@ -129,10 +129,10 @@
                                 // 1. Tampilkan IPK jika KHS
                                 if (selectedType === 'gpa_advising') {
                                     ipkContainer.style.display = 'block';
-                                    ipkInput.disabled = false;
+                                    ipkInput.disabled.readonly = false;
                                 } else {
                                     ipkContainer.style.display = 'none';
-                                    ipkInput.disabled = true;
+                                    ipkInput.disabled. readonly = true;
                                 }
 
                                 // 2. Perbarui status disable di dropdown semester
