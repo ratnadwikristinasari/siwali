@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Helpers\DashboardHelper;
+use App\Helpers\MahasiswaHelper;
 use App\Helpers\ProdiHelper;
 use App\Helpers\SemesterApiHelper;
 use App\Helpers\SessionApiHelper;
@@ -31,8 +32,9 @@ class CDashboard extends Controller
         // Default kosong untuk role selain dashboard yang aktif agar beban query ringan.
         $rataIPK = 0;
         $totalwali = 0;
-        $semesterLabels = [];
-        $valueipk = [];
+        // $semesterLabels = [];
+        // $valueipk = [];
+        $gpa = null;
         $totalperwalian = [
             'totalMahasiswa' => 0,
             'totalBelum' => 0,
@@ -109,19 +111,21 @@ class CDashboard extends Controller
         if ($user->hasAnyRole(['student', 'orang_tua'])) {
             $dashboardStudent = DashboardHelper::getDashboardStudentUser();
             $dashboardStudentName = $dashboardStudent?->name;
-            $chart = DashboardHelper::grafikIpkPerSemester($dashboardStudent?->id);
+            // $chart = DashboardHelper::grafikIpkPerSemester($dashboardStudent?->id);
             $rataIPK = DashboardHelper::rataIpkMahasiswa($dashboardStudent?->id);
             $totalwali = DashboardHelper::totalPerwalian($dashboardStudent?->id);
             $totalNonPerwalian = DashboardHelper::totalNonPerwalian($dashboardStudent?->id);
-            $semesterLabels = $chart->pluck('semester')->values()->all();
-            $valueipk = $chart->pluck('ipk')->values()->all();
+            // $semesterLabels = $chart->pluck('semester')->values()->all();
+            // $valueipk = $chart->pluck('ipk')->values()->all();
+
+            $gpa = MahasiswaHelper::getStudentGpa($token, $dashboardStudent?->student_employee_id);
         }
 
         return view('content.dashboard.dashboard-main', compact(
             'rataIPK',
             'totalwali',
-            'semesterLabels',
-            'valueipk',
+            // 'semesterLabels',
+            // 'valueipk',
             'totalperwalian',
             'totalNonPerwalian',
             'ipkTopData',
@@ -131,7 +135,8 @@ class CDashboard extends Controller
             'prodiList',
             'analytics',
             'analyticsSummary',
-            'dashboardStudentName'
+            'dashboardStudentName',
+            'gpa'
 
         ));
     }

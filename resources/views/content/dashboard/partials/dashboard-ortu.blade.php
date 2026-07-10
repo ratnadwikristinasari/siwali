@@ -6,7 +6,8 @@
                     <div class="row align-items-center g-4">
                         <div class="col-12 col-md-8">
                             <p class="text-muted mb-1">Dashboard Orang Tua</p>
-                            <h4 class="mb-2 text-wrap">SELAMAT DATANG, ORANG TUA {{ $dashboardStudentName ?? 'mahasiswa' }}. </h4>
+                            <h4 class="mb-2 text-wrap">SELAMAT DATANG, ORANG TUA {{ $dashboardStudentName ?? 'mahasiswa' }}.
+                            </h4>
                             <p class="mb-3 text-muted">Berikut adalah ringkasan akademik dari anak Anda.</p>
                             <div class="d-flex flex-wrap align-items-end gap-3">
                                 <div>
@@ -90,10 +91,10 @@
         </style>
     @endpush
 
-    <script>
+    {{-- <script>
         window.weeklyOverviewData = {
             semester: @json($semesterLabels),
             ipk: @json($valueipk)
         };
-    </script>
+    </script> --}}
 @endsection

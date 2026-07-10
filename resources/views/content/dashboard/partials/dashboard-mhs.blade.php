@@ -26,7 +26,7 @@
             </div>
         </div>
 
-<div class="col-12 col-xl-4">
+        <div class="col-12 col-xl-4">
             <div class="card h-100">
                 <div class="card-body p-4">
                     <p class="text-muted mb-2">Total Perwalian KHS</p>
@@ -73,8 +73,8 @@
     @push('page-style')
         <style>
             /* .student-hero-card {
-                                background: linear-gradient(130deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.05));
-                            } */
+                                                                background: linear-gradient(130deg, rgba(13, 110, 253, 0.08), rgba(25, 135, 84, 0.05));
+                                                            } */
 
             .student-hero-image {
                 width: 92px;
@@ -94,10 +94,10 @@
         </style>
     @endpush
 
-    <script>
+    {{-- <script>
         window.weeklyOverviewData = {
             semester: @json($semesterLabels),
             ipk: @json($valueipk)
         };
-    </script>
+    </script> --}}
 @endsection

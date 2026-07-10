@@ -11,7 +11,13 @@
     @endsection
 
     @section('page-script')
-        @vite('resources/assets/js/dashboards-analytics.js')
+        <script>
+            window.weeklyOverviewData = {
+                semester: @json(collect($gpa['data'] ?? [])->pluck('semester')->map(fn($semester) => 'Semester ' . $semester)->values()),
+                ipk: @json(collect($gpa['data'] ?? [])->pluck('gpa')->map(fn($ipk) => (float) $ipk)->values())
+            };
+        </script>
+        @vite('resources/assets/js/detailmahasiswa-gpa-chart.js')
     @endsection
 
     {{-- setelah ini baru load dashboard.js --}}
