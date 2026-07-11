@@ -35,9 +35,9 @@ class CPerwalian extends Controller
 
         if ($request->type === 'gpa_advising') {
             $hasSubmitedKhs = Advise::where('student_user_id', $studentUser->id)
-            ->where('type', 'gpa_advising')
-            ->where('semester_id', $request->semester_id)
-            ->exists();
+                ->where('type', 'gpa_advising')
+                ->where('semester_id', $request->semester_id)
+                ->exists();
             if ($hasSubmitedKhs) {
                 return back()->withErrors('Anda sudah melakukan pengajuan Perwalian KHS untuk semester ini. Pengajuan KHS hanya dapat dilakukan 1x per semester.');
             }
@@ -85,7 +85,7 @@ class CPerwalian extends Controller
             'lecture_user_id' => $lectureUser->id,
             'student_id' => $dataAuth['data']['student_detail']['id'],
             'lecture_id' => $employeeId,
-            'status' => empty($request->masukan) ? 'Pending' : 'Done',
+            'status' => empty($request->masukan) ? 'pending' : 'done',
             'semester' => $request->semester ?? null,
             'ipk' => $request->ipk,
             'keluhan' => $request->keluhan,
@@ -138,6 +138,8 @@ class CPerwalian extends Controller
 
     public function update(Request $request, $id)
     {
+        //Todo: move this to queue job to avoid timeout error when signing pdf
+        set_time_limit(300); // Set time limit to 5 minutes
         $request->validate([
             'masukan' => 'required|string',
         ]);

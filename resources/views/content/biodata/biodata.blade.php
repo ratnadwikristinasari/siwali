@@ -192,7 +192,7 @@
                                     <th>Tahun Akademik</th>
                                     <th>Kelas</th>
                                     <th>Status Akademik</th>
-                                    <th>Status Perwalian</th>
+                                    {{-- <th>Status Perwalian</th> --}}
                                     <th>KHS</th>
                                 </tr>
                             </thead>
@@ -230,9 +230,28 @@
                                             @endif
                                         </td> --}}
                                         <td>
+                                            @php
+                                                $routeGpa = '#';
+                                                if (Auth::user()->hasRole('lecturer')) {
+                                                    $routeGpa = route('datamahasiswa.preview-gpa', [
+                                                        'studentId' => $id,
+                                                        'semesterId' => $sem['id'],
+                                                    ]);
+                                                } elseif (Auth::user()->hasRole('student')) {
+                                                    $routeGpa = route('biodata.preview-gpa', [
+                                                        'studentId' => $id,
+                                                        'semesterId' => $sem['semester_id'],
+                                                    ]);
+                                                } elseif (Auth::user()->hasRole('orang_tua')) {
+                                                    $routeGpa = route('biodata.preview-gpa', [
+                                                        'studentId' => $id,
+                                                        'semesterId' => $sem['id'],
+                                                    ]);
+                                                }
+                                            @endphp
                                             <a class="btn btn-icon btn-sm btn-outline-primary"
-                                                href="{{ route('datamahasiswa.preview-gpa', ['studentId' => $id, 'semesterId' => $sem['id']]) }}"
-                                                title="Lihat KHS" target="_blank" rel="noopener">
+                                                href="{{ $routeGpa }}" title="Lihat KHS" target="_blank"
+                                                rel="noopener">
                                                 <i class="ri-file-list-3-line"></i>
                                             </a>
                                         </td>

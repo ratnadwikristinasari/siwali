@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Models\Advise;
 use App\Models\StudentParent;
 use App\Models\User;
-use Illuminate\Support\Collection;
+// use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardHelper
@@ -172,62 +172,62 @@ class DashboardHelper
     }
 
 
-    public static function grafikIpkPerSemester(?string $studentUserId = null): Collection
-    {
-        $studentUserId ??= self::getDashboardStudentUser()?->id;
+    // public static function grafikIpkPerSemester(?string $studentUserId = null): Collection
+    // {
+    //     $studentUserId ??= self::getDashboardStudentUser()?->id;
 
-        if (empty($studentUserId)) {
-            return collect([]);
-        }
+    //     if (empty($studentUserId)) {
+    //         return collect([]);
+    //     }
 
-        return Advise::where('student_user_id', $studentUserId)
-            ->where('type', 'gpa_advising')
-            ->whereIn('status', ['done', 'signed'])
-            ->whereNotNull('ipk')
-            ->whereNotNull('semester')
-            ->orderBy('semester')
-            ->get(['semester', 'ipk'])
-            ->groupBy('semester')
-            ->map(function ($items, $semester) {
-                $latest = $items->last();
-                return [
-                    'semester' => 'Semester ' . $semester,
-                    'ipk' => min(max(round((float) ($latest->ipk ?? 0), 2), 0), 4),
-                ];
-            })
-            ->values();
-    }
+    //     return Advise::where('student_user_id', $studentUserId)
+    //         ->where('type', 'gpa_advising')
+    //         ->whereIn('status', ['done', 'signed'])
+    //         ->whereNotNull('ipk')
+    //         ->whereNotNull('semester')
+    //         ->orderBy('semester')
+    //         ->get(['semester', 'ipk'])
+    //         ->groupBy('semester')
+    //         ->map(function ($items, $semester) {
+    //             $latest = $items->last();
+    //             return [
+    //                 'semester' => 'Semester ' . $semester,
+    //                 'ipk' => min(max(round((float) ($latest->ipk ?? 0), 2), 0), 4),
+    //             ];
+    //         })
+    //         ->values();
+    // }
     //DASHBOARD DOSEN
 
-    public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
-    {
-        $page = 1;
-        $allData = collect();
+    // public static function getAllMahasiswaWali(string $token, ?string $majorId = null)
+    // {
+    //     $page = 1;
+    //     $allData = collect();
 
-        do {
-            $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page);
+    //     do {
+    //         $response = MahasiswaHelper::getMahasiswa($token, $majorId, $page);
 
-            if (empty($response['data'])) {
-                break;
-            }
+    //         if (empty($response['data'])) {
+    //             break;
+    //         }
 
-            $allData = $allData->merge($response['data']);
+    //         $allData = $allData->merge($response['data']);
 
-            $meta = $response['meta'] ?? [];
+    //         $meta = $response['meta'] ?? [];
 
-            if (isset($meta['last_page'])) {
-                $lastPage = $meta['last_page'];
-            } elseif (isset($meta['total'], $meta['per_page'])) {
-                $lastPage = (int) ceil($meta['total'] / $meta['per_page']);
-            } else {
-                $lastPage = $page;
-            }
+    //         if (isset($meta['last_page'])) {
+    //             $lastPage = $meta['last_page'];
+    //         } elseif (isset($meta['total'], $meta['per_page'])) {
+    //             $lastPage = (int) ceil($meta['total'] / $meta['per_page']);
+    //         } else {
+    //             $lastPage = $page;
+    //         }
 
-            $page++;
-        } while ($page <= $lastPage);
+    //         $page++;
+    //     } while ($page <= $lastPage);
 
-        return $allData;
-    }
+    //     return $allData;
+    // }
 
 
     public static function totalPerwalianMahasiswa(?string $semesterId = null): array

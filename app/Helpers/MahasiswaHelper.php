@@ -23,11 +23,11 @@ class MahasiswaHelper
             'status' => $status,
             'page' => $page
         ];
-        $response = Http::withoutVerifying()->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])
-            ->withQueryParameters($queryParams)
-            ->get(config('app.super_app_url') . '/supervisor-lectures/by-lecture');
+        // $response = Http::withoutVerifying()->withHeaders([
+        //     'Authorization' => 'Bearer ' . $token,
+        // ])
+        //     ->withQueryParameters($queryParams)
+        //     ->get(config('app.super_app_url') . '/supervisor-lectures/by-lecture');
 
         $response = GlobalHelper::requestWithToken(
             '/supervisor-lectures/by-lecture',

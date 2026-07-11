@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 
 class GlobalHelper
 {
-    public static function requestWithToken($url, $token, $method = 'GET', $data = [], $queryParams = []): \Illuminate\Http\Client\Response | \GuzzleHttp\Promise\PromiseInterface
+    public static function requestWithToken(string $url, string $token, string $method = 'GET', array $data = [], array $queryParams = []): \Illuminate\Http\Client\Response | \GuzzleHttp\Promise\PromiseInterface
     {
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,

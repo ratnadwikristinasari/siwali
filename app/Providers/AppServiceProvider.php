@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,14 @@ class AppServiceProvider extends ServiceProvider
         if (in_array(config('app.env'), ['staging', 'production'])) {
             URL::forceScheme('https');
         }
+
+        Ratelimiter::for('api', function () {
+            return Limit::perMinute(60)->by(optional(request()->user())->id ?: request()->ip());
+        });
+
+        RateLimiter::for('oauth-callback', function () {
+            return Limit::perMinute(10)->by(optional(request()->user())->id ?: request()->ip());
+        });
 
         Blade::if('role', function (string $roles, string $mode = 'any') {
             if (!Auth::check()) return false;

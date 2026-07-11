@@ -46,7 +46,6 @@ class CAllMahasiswa extends Controller
         ];
 
         $response = MahasiswaHelper::getAllStudents($token, $queryParams);
-        // dd($response);
         $data = collect($response['data'] ?? []);
         $meta = $response['meta'] ?? [
             'total' => count($data),
@@ -72,7 +71,6 @@ class CAllMahasiswa extends Controller
 
             $data = $data->map(function ($mhs) use ($advises, $apiStudentKey, $selectedSemesterId) {
                 $activeSemesterId = $selectedSemesterId;
-                // dd($activeSemesterId);
 
                 if (empty($activeSemesterId)) {
                     $activeSemesterId = collect($mhs['student_semesters'] ?? [])
@@ -95,7 +93,6 @@ class CAllMahasiswa extends Controller
 
                 return $mhs;
             });
-            // dd($data);
             if ($statusAkademikFilter !== '') {
                 $data = $data->filter(function ($mhs) use ($statusAkademikFilter) {
                     if ($statusAkademikFilter === 'TANPA_KETERANGAN') {

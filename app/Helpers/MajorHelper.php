@@ -12,20 +12,35 @@ class MajorHelper
             'major_id' => $majorId,
             'page' => $page
         ];
-        $response = Http::withoutVerifying()->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])
-            ->withQueryParameters($queryParams)
-            ->get(config('app.super_app_url') . '/majors');
+        // $response = Http::withoutVerifying()->withHeaders([
+        //     'Authorization' => 'Bearer ' . $token,
+        // ])
+        //     ->withQueryParameters($queryParams)
+        //     ->get(config('app.super_app_url') . '/majors');
+        // return $response->json();
+
+        $response = GlobalHelper::requestWithToken(
+            '/majors',
+            $token,
+            'GET',
+            [],
+            $queryParams
+        );
         return $response->json();
     }
 
     public static function getById(string $token, string $majorId)
     {
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])
-            ->get(config('app.super_app_url_internal') . '/majors/' . $majorId);
+        // $response = Http::withHeaders([
+        //     'Authorization' => 'Bearer ' . $token,
+        // ])
+        //     ->get(config('app.super_app_url_internal') . '/majors/' . $majorId);
+
+        $response = GlobalHelper::requestWithToken(
+            '/majors/' . $majorId,
+            $token,
+            'GET'
+        );
 
         return $response->json();
     }

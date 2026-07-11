@@ -40,11 +40,13 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'remember_token',
+        'token',
     ];
 
     protected $casts = [
         'roles' => 'array',
         'permissions' => 'array',
+        // 'token' => 'encrypted',
     ];
 
     public function studentParents()

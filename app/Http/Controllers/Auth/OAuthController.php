@@ -113,7 +113,7 @@ class OAuthController extends Controller
                     [
                         'student_employee_id' => $child['student_id'] ?? null,
                         'name' => $child['name'] ?? 'Anak dari ' . $dto->user->name,
-                        'email' => $child['nim'] . '@student.polije.ac.id' ?? 'anak-' . explode('@', $dto->user->email)[0] . '@student.polije.ac.id',
+                        'email' => ($child['nim'] ?? explode('@', $dto->user->email)[0]) . '@student.polije.ac.id',
                         'roles' => ['student'],
                     ]
                 );

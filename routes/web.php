@@ -7,9 +7,9 @@ use App\Http\Controllers\history\CHistoryPerwalianDosen;
 use App\Http\Controllers\page\CAllMahasiswa;
 use App\Http\Controllers\page\Cbiodata;
 use App\Http\Controllers\page\CDetailPerwalian;
-use App\Http\Controllers\page\CFormNonKHS;
-use App\Http\Controllers\page\CperwalianNonKHS;
-use App\Mail\AjukanPerwalianMail;
+// use App\Http\Controllers\page\CFormNonKHS;
+// use App\Http\Controllers\page\CperwalianNonKHS;
+// use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\CLandingpage;
 use App\Http\Controllers\dashboard\CDashboard;
@@ -19,7 +19,7 @@ use App\Http\Controllers\page\CProdi;
 use App\Http\Controllers\page\CFormwali;
 use App\Http\Controllers\page\CPerwalian;
 use App\Http\Controllers\history\CHistoryPerwalian;
-use App\Http\Controllers\DropzoneController;
+// use App\Http\Controllers\DropzoneController;
 
 Route::get('/', [CLandingpage::class, 'index'])->name('content.landingpage');
 Route::get('/login', [CLandingpage::class, 'index'])->name('login');
@@ -27,7 +27,7 @@ Route::get('/login', [CLandingpage::class, 'index'])->name('login');
 
 Route::prefix('auth')->group(function () {
     Route::get('/login', [OAuthController::class, 'redirect'])->name('auth.login');
-    Route::get('/callback', [OAuthController::class, 'callback'])->name('auth.callback');
+    Route::get('/callback', [OAuthController::class, 'callback'])->middleware('throttle:oauth-callback')->name('auth.callback');
     Route::post('/logout', [OAuthController::class, 'logout'])->name('auth.logout');
 });
 
@@ -41,7 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::get('my/dashboard/data', [CDashboard::class, 'getTopTenStudent'])->name('dashboard.top-ipk');
     Route::get('my/dashboard/analytics', [CDashboard::class, 'getLecturerAnalytics'])->name('dashboard.lecturer-analytics');
 
-    Route::get('biodata', [Cbiodata::class, 'biodata'])->middleware('role:student|orang_tua')->name('biodata');
+    Route::middleware('role:student|orang_tua')->group(function () {
+        Route::get('biodata', [Cbiodata::class, 'biodata'])->name('biodata');
+        Route::get('biodata/gpa/{studentId}/{semesterId}', [Cbiodata::class, 'previewGPA'])->name('biodata.preview-gpa');
+    });
 
     Route::prefix('student')->group(function () {
         Route::middleware('role:lecturer')->group(function () {
@@ -84,18 +87,16 @@ Route::middleware('auth')->group(function () {
         Route::get('detail/mahasiswa/{id}', [CDetailMahasiswa::class, 'index'])->name('detailmahasiswa');
     });
 
-    Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
-    Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
+    // Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
+    // Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
 
-    Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
-    Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+    // Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
+    // Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
 
-    Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
+    // Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
 
     // Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
-    Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
+    // Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
     // Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
-
-
     Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
 });
