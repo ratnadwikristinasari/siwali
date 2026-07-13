@@ -49,6 +49,7 @@ class Cbiodata extends Controller
                         'generation'        => $rawData['generation'],
                         'study_program_name' => $rawData['study_program_name'],
                         'major_name'        => $rawData['major_name'],
+                        'status' => $rawData['status'] ?? null,
                         'supervisor_lectures' => $rawData['supervisor_lectures'] ?? [],
                         'student_semester'  => $semesters->map(fn($s) => array_merge($s, [
                             'is_active' => $lastSemester && $s['id'] === $lastSemester['id'],
@@ -93,6 +94,7 @@ class Cbiodata extends Controller
                     'generation'        => $rawData['generation'],
                     'study_program_name' => $rawData['study_program_name'],
                     'major_name'        => $rawData['major_name'],
+                    'status' => $rawData['status'] ?? null,
                     'm_major_id' => $rawData['major_id'],
                     'supervisor_lectures' => $rawData['supervisor_lectures'] ?? [],
                     'student_semester'  => $semesters->map(fn($s) => array_merge($s, [
