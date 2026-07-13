@@ -49,6 +49,7 @@ class CDetailMahasiswa extends Controller
                     'study_program_name' => $rawData['study_program_name'],
                     'major_name'        => $rawData['major_name'],
                     'supervisor_lectures' => $rawData['supervisor_lectures'] ?? [],
+                    'status' => $rawData['status'] ?? null,
                     'student_semester'  => $semesters->map(fn($s) => array_merge($s, [
                         'is_active' => $lastSemester && $s['id'] === $lastSemester['id'],
                     ]))->values()->toArray(),
