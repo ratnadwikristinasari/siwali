@@ -31,9 +31,7 @@ class CMahasiswa extends Controller
         $statusAkademikFilter = $request->query('status_akademik', '');
         $statusPerwalianFilter = strtolower($request->query('status_perwalian', ''));
 
-        $statusAkademikApi = $statusAkademikFilter === 'TANPA_KETERANGAN'
-            ? 'TANPA KETERANGAN'
-            : $statusAkademikFilter;
+    
 
         $response = MahasiswaHelper::getMahasiswa(
             $token,
@@ -42,7 +40,6 @@ class CMahasiswa extends Controller
             $search,
             $selectedSessionId,
             $selectedSemesterId,
-            $statusAkademikApi
         );
 
         if (!isset($response['data']) || empty($response['data'])) {
@@ -133,6 +130,15 @@ class CMahasiswa extends Controller
                     && !Cache::has($reminderKey);
                 return $mhs;
             });
+
+            if ($statusAkademikFilter !== '') {
+                $data = $data->filter(function ($mhs) use ($statusAkademikFilter) {
+                    if ($statusAkademikFilter === 'TANPA_KETERANGAN') {
+                        return ($mhs ['status'] ?? null) === null || ($mhs['status'] ?? '') === 'TANPA KETERANGAN';
+                    }
+                    return ($mhs['status'] ?? '') === $statusAkademikFilter;
+                })->values();
+            }
 
             if ($statusPerwalianFilter !== '') {
                 $data = $data->filter(function ($mhs) use ($statusPerwalianFilter) {
