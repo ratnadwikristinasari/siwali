@@ -158,13 +158,13 @@
 
                     if (template === 'umum') {
                         message = 'Halo ' + studentName +
-                            ', ini pengingat untuk segera melakukan perwalian semester aktif. Mohon segera lengkapi form perwalian ya.';
+                            ', Berdasarkan Kalender Akademik Jurusan Teknologi Informasi Polteknik Negeri Jember, harap segera melakukan perwalian semester. Mohon segera melengkapi Form Evaluasi Dosen dan melakukan pengajuan form perwalian KHS. Terima kasih';
                     } else if (template === 'hari-ini') {
                         message = 'Halo ' + studentName +
-                            ', mohon melakukan perwalian hari ini agar proses akademik dapat segera diproses. Terima kasih.';
+                            ', Berdasarkan Kalender Akademik Jurusan Teknologi Informasi Polteknik Negeri Jember, harap melakukan perwalian semester hari ini, Terimakasih';
                     } else if (template === 'final') {
                         message = 'Halo ' + studentName +
-                            ', ini pengingat terakhir untuk perwalian semester aktif. Mohon segera melakukan perwalian secepatnya.';
+                            ', Berdasarkan Kalender Akademik Jurusan Teknologi Informasi Polteknik Negeri Jember, Mohon segera melakukan perwalian secepatnya.';
                     }
 
                     const whatsappUrl = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent(
