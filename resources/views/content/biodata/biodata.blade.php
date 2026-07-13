@@ -7,6 +7,13 @@
     $birthDate = $data['birth_date'] ? \Carbon\Carbon::parse($data['birth_date'])->translatedFormat('d F Y') : '-';
 @endphp
 
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="row g-4 mb-4">
     {{-- Profile Card --}}
     <div class="col-xl-4">
