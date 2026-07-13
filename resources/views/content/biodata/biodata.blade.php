@@ -3,7 +3,7 @@
     $student = $data['student_detail'];
     $activeSemester = collect($student['student_semester'] ?? [])->firstWhere('is_active', true);
     $supervisor = $student['supervisor_lectures'][0] ?? null;
-    $statusColor = $data['status'] === 'ACTIVE' ? 'success' : 'secondary';
+    $statusColor = $student['status'] === 'ACTIVE' ? 'success' : 'secondary';
     $birthDate = $data['birth_date'] ? \Carbon\Carbon::parse($data['birth_date'])->translatedFormat('d F Y') : '-';
 @endphp
 
@@ -20,7 +20,7 @@
                 <h5 class="mb-1">{{ $data['name'] }}</h5>
                 <p class="text-muted mb-0">{{ $student['nim'] ?? '-' }}</p>
                 <span class="badge bg-label-{{ $statusColor }} rounded-pill px-3 py-1 mb-3">
-                    {{ $data['status'] }}
+                    {{ $student['status'] }}
                 </span>
 
                 <div class="d-flex justify-content-center gap-4 mt-0">
