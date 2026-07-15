@@ -33,8 +33,8 @@
 
         const options = {
             chart: {
-                type: "line",
-                height: 260,
+                type: "area",
+                height: 300,
                 toolbar: { show: false },
                 zoom: { enabled: false },
                 animations: {
@@ -43,7 +43,7 @@
                     speed: 500,
                 },
             },
-            colors: ["#2f80ed"],
+            colors: ["#1064d1"],
             series: [
                 {
                     name: "IPK",
@@ -53,9 +53,9 @@
             fill: {
                 type: "gradient",
                 gradient: {
-                    shadeIntensity: 0.5,
-                    opacityFrom: 0.4,
-                    opacityTo: 0.05,
+                    shadeIntensity: 1,
+                    opacityFrom: 1,
+                    opacityTo: 0.04,
                     stops: [0, 90, 100],
                 },
             },

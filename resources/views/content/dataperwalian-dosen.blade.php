@@ -5,6 +5,30 @@
 @section('page-script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let initialSessionId = '{{ request('session_id') }}';
+            let initialSemesterId = '{{ request('semester_id') }}';
+
+            // Load initial semester data if session is selected
+            if (initialSessionId) {
+                $.ajax({
+                    url: '{{ route('api.semester.option') }}',
+                    method: 'GET',
+                    data: {
+                        session_id: initialSessionId
+                    },
+                    success: function(response) {
+                        let semesterSelect = $('#semester_id');
+                        semesterSelect.empty();
+                        semesterSelect.append('<option value="">Pilih Semester</option>');
+                        response.data.forEach(function(semester) {
+                            let selected = (semester.value == initialSemesterId) ? 'selected' : '';
+                            semesterSelect.append('<option value="' + semester.value + '" ' + selected + '>' + semester.label + '</option>');
+                        });
+                        semesterSelect.prop('disabled', false);
+                    }
+                });
+            }
+
             $('#search').on('keyup', function() {
                 let debounceTimer;
                 clearTimeout(debounceTimer);
@@ -12,8 +36,37 @@
                     $('#form-filter').submit();
                 }, 1000);
             });
+            $('#session_id').on('change', function() {
+                let sessionId = $(this).val();
 
-            $('#type, #status, #sort_ipk').on('change', function() {
+                if (sessionId) {
+                    $.ajax({
+                        url: '{{ route('api.semester.option') }}',
+                        method: 'GET',
+                        data: {
+                            session_id: sessionId
+                        },
+                        success: function(response) {
+                            let semesterSelect = $('#semester_id');
+                            semesterSelect.empty();
+                            semesterSelect.append('<option value="">Pilih Semester</option>');
+                            response.data.forEach(function(semester) {
+                                semesterSelect.append('<option value="' + semester.value + '">' + semester.label + '</option>');
+                            });
+                            semesterSelect.prop('disabled', false);
+                            $('#form-filter').submit();
+                        },
+                        error: function() {
+                            alert('Gagal mengambil data semester');
+                        }
+                    });
+                } else {
+                    $('#semester_id').empty().append('<option value="">Pilih Semester</option>').prop('disabled', true);
+                    $('#form-filter').submit();
+                }
+            });
+
+            $('#type, #status, #sort_ipk, #semester_id').on('change', function() {
                 $('#form-filter').submit();
             });
         });
@@ -37,7 +90,7 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('dataperwaliandosen') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="type" id="type">
                                             <option value="">Semua Jenis</option>
@@ -52,7 +105,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="status" id="status">
                                             <option value="">Semua Status</option>
@@ -68,7 +121,14 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="semester_id" id="semester_id">
+                                            <option value="">Pilih Semester</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="sort_ipk" id="sort_ipk">
                                             <option value="">Urutkan IPK</option>
@@ -81,7 +141,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari..." id="search"
                                             name="search" value="{{ request('search') }}">
@@ -100,6 +160,7 @@
                                 <th class="text-truncate">Jenis Perwalian</th>
                                 <th class="text-truncate">Tanggal</th>
                                 <th class="text-truncate">Nama</th>
+                                <th class="text-truncate">Semester</th>
                                 <th class="text-truncate">IPK</th>
                                 <th class="text-truncate">Keluhan</th>
                                 <th class="text-truncate">Masukan</th>
@@ -130,20 +191,24 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <td class="text-truncate">
+                                        {{ $historydosenwali->semester ?? '-' }}
+                                    </td>
 
                                     <td class="text-truncate">
                                         {{ $historydosenwali->ipk }}
                                     </td>
-                                    <td class="text-truncate">
-                                        {{ $historydosenwali->keluhan }}
+                                    <td class="text-truncate" title="{{ $historydosenwali->keluhan }}">
+                                        {{ Str::limit($historydosenwali->keluhan, 30) }}
                                     </td>
-                                    <td class="text-truncate">
-                                        {{ $historydosenwali->masukan }}
+                                    <td class="text-truncate" title="{{ $historydosenwali->masukan }}">
+                                        {{ Str::limit($historydosenwali->masukan, 30) }}
                                     </td>
 
                                     <td>
                                         @if ($historydosenwali->status === 'pending')
-                                            <span class="badge bg-label-warning rounded-pill">Menunggu Tanda Tangan Dosen Wali</span>
+                                            <span class="badge bg-label-warning rounded-pill">Menunggu Tanda Tangan Dosen
+                                                Wali</span>
                                         @elseif ($historydosenwali->status === 'signed')
                                             <span class="badge bg-label-info rounded-pill">Menunggu Tanda Tangan
                                                 Kajur</span>
@@ -170,7 +235,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center">
+                                    <td colspan="10" class="text-center">
                                         Belum ada data perwalian
                                     </td>
                                 </tr>

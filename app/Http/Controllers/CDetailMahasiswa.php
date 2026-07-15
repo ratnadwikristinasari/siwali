@@ -30,6 +30,13 @@ class CDetailMahasiswa extends Controller
 
         $gpa = MahasiswaHelper::getStudentGpa($userToken, $id);
 
+        $adviseStatuses = collect();
+        if ($student) {
+            $adviseStatuses = Advise::where('student_user_id', $student->id)
+                ->where('type', 'gpa_advising')
+                ->pluck('status', 'semester_id');
+        }
+
         $userData = [
             'message' => $raw['message'],
             'data' => [
@@ -52,6 +59,7 @@ class CDetailMahasiswa extends Controller
                     'status' => $rawData['status'] ?? null,
                     'student_semester'  => $semesters->map(fn($s) => array_merge($s, [
                         'is_active' => $lastSemester && $s['id'] === $lastSemester['id'],
+                        'status_perwalian' => $adviseStatuses[$s['id']] ?? null,
                     ]))->values()->toArray(),
                 ],
             ],

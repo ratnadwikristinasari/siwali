@@ -25,6 +25,11 @@ class Cbiodata extends Controller
 
         $id = $user->student_employee_id;
 
+        $studentUserId = $user->hasRole('orang_tua') ? $user->studentParents->first()->student->id : $user->id;
+        $adviseStatuses = \App\Models\Advise::where('student_user_id', $studentUserId)
+            ->where('type', 'gpa_advising')
+            ->pluck('status', 'semester_id');
+
         if ($user->hasRole('orang_tua')) {
             $raw = MahasiswaHelper::getStudentDetails($userToken, $user->studentParents->first()->student->student_employee_id);
             $rawData = $raw['data'];
@@ -53,12 +58,21 @@ class Cbiodata extends Controller
                         'supervisor_lectures' => $rawData['supervisor_lectures'] ?? [],
                         'student_semester'  => $semesters->map(fn($s) => array_merge($s, [
                             'is_active' => $lastSemester && $s['id'] === $lastSemester['id'],
+                            'status_perwalian' => $adviseStatuses[$s['id']] ?? null,
                         ]))->values()->toArray(),
                     ],
                 ],
             ];
 
             $id = $user->studentParents->first()->student->student_employee_id;
+        } else {
+            if (isset($userData['data']['student_detail']['student_semester'])) {
+                $userData['data']['student_detail']['student_semester'] = collect($userData['data']['student_detail']['student_semester'])->map(function($s) use ($adviseStatuses) {
+                    $sId = $s['semester_id'] ?? $s['id'] ?? '';
+                    $s['status_perwalian'] = $adviseStatuses[$sId] ?? null;
+                    return $s;
+                })->toArray();
+            }
         }
 
         $gpa = MahasiswaHelper::getStudentGpa($userToken, $id);

@@ -18,6 +18,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessSignDocument implements ShouldQueue
 {
@@ -91,4 +93,18 @@ class ProcessSignDocument implements ShouldQueue
 
         // todo: send notif to parent if email exists
     }
+    public function failed(Throwable $exception): void
+    {
+        $advise = Advise::find($this->adviseId);
+
+        if ($advise) {
+            // Rollback status ke 'signed' agar kembali muncul di tabel halaman Kajur
+            $advise->update([
+                'status' => 'signed'
+            ]);
+            
+            // Mencatat error ke log file (storage/logs/laravel.log) agar mudah dicari penyebabnya
+            Log::error("Job ProcessSignDocument GAGAL untuk Advise ID {$this->adviseId}. Error: " . $exception->getMessage());
+        }
+}
 }

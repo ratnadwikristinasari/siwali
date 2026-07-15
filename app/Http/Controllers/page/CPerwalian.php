@@ -27,8 +27,11 @@ class CPerwalian extends Controller
         $request->validate([
             'type' => 'required|string|in:gpa_advising,non_gpa_advising',
             'keluhan' => 'required|string',
-            'semester_id' => 'required_if:type,gpa_advising'
+            'semester_id' => 'required_if:type,gpa_advising',
+            // 'ipk' => 'required|number'
         ]);
+
+        //dd($request->all());
 
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
@@ -139,7 +142,7 @@ class CPerwalian extends Controller
     public function update(Request $request, $id)
     {
         //Todo: move this to queue job to avoid timeout error when signing pdf
-        set_time_limit(300); // Set time limit to 5 minutes
+        set_time_limit(100); // Set time limit to 5 minutes
         $request->validate([
             'masukan' => 'required|string',
         ]);

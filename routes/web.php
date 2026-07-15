@@ -7,9 +7,9 @@ use App\Http\Controllers\history\CHistoryPerwalianDosen;
 use App\Http\Controllers\page\CAllMahasiswa;
 use App\Http\Controllers\page\Cbiodata;
 use App\Http\Controllers\page\CDetailPerwalian;
-// use App\Http\Controllers\page\CFormNonKHS;
-// use App\Http\Controllers\page\CperwalianNonKHS;
-// use App\Mail\AjukanPerwalianMail;
+use App\Http\Controllers\page\CFormNonKHS;
+use App\Http\Controllers\page\CperwalianNonKHS;
+use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\CLandingpage;
 use App\Http\Controllers\dashboard\CDashboard;
@@ -90,13 +90,13 @@ Route::middleware('auth')->group(function () {
     // Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
     // Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
 
-    // Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
-    // Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+    Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
+    Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
 
-    // Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
+    Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
 
-    // Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
-    // Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
-    // Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+    Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
+    Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
+    Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
     Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
 });

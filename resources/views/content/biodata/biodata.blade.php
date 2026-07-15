@@ -199,7 +199,7 @@
                                     <th>Tahun Akademik</th>
                                     <th>Kelas</th>
                                     <th>Status Akademik</th>
-                                    {{-- <th>Status Perwalian</th> --}}
+                                    <th>Status Perwalian</th>
                                     <th>KHS</th>
                                 </tr>
                             </thead>
@@ -217,25 +217,26 @@
                                                     Naik</span>
                                             @endif
                                         </td>
-                                        {{-- <td>
-                                            @if ($sem['status_perwalian'] === null)
+                                        <td>
+                                            @php $status_perwalian = $sem['status_perwalian'] ?? null; @endphp
+                                            @if ($status_perwalian === null)
                                                 <span class="badge bg-label-secondary rounded-pill">
                                                     Belum Perwalian
                                                 </span>
-                                            @elseif ($sem['status_perwalian'] === 'pending')
+                                            @elseif ($status_perwalian === 'pending')
                                                 <span class="badge bg-label-warning rounded-pill">
                                                     Menunggu Tanda Tangan Dosen Wali
                                                 </span>
-                                            @elseif ($sem['status_perwalian'] === 'signed')
+                                            @elseif ($status_perwalian === 'signed')
                                                 <span class="badge bg-label-info rounded-pill">
                                                     Menunggu Tanda Tangan Kajur
                                                 </span>
-                                            @elseif ($sem['status_perwalian'] === 'done')
+                                            @elseif ($status_perwalian === 'done')
                                                 <span class="badge bg-label-success rounded-pill">
                                                     Selesai
                                                 </span>
                                             @endif
-                                        </td> --}}
+                                        </td>
                                         <td>
                                             @php
                                                 $routeGpa = '#';

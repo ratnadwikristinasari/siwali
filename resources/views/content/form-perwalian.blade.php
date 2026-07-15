@@ -68,8 +68,8 @@
                         <div id="ipk-container" style="display: none;">
                             <label for="ipk" id="label-ipk">IPK Semester</label>
                             <div class="mb-3">
-                                <input type="text" id="ipk" class="form-control" name="ipk" placeholder="IPK"
-                                    readonly disabled />
+                                <input type="text" style="background-color: #f1f1f1" pointer-events: none; id="ipk" class="form-control" name="ipk" placeholder="IPK"
+                                    readonly/>
                             </div>
                         </div>
 
@@ -129,10 +129,10 @@
                                 // 1. Tampilkan IPK jika KHS
                                 if (selectedType === 'gpa_advising') {
                                     ipkContainer.style.display = 'block';
-                                    ipkInput.disabled.readonly = false;
+                                    //ipkInput.disabled = false;
                                 } else {
                                     ipkContainer.style.display = 'none';
-                                    ipkInput.disabled. readonly = true;
+                                    //ipkInput.disabled = true;
                                 }
 
                                 // 2. Perbarui status disable di dropdown semester

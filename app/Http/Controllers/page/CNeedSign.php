@@ -35,6 +35,10 @@ class CNeedSign extends Controller
     public function sign($id)
     {
         $token = Auth::user()->token;
+
+        $advise = Advise::findOrFail($id);
+        $advise->update(['status' => 'processing']);
+
         ProcessSignDocument::dispatch($id, $token);
 
         return redirect()->route('page.need_sign')->with('success', 'Dokumen perwalian telah ditandatangani.');
@@ -48,6 +52,7 @@ class CNeedSign extends Controller
             'ids.*' => 'exists:advise,id',
         ]);
         $token = Auth::user()->token;
+        Advise::whereIn('id', $request->ids)->update(['status' => 'processing']);
         foreach ($request->ids as $id) {
             if (is_null($id)) {
                 continue; 
