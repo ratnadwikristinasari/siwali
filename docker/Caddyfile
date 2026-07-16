@@ -1,0 +1,75 @@
+# SiWali Production Caddyfile
+# ENV vars required:
+#   APP_PUBLIC_PATH           = /app/public
+#   CADDY_SERVER_SERVER_NAME  = http://:8000
+#   CADDY_SERVER_WORKER_COUNT = 4
+#   FRANKENPHP_NUM_THREADS    = 4
+
+{
+	auto_https disable_redirects
+	admin localhost:2019
+
+	frankenphp {
+		worker {
+			file {$APP_PUBLIC_PATH}/frankenphp-worker.php
+			num {$CADDY_SERVER_WORKER_COUNT}
+			max_consecutive_failures 3
+		}
+
+		# num_threads TIDAK di-set manual — FrankenPHP auto: 2x CPU cores
+		# Wajib: num_threads > num workers, auto selalu memenuhi constraint ini
+		# max_threads: batas atas thread burst saat traffic spike
+		max_threads 8
+		max_wait_time 8s
+	}
+}
+
+{$CADDY_SERVER_SERVER_NAME} {
+	root * {$APP_PUBLIC_PATH}
+
+	log {
+		level WARN
+		format filter {
+			wrap json
+			fields {
+				uri query {
+					replace authorization REDACTED
+				}
+			}
+		}
+	}
+
+	encode zstd br gzip
+
+	@static {
+		path /build/*
+		path /favicon.ico
+		path /robots.txt
+	}
+	header @static Cache-Control "public, immutable, max-age=31536000"
+
+	header {
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	@blocked {
+		path *.env
+		path *.env.*
+		path *.log
+		path *.sql
+		path *.sh
+		path *.bak
+		path /.git/*
+	}
+	respond @blocked 403
+
+	php_server {
+		index frankenphp-worker.php
+		try_files {path} frankenphp-worker.php
+		resolve_root_symlink
+	}
+}
