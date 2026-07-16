@@ -29,5 +29,28 @@ phpunit.xml
 
 # Docker-related files
 Dockerfile
-docker-compose.yml
+docker-compose*.yml
 .dockerignore
+
+# FrankenPHP binary yang ter-download oleh composer (163MB!)
+# Binary asli sudah ada di base image /usr/local/bin/frankenphp
+frankenphp
+
+# Deployment manifests — tidak perlu di image
+k8s/
+
+# Development docs
+PRD.md
+AGENTS.md
+README.md
+*.md
+
+# Env files sensitif (jangan masuk build context)
+.env.staging
+.env.production
+.env.local
+
+# Package lock files — JANGAN diignore, dibutuhkan oleh build stages
+# package-lock.json → npm ci --frozen-lockfile di build-js stage
+# composer.lock    → composer install di builder stage
+
