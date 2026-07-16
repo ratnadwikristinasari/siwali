@@ -1,0 +1,570 @@
+# ==============================================================================
+# k3s-manifest.yml — SiWali Production (Shared Server: 4 Core / 4GB RAM)
+# ==============================================================================
+# Topology:
+#   k3s cluster (node tunggal):
+#     - JTIForm (namespace: jtiform)
+#     - SiWali  (namespace: siwali)
+#     - Traefik ingress (default k3s)
+#
+#   Docker (berjalan di host yang sama):
+#     - MySQL, Redis, RabbitMQ, Adminer, Node Exporter
+#     - Go services, VueJS nginx, Python FastAPI
+#
+# Koneksi k3s → Docker: via HOST_GATEWAY_IP (biasanya 172.17.0.1 atau IP node)
+# ==============================================================================
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PriorityClass — pastikan SiWali tidak ter-evict duluan saat memory pressure
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: app-high-priority
+  # Tidak ada namespace, PriorityClass itu cluster-scoped
+value: 1000
+globalDefault: false
+description: "High priority untuk app utama (SiWali, JTIForm)"
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: app-low-priority
+value: 500
+globalDefault: false
+description: "Low priority untuk worker dan scheduler"
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Namespace
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: siwali
+  labels:
+    app: siwali
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# ResourceQuota — batasi total resource yang bisa dikonsumsi namespace siwali
+# Ini penting agar SiWali tidak "mencuri" resource dari JTIForm dan sebaliknya
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: siwali-quota
+  namespace: siwali
+spec:
+  hard:
+    # Batas total CPU request & limit di namespace ini
+    requests.cpu: "400m"     # 400m guaranteed untuk SiWali
+    limits.cpu: "1600m"      # Maksimal 1.6 core burst (40% dari 4 core)
+    # Batas total memory
+    requests.memory: "512Mi"
+    limits.memory: "1280Mi"  # ~1.25GB maksimal semua pod siwali
+    # Batas jumlah pod
+    pods: "5"
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# LimitRange — default limits untuk pod yang tidak specify resource
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: siwali-limits
+  namespace: siwali
+spec:
+  limits:
+    - type: Container
+      default:           # Limit default jika container tidak specify
+        cpu: "200m"
+        memory: "256Mi"
+      defaultRequest:    # Request default
+        cpu: "50m"
+        memory: "64Mi"
+      max:               # Batas maksimal yang bisa di-request
+        cpu: "800m"
+        memory: "768Mi"
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# ExternalName Services — bridge ke Docker services di host
+# ──────────────────────────────────────────────────────────────────────────────
+# Catatan: Ganti HOST_GATEWAY_IP dengan IP aktual host node
+# Cara cek: ip route | grep docker0 | awk '{print $9}'
+# Biasanya: 172.17.0.1 (Docker default bridge) atau IP eth0 node k3s
+# ──────────────────────────────────────────────────────────────────────────────
+
+# MySQL — di Docker host
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-external
+  namespace: siwali
+spec:
+  type: ExternalName
+  externalName: "172.17.0.1"  # Ganti dengan HOST_GATEWAY_IP
+  ports:
+    - port: 3306
+      targetPort: 3306
+
+---
+# Redis — di Docker host
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-external
+  namespace: siwali
+spec:
+  type: ExternalName
+  externalName: "172.17.0.1"  # Ganti dengan HOST_GATEWAY_IP
+  ports:
+    - port: 6379
+      targetPort: 6379
+
+---
+# RabbitMQ — di Docker host
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-external
+  namespace: siwali
+spec:
+  type: ExternalName
+  externalName: "172.17.0.1"  # Ganti dengan HOST_GATEWAY_IP
+  ports:
+    - port: 5672
+      targetPort: 5672
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Secret — env vars sensitif
+# Buat dengan: kubectl create secret generic siwali-env --from-env-file=.env.production -n siwali
+# JANGAN commit file ini setelah diisi nilai aslinya!
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Secret
+metadata:
+  name: siwali-env
+  namespace: siwali
+type: Opaque
+stringData:
+  APP_KEY: "base64:YOUR_APP_KEY"
+  DB_PASSWORD: "YOUR_DB_PASSWORD"
+  REDIS_PASSWORD: "YOUR_REDIS_PASSWORD"
+  AWS_SECRET_ACCESS_KEY: "YOUR_S3_SECRET"
+  OAUTH_CLIENT_SECRET: "YOUR_OAUTH_SECRET"
+  RABBITMQ_PASSWORD: "YOUR_RABBITMQ_PASSWORD"
+  INTERSERVICE_API_KEY: "YOUR_API_KEY"
+  SENTRY_LARAVEL_DSN: "YOUR_SENTRY_DSN"
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# ConfigMap — env vars non-sensitif
+# HOST_GATEWAY_IP: IP host yang bisa dicapai dari dalam pod k3s
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: siwali-config
+  namespace: siwali
+data:
+  APP_NAME: "Sistem Informasi Perwalian - SiWali"
+  APP_ENV: "production"
+  APP_DEBUG: "false"
+  APP_URL: "https://siwali.jtinova.com"
+  APP_LOCALE: "id"
+
+  LOG_CHANNEL: "daily"
+  LOG_LEVEL: "error"
+
+  # Database — gunakan ExternalName service atau langsung IP
+  DB_CONNECTION: "mysql"
+  DB_HOST: "mysql-external"   # ExternalName service di atas
+  DB_PORT: "3306"
+  DB_DATABASE: "siwali"
+  DB_USERNAME: "siwali"
+
+  # Redis — ExternalName service
+  REDIS_CLIENT: "predis"
+  REDIS_HOST: "redis-external"
+  REDIS_PORT: "6379"
+
+  # RabbitMQ
+  RABBITMQ_HOST: "rabbitmq-external"
+  RABBITMQ_PORT: "5672"
+  RABBITMQ_USER: "jt1polij3"
+  RABBITMQ_QUEUE: "notification_queue"
+
+  # Session & Cache
+  SESSION_DRIVER: "redis"
+  SESSION_LIFETIME: "120"
+  SESSION_ENCRYPT: "true"
+  SESSION_SECURE_COOKIE: "true"
+  CACHE_STORE: "redis"
+  QUEUE_CONNECTION: "redis"
+  FILESYSTEM_DISK: "s3"
+
+  # Octane/FrankenPHP
+  OCTANE_SERVER: "frankenphp"
+  OCTANE_HTTPS: "false"         # TLS diterminate di Traefik
+  CADDY_SERVER_SERVER_NAME: "http://:8000"
+  APP_PUBLIC_PATH: "/app/public"
+
+  # ── TUNING UTAMA untuk shared 4GB server ─────────────────────────────────
+  # 4 workers × 96MB (memory_limit) = 384MB untuk workers
+  # + ~256MB overhead Laravel/PHP = ~640MB total untuk app pod
+  # Sisakan untuk burst: max_threads = 8 (di Caddyfile)
+  CADDY_SERVER_WORKER_COUNT: "4"
+  FRANKENPHP_NUM_THREADS: "4"
+
+  # SuperApp & Services
+  SUPER_APP_URL: "https://be-superapp.jtinova.com/api/v1"
+  SUPER_APP_URL_INTERNAL: "http://10.10.0.156:8000/api/v1"
+  JTIFORM_SERVICE_URL: "https://jtiform.jtinova.com/api"
+  JTIFORM_CHECK_PATH: "/check"
+
+  # AWS S3
+  AWS_DEFAULT_REGION: "us-east-1"
+  AWS_BUCKET: "siwali"
+  AWS_ENDPOINT: "https://s3.jtinova.com"
+  AWS_USE_PATH_STYLE_ENDPOINT: "true"
+  AWS_URL: "https://s3.jtinova.com/siwali"
+
+  # Sentry
+  SENTRY_TRACES_SAMPLE_RATE: "0.1"   # 10% sampling di production untuk hemat resource
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Deployment — SiWali App Server
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwali-app
+  namespace: siwali
+  labels:
+    app: siwali
+    component: app
+  annotations:
+    # Untuk tracking versi image saat rollout
+    deployment.kubernetes.io/revision: "1"
+spec:
+  # 1 replica di shared 4GB server — 2 replicas = OOM risk tinggi
+  # Naikan ke 2 hanya jika punya dedicated node atau RAM > 8GB
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: siwali
+      component: app
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1          # Buat 1 pod baru sebelum matikan yang lama
+      maxUnavailable: 0    # Zero-downtime
+
+  template:
+    metadata:
+      labels:
+        app: siwali
+        component: app
+      annotations:
+        # Paksa pod restart saat ConfigMap berubah
+        # Update timestamp ini saat deploy ulang: kubectl rollout restart deployment/siwali-app -n siwali
+        deploy/timestamp: "2026-07-11"
+
+    spec:
+      priorityClassName: app-high-priority
+
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+
+      # Graceful shutdown — tunggu FrankenPHP selesai proses request yang ongoing
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: siwali
+          image: ghcr.io/YOUR_ORG/siwali:latest
+          imagePullPolicy: Always
+
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: caddy-admin
+              containerPort: 2019
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: siwali-config
+            - secretRef:
+                name: siwali-env
+
+          # ── Resource Limits — DISESUAIKAN untuk shared 4GB ───────────────
+          # requests: resource yang di-guarantee oleh k8s scheduler
+          # limits:   resource maksimum (pod di-kill jika melampaui memory limit)
+          #
+          # Kalkulasi:
+          #   4 workers × 96MB = 384MB workers
+          #   + 256MB Laravel/FrankenPHP overhead
+          #   + headroom = ~640MB → set limit 704Mi
+          resources:
+            requests:
+              cpu: "200m"     # 0.2 core guaranteed
+              memory: "256Mi" # Minimum untuk boot
+            limits:
+              cpu: "800m"     # Max 0.8 core burst (1.6 total dengan worker pod)
+              memory: "704Mi" # 4×96MB + 256MB overhead + buffer
+
+          # ── Health Probes ─────────────────────────────────────────────────
+          # Startup probe: beri waktu lebih saat cold start (OPcache warm-up)
+          startupProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 12  # 12 × 5s = 60s max startup time
+            timeoutSeconds: 3
+
+          # Readiness: traffic masuk hanya jika worker siap
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          # Liveness: restart pod jika hang/crash
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          volumeMounts:
+            - name: logs
+              mountPath: /app/storage/logs
+            - name: opcache-tmpfs
+              mountPath: /tmp/php-opcache
+
+      volumes:
+        - name: logs
+          emptyDir: {}
+        # OPcache file cache di tmpfs (RAM disk) — faster opcache warm-up
+        # Limit 64Mi — cukup untuk Laravel codebase
+        - name: opcache-tmpfs
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Deployment — Queue Worker
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwali-worker
+  namespace: siwali
+  labels:
+    app: siwali
+    component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siwali
+      component: worker
+
+  template:
+    metadata:
+      labels:
+        app: siwali
+        component: worker
+    spec:
+      priorityClassName: app-low-priority
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      terminationGracePeriodSeconds: 60  # Lebih lama — beri waktu job selesai
+
+      containers:
+        - name: worker
+          image: ghcr.io/YOUR_ORG/siwali:latest
+          imagePullPolicy: Always
+
+          command:
+            - "php"
+            - "artisan"
+            - "queue:work"
+            - "redis"
+            - "--sleep=3"
+            - "--tries=3"
+            - "--max-time=3600"    # Restart worker tiap 1 jam (mitigasi memory leak)
+            - "--memory=96"        # Sesuai memory_limit PHP
+            - "--timeout=120"      # Timeout per job (PDF signing bisa 60-90s)
+
+          envFrom:
+            - configMapRef:
+                name: siwali-config
+            - secretRef:
+                name: siwali-env
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "400m"
+              memory: "256Mi"
+
+          volumeMounts:
+            - name: logs
+              mountPath: /app/storage/logs
+
+      volumes:
+        - name: logs
+          emptyDir: {}
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Deployment — Scheduler (artisan schedule:work)
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwali-scheduler
+  namespace: siwali
+  labels:
+    app: siwali
+    component: scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siwali
+      component: scheduler
+  template:
+    metadata:
+      labels:
+        app: siwali
+        component: scheduler
+    spec:
+      priorityClassName: app-low-priority
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      containers:
+        - name: scheduler
+          image: ghcr.io/YOUR_ORG/siwali:latest
+          imagePullPolicy: Always
+          command: ["php", "artisan", "schedule:work"]
+          envFrom:
+            - configMapRef:
+                name: siwali-config
+            - secretRef:
+                name: siwali-env
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Service — internal ClusterIP
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: siwali-svc
+  namespace: siwali
+  labels:
+    app: siwali
+spec:
+  selector:
+    app: siwali
+    component: app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Ingress — Traefik (default k3s)
+# Berbagi Traefik dengan JTIForm — cukup tambahkan host rule baru
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: siwali-ingress
+  namespace: siwali
+  annotations:
+    # Traefik entrypoints
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Batas ukuran request body (untuk upload KHS)
+    traefik.ingress.kubernetes.io/request-body-limit: "10MB"
+    # Timeout Traefik — lebih besar dari max_wait_time FrankenPHP
+    # Agar user dapat response dari FrankenPHP (503), bukan timeout Traefik
+    traefik.ingress.kubernetes.io/router.middlewares: "siwali-timeout@kubernetescrd"
+    # TLS via cert-manager (pastikan cert-manager + ClusterIssuer sudah ada)
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - siwali.jtinova.com
+      secretName: siwali-tls-cert
+  rules:
+    - host: siwali.jtinova.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: siwali-svc
+                port:
+                  number: 80
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# Traefik Middleware — timeout yang lebih panjang untuk endpoint PDF/sign
+# ──────────────────────────────────────────────────────────────────────────────
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: siwali-timeout
+  namespace: siwali
+spec:
+  forwardAuth: {}  # Placeholder
+  # Untuk timeout, gunakan IngressRoute Traefik atau annotasi langsung
+
+---
+# ──────────────────────────────────────────────────────────────────────────────
+# GHCR Pull Secret — ganti dengan PAT milikmu
+# Cara buat (jalankan di server):
+#   kubectl create secret docker-registry ghcr-pull-secret \
+#     --docker-server=ghcr.io \
+#     --docker-username=YOUR_GITHUB_USERNAME \
+#     --docker-password=YOUR_GITHUB_PAT_TOKEN \
+#     --docker-email=your@email.com \
+#     -n siwali
+# ──────────────────────────────────────────────────────────────────────────────
+# Secret ini TIDAK perlu di-commit ke git
+# Buat sekali di server lalu tidak perlu diulang kecuali PAT expired
