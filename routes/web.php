@@ -21,11 +21,11 @@ use App\Http\Controllers\page\CPerwalian;
 use App\Http\Controllers\history\CHistoryPerwalian;
 // use App\Http\Controllers\DropzoneController;
 
-if (config('app.env') === 'production') {
-    $prefix = 'siwali';
-} else {
-    $prefix = '';
-}
+// if (config('app.env') === 'production') {
+//     $prefix = 'siwali';
+// } else {
+$prefix = '';
+// }
 
 Route::prefix($prefix)->group(
     function () {
