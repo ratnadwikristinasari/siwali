@@ -29,6 +29,7 @@ RUN apk add --no-cache \
       pcntl \
       redis \
       opcache \
+      sockets \
   && rm -rf /var/cache/apk/* /tmp/*
 
 FROM php-base AS builder
