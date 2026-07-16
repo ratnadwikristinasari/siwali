@@ -40,6 +40,15 @@ use Illuminate\Support\Facades\Route;
           @isset($submenu->badge)
             <div class="badge bg-{{ $submenu->badge[0] }} rounded-pill ms-auto">{{ $submenu->badge[1] }}</div>
           @endisset
+          {{-- TAMPILKAN BADGE DINAMIS: PERWALIAN MAHASISWA --}}
+          @if (isset($submenu->slug) && $submenu->slug === 'dataperwaliandosen' && isset($pendingPerwalianCount) && $pendingPerwalianCount > 0)
+              <div class="badge bg-danger rounded-pill ms-auto">{{ $pendingPerwalianCount }}</div>
+          @endif
+
+          {{-- TAMPILKAN BADGE DINAMIS: PENGESAHAN KHS --}}
+          @if (isset($submenu->slug) && $submenu->slug === 'page.need_sign' && isset($pendingKHSCount) && $pendingKHSCount > 0)
+              <div class="badge bg-warning rounded-pill ms-auto">{{ $pendingKHSCount }}</div>
+          @endif
         </a>
 
         {{-- submenu --}}
