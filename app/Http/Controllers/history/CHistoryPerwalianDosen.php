@@ -51,7 +51,7 @@ class CHistoryPerwalianDosen extends Controller
                 $query->where('status', $status);
             })
             ->when($selectedSemesterId, function ($query, $semester) {
-                $query->where('semester', $semester);
+                $query->where('semester_id', $semester);
             })
             ->when($sort_ipk, function ($query, $sort_ipk) {
                  $query->orderBy('ipk', $sort_ipk);
