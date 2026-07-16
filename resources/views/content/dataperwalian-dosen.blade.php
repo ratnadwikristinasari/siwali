@@ -21,21 +21,19 @@
                         semesterSelect.empty();
                         semesterSelect.append('<option value="">Pilih Semester</option>');
                         response.data.forEach(function(semester) {
-                            let selected = (semester.value == initialSemesterId) ? 'selected' : '';
-                            semesterSelect.append('<option value="' + semester.value + '" ' + selected + '>' + semester.label + '</option>');
+                            let selected = (semester.value == initialSemesterId) ? 'selected' :
+                                '';
+                            semesterSelect.append('<option value="' + semester.value + '" ' +
+                                selected + '>' + semester.label + '</option>');
                         });
                         semesterSelect.prop('disabled', false);
+                    },
+                    error: function() {
+                        console.error('Gagal mengambil data semester saat load halaman');
                     }
                 });
             }
 
-            $('#search').on('keyup', function() {
-                let debounceTimer;
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(function() {
-                    $('#form-filter').submit();
-                }, 1000);
-            });
             $('#session_id').on('change', function() {
                 let sessionId = $(this).val();
 
@@ -51,23 +49,32 @@
                             semesterSelect.empty();
                             semesterSelect.append('<option value="">Pilih Semester</option>');
                             response.data.forEach(function(semester) {
-                                semesterSelect.append('<option value="' + semester.value + '">' + semester.label + '</option>');
+                                semesterSelect.append('<option value="' + semester
+                                    .value + '">' + semester.label + '</option>');
                             });
                             semesterSelect.prop('disabled', false);
-                            $('#form-filter').submit();
                         },
                         error: function() {
                             alert('Gagal mengambil data semester');
                         }
                     });
                 } else {
-                    $('#semester_id').empty().append('<option value="">Pilih Semester</option>').prop('disabled', true);
+                    $('#semester_id').empty().append('<option value="">Pilih Semester</option>').prop(
+                        'disabled', true);
                     $('#form-filter').submit();
                 }
             });
 
             $('#type, #status, #sort_ipk, #semester_id').on('change', function() {
                 $('#form-filter').submit();
+            });
+
+            $('#search').on('keyup', function() {
+                let debounceTimer;
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    $('#form-filter').submit();
+                }, 1000);
             });
         });
     </script>
@@ -90,7 +97,7 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('dataperwaliandosen') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
-                                <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="type" id="type">
                                             <option value="">Semua Jenis</option>
@@ -105,7 +112,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="status" id="status">
                                             <option value="">Semua Status</option>
@@ -123,7 +130,22 @@
                                 </div>
                                 <div class="col-12 col-sm-3 col-md-3 col-lg-2">
                                     <div class="input-group input-group-sm">
-                                        <select class="form-select" name="semester_id" id="semester_id">
+                                        <select class="form-select" name="session_id" id="session_id">
+                                            <option value="">Pilih Tahun Ajaran</option>
+                                            @if (isset($sessions))
+                                                @foreach ($sessions as $session)
+                                                    <option value="{{ $session['value'] }}"
+                                                        {{ request('session_id') == $session['value'] ? 'selected' : '' }}>
+                                                        {{ $session['label'] }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-3 col-md-3 col-lg-2">
+                                    <div class="input-group input-group-sm">
+                                        <select class="form-select" name="semester_id" id="semester_id" disabled>
                                             <option value="">Pilih Semester</option>
                                         </select>
                                     </div>

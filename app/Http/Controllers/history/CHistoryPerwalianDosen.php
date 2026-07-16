@@ -63,6 +63,6 @@ class CHistoryPerwalianDosen extends Controller
 
             $sessions = SessionApiHelper::getAsOptions($token);
 
-        return view('content.dataperwalian-dosen', compact('perwaliandosen'));
+        return view('content.dataperwalian-dosen', compact('perwaliandosen', 'sessions'));
     }
 }
