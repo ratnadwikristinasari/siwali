@@ -26,7 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (in_array(config('app.env'), ['staging', 'production'])) {
+        // Force HTTPS untuk URL generation di balik reverse proxy Nginx
+        // OCTANE_HTTPS=true di-set dari k3s deployment env var
+        // APP_ENV staging/production sebagai fallback
+        if (config('octane.https') || in_array(config('app.env'), ['staging', 'production'])) {
             URL::forceScheme('https');
         }
 
