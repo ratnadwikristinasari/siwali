@@ -1,129 +1,75 @@
-# ==============================================================================
-# Caddyfile — SiWali Production FrankenPHP
-# ==============================================================================
-# ENV vars yang HARUS di-set (via Docker env / k3s Secret):
-#   CADDY_SERVER_SERVER_NAME   → "http://:8000" (HTTP) atau "https://siwali.example.com"
-#   APP_PUBLIC_PATH            → /app/public
-#   CADDY_SERVER_WORKER_COUNT  → jumlah worker (lihat penjelasan di bawah)
-# ==============================================================================
+# SiWali Production Caddyfile
+# ENV vars required:
+#   APP_PUBLIC_PATH           = /app/public
+#   CADDY_SERVER_SERVER_NAME  = http://:8000
+#   CADDY_SERVER_WORKER_COUNT = 4
+#   FRANKENPHP_NUM_THREADS    = 4
 
 {
-    # ── Global Options ───────────────────────────────────────────────────────
-    # Disable Caddy auto-HTTPS karena TLS termination di load balancer / ingress k3s
-    # Jika app langsung expose ke internet tanpa ingress, hapus baris ini
-    # dan set SERVER_NAME ke domain dengan HTTPS
-    auto_https disable_redirects
+	auto_https disable_redirects
+	admin localhost:2019
 
-    # Admin API di localhost saja (untuk reload config tanpa restart)
-    # Berguna untuk health check dan hot-reload di Caddy
-    admin localhost:2019
+	frankenphp {
+		worker {
+			file {$APP_PUBLIC_PATH}/frankenphp-worker.php
+			num {$CADDY_SERVER_WORKER_COUNT}
+			max_consecutive_failures 3
+		}
 
-    # FrankenPHP global config
-    frankenphp {
-        # ── Worker Mode (kunci performa Octane) ──────────────────────────────
-        # Worker akan di-start sejumlah CADDY_SERVER_WORKER_COUNT
-        # Jika env tidak di-set → Caddy baca langsung dari env var kosong,
-        # sehingga FrankenPHP fallback ke default (2x CPU cores)
-        #
-        # PANDUAN TUNING (lihat penjelasan lengkap di NOTES.md):
-        # - Mulai dari: num = jumlah CPU cores
-        # - Untuk server 2 CPU + 2GB RAM dengan memory_limit=128M:
-        #   num = 8 (2GB / 128M / safety_factor=2 = 8)
-        worker {
-            file {$APP_PUBLIC_PATH}/frankenphp-worker.php
-            # Jumlah worker dikontrol via env var agar mudah di-tune tanpa rebuild
-            # Shared 4GB server: 4 workers (4 x 96MB = 384MB worker RAM)
-            # Server dedicated ≥4GB: naikkan ke 6-8
-            num {$CADDY_SERVER_WORKER_COUNT}
-
-            # Max request sebelum worker di-restart (mitigasi memory leak)
-            max_consecutive_failures 3
-        }
-
-        # ── Thread Pool Sizing ───────────────────────────────────────────────
-        # num_threads: worker tetap aktif (sama dengan worker count)
-        # max_threads: burst temporary saat spike, lalu scale down
-        # Untuk shared 4GB: max 8 threads saat burst (96MB x 8 = 768MB)
-        num_threads {$FRANKENPHP_NUM_THREADS}
-        max_threads 8
-
-        # Max request queue wait time — KRITIS untuk shared server!
-        # Jika semua worker busy, request baru tunggu max 8 detik
-        # Lebih baik 503 cepat daripada timeout 50 detik yang bikin server macet
-        # Di dedicated server dengan banyak worker, bisa dinaikkan ke 15s
-        max_wait_time 8s
-    }
+		# num_threads TIDAK di-set manual — FrankenPHP auto: 2x CPU cores
+		# Wajib: num_threads > num workers, auto selalu memenuhi constraint ini
+		# max_threads: batas atas thread burst saat traffic spike
+		max_threads 8
+		max_wait_time 8s
+	}
 }
 
-# ── Virtual Host / Server Block ───────────────────────────────────────────────
 {$CADDY_SERVER_SERVER_NAME} {
+	root * {$APP_PUBLIC_PATH}
 
-    # Root direktori ke folder public Laravel
-    root * {$APP_PUBLIC_PATH}
+	log {
+		level WARN
+		format filter {
+			wrap json
+			fields {
+				uri query {
+					replace authorization REDACTED
+				}
+			}
+		}
+	}
 
-    # ── Logging ──────────────────────────────────────────────────────────────
-    log {
-        level WARN
-        format filter {
-            wrap json
-            fields {
-                # Redact authorization header/param
-                uri query {
-                    replace authorization REDACTED
-                }
-            }
-        }
-    }
+	encode zstd br gzip
 
-    # ── Compression ──────────────────────────────────────────────────────────
-    # Urutan: Zstd (terbaik) > Brotli > Gzip (fallback)
-    encode zstd br gzip
+	@static {
+		path /build/*
+		path /favicon.ico
+		path /robots.txt
+	}
+	header @static Cache-Control "public, immutable, max-age=31536000"
 
-    # ── Static Asset Caching ─────────────────────────────────────────────────
-    # Vite menghasilkan filename dengan hash → boleh cache sangat lama
-    @static {
-        path /build/*
-        path /favicon.ico
-        path /robots.txt
-    }
-    header @static {
-        Cache-Control "public, immutable, max-age=31536000"
-        X-Content-Type-Options nosniff
-    }
+	header {
+		X-Frame-Options DENY
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
 
-    # ── Security Headers ─────────────────────────────────────────────────────
-    header {
-        # Prevent clickjacking
-        X-Frame-Options DENY
-        # Prevent MIME-type sniffing
-        X-Content-Type-Options nosniff
-        # Force HTTPS (jika terminate TLS di sini)
-        # Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        # Referrer policy
-        Referrer-Policy strict-origin-when-cross-origin
-        # Permissions policy
-        Permissions-Policy "camera=(), microphone=(), geolocation=()"
-        # Remove server header
-        -Server
-    }
+	@blocked {
+		path *.env
+		path *.env.*
+		path *.log
+		path *.sql
+		path *.sh
+		path *.bak
+		path /.git/*
+	}
+	respond @blocked 403
 
-    # ── Block Sensitive Files ─────────────────────────────────────────────────
-    @blocked {
-        path *.env
-        path *.env.*
-        path *.log
-        path *.sql
-        path *.sh
-        path *.bak
-        path /.git/*
-        path /storage/*.key
-    }
-    respond @blocked 403
-
-    # ── PHP Handler (FrankenPHP Worker Mode) ─────────────────────────────────
-    php_server {
-        index frankenphp-worker.php
-        try_files {path} frankenphp-worker.php
-        resolve_root_symlink
-    }
+	php_server {
+		index frankenphp-worker.php
+		try_files {path} frankenphp-worker.php
+		resolve_root_symlink
+	}
 }

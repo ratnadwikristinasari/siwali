@@ -52,8 +52,9 @@ COPY . .
 
 RUN composer dump-autoload --optimize --no-dev
 
-RUN php artisan config:cache \
-  && php artisan route:cache \
+RUN cp vendor/laravel/octane/src/Commands/stubs/frankenphp-worker.php public/frankenphp-worker.php
+
+RUN php artisan route:cache \
   && php artisan view:cache \
   && php artisan event:cache
 
@@ -66,6 +67,8 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php/production.ini "$PHP_INI_DIR/conf.d/99-production.ini"
 
 COPY docker/Caddyfile /etc/caddy/Caddyfile
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 RUN mkdir -p \
       /data/caddy \
@@ -113,4 +116,4 @@ USER www-data
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -sf http://localhost:8000/up || exit 1
 
-ENTRYPOINT ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+ENTRYPOINT ["/entrypoint.sh"]
