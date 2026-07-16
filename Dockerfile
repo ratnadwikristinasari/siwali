@@ -50,13 +50,28 @@ RUN composer install \
 
 COPY . .
 
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
 
 RUN cp vendor/laravel/octane/src/Commands/stubs/frankenphp-worker.php public/frankenphp-worker.php
 
 RUN php artisan route:cache \
   && php artisan view:cache \
   && php artisan event:cache
+
+RUN \
+  find vendor -type d \( \
+       -name 'tests' -o -name 'Tests' -o \
+       -name 'test'  -o -name 'Test'  -o \
+       -name 'spec'  -o -name 'Spec'  -o \
+       -name 'benchmarks' -o -name 'examples' \
+     \) -exec rm -rf {} + 2>/dev/null || true \
+  # Hapus dokumentasi (tidak pernah di-autoload)
+  && find vendor -maxdepth 4 \( \
+       -name '*.md' -o -name 'CHANGELOG*' -o \
+       -name 'CONTRIBUTING*' -o -name 'UPGRADING*' -o \
+       -name 'HISTORY*' -o -name 'phpunit.xml*' -o \
+       -name '.travis.yml' -o -name '.styleci.yml' \
+     \) -delete 2>/dev/null || true
 
 FROM php-base AS final
 
@@ -94,15 +109,25 @@ RUN rm -f \
       .env.production \
       .env.local \
       .env \
+      composer.lock \
+      package.json \
+      package-lock.json \
+      vite.config.js \
+      .env.example \
+      .gitattributes \
+      AGENTS.md \
+      PRD.md \
   && rm -rf \
       node_modules \
       .git \
       tests \
       docker \
+      k8s \
       README.md \
       Dockerfile* \
       .github \
-      .editorconfig
+      .editorconfig \
+  && rm -f frankenphp
 
 LABEL org.opencontainers.image.source="https://github.com/jtinovation/siwali" \
       org.opencontainers.image.description="SiWali - Sistem Informasi Perwalian" \
