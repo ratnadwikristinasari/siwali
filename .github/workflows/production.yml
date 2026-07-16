@@ -1,0 +1,140 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: ["production"]
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Custom tag (optional, default: manual-YYYYMMDD)"
+        required: false
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/production' }}
+            type=sha,prefix=sha-,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=manual-{{date 'YYYYMMDD'}},enable=${{ github.event_name == 'workflow_dispatch' }}
+          labels: |
+            org.opencontainers.image.title=SiWali
+            org.opencontainers.image.description=Sistem Informasi Perwalian
+            org.opencontainers.image.vendor=JTI Polije
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          file: Dockerfile
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Remove untagged images from GHCR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          OWNER_TYPE: ${{ github.event.repository.owner.type }}
+          PACKAGE: ${{ github.event.repository.name }}
+        run: |
+          set -euo pipefail
+
+          if [ "${OWNER_TYPE}" = "Organization" ]; then
+            SCOPE="orgs/${OWNER}"
+          else
+            SCOPE="users/${OWNER}"
+          fi
+
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y jq
+          fi
+
+          echo "Listing untagged versions for ghcr.io/${OWNER}/${PACKAGE} ..."
+          # --paginate untuk ambil semua halaman
+          gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
+            "/${SCOPE}/packages/container/${PACKAGE}/versions?per_page=100" \
+          | jq -r '.[] | select(.metadata.container.tags | length == 0) | .id' \
+          | while read -r VID; do
+              echo "Deleting version id: ${VID}"
+              gh api --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                "/${SCOPE}/packages/container/${PACKAGE}/versions/${VID}"
+            done
+
+          echo "Done removing untagged images."
+
+      - name: Image digest
+        run: |
+          echo "✅ Image pushed successfully!"
+          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "🔖 Digest: ${{ steps.push.outputs.digest }}"
+          echo ""
+          echo "Deploy commands:"
+          echo "  # Docker:"
+          echo "  docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "  # k3s:"
+          echo "  kubectl rollout restart deployment/siwali -n siwali"
+
+  # deploy:
+  #   runs-on: self-hosted
+  #   needs: build
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Deploy via SSH
+  #       uses: appleboy/ssh-action@v1.0.3
+  #       with:
+  #         host: ${{ secrets.SSH_HOST_PRODUCTION }}
+  #         username: ${{ secrets.SSH_USERNAME_PRODUCTION }}
+  #         password: ${{ secrets.SSH_PASSWORD_PRODUCTION }}
+  #         script: |
+  #           set -e
+  #           export KUBECONFIG=~/.kube/config
+  #           kubectl rollout restart deployment jtiform-app -n jtiform
+  #           kubectl rollout restart deployment jtiform-queue-evaluation -n jtiform
+  #           kubectl rollout restart deployment jtiform-queue-prodi -n jtiform
