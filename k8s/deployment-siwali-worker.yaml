@@ -26,6 +26,18 @@ spec:
             - "--tries=3"
             - "--timeout=120"
             - "--max-time=3600"
+          env:
+            - name: CADDY_SERVER_SERVER_NAME
+              value: "http://:8000"
+            - name: APP_PUBLIC_PATH
+              value: "/app/public"
+            - name: CADDY_SERVER_WORKER_COUNT
+              value: "4"
+            - name: OCTANE_HTTPS
+              value: "true"
+          envFrom:
+            - configMapRef:
+                name: siwali-config
           lifecycle:
             preStop:
               exec:
