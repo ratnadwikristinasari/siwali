@@ -17,7 +17,7 @@ spec:
         - name: ghcr-creds
       containers:
         - name: siwali-worker
-          image: ghcr.io/jtinovation/siwali:production
+          image: ghcr.io/jtinovation/siwali:latest
           imagePullPolicy: Always
           command: ["php", "artisan", "queue:work"]
           args:
