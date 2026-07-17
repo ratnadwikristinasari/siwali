@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwali-worker
+  namespace: siwali
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siwali-worker
+  template:
+    metadata:
+      labels:
+        app: siwali-worker
+    spec:
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+        - name: siwali-worker
+          image: ghcr.io/jtinovation/siwali:production
+          imagePullPolicy: Always
+          command: ["php", "artisan", "queue:work"]
+          args:
+            - "redis"
+            - "--sleep=3"
+            - "--tries=3"
+            - "--timeout=120"
+            - "--max-time=3600"
+          lifecycle:
+            preStop:
+              exec:
+                # Graceful shutdown: tunggu job yang sedang berjalan selesai
+                command: ["sh", "-c", "sleep 15"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "400m"
+              memory: "200Mi"

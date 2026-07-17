@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwali-app
+  namespace: siwali
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siwali-app
+  template:
+    metadata:
+      labels:
+        app: siwali-app
+    spec:
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+        - name: siwali
+          image: ghcr.io/jtinovation/siwali:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: CADDY_SERVER_SERVER_NAME
+              value: "http://:8000"
+            - name: APP_PUBLIC_PATH
+              value: "/app/public"
+            - name: CADDY_SERVER_WORKER_COUNT
+              value: "4"
+            - name: OCTANE_HTTPS
+              value: "true"
+          envFrom:
+            - configMapRef:
+                name: siwali-config
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "704Mi"
+          livenessProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /up
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 12
