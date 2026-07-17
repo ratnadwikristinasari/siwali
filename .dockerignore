@@ -46,7 +46,7 @@ README.md
 *.md
 
 # Env files sensitif (jangan masuk build context)
-.env.staging
+# .env.staging
 .env.production
 .env.local
 
