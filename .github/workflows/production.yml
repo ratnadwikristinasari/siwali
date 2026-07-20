@@ -72,7 +72,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Remove untagged images from GHCR
+      - name: Hapus image lama (Sisakan 2 versi terbaru)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
@@ -92,20 +92,25 @@ jobs:
             sudo apt-get install -y jq
           fi
 
-          echo "Listing untagged versions for ghcr.io/${OWNER}/${PACKAGE} ..."
-          # --paginate untuk ambil semua halaman
+          echo "Listing versions for ghcr.io/${OWNER}/${PACKAGE} ..."
+
+          # gh api --paginate akan mengambil semua versi
+          # jq akan mengurutkan berdasarkan waktu pembuatan (terbaru ke terlama)
+          # .[2:] akan melewati (skip) 2 versi terbaru dan mengambil sisanya
           gh api --paginate \
             -H "Accept: application/vnd.github+json" \
             "/${SCOPE}/packages/container/${PACKAGE}/versions?per_page=100" \
-          | jq -r '.[] | select(.metadata.container.tags | length == 0) | .id' \
+          | jq -r 'sort_by(.created_at) | reverse | .[2:][] | .id' \
           | while read -r VID; do
-              echo "Deleting version id: ${VID}"
-              gh api --method DELETE \
-                -H "Accept: application/vnd.github+json" \
-                "/${SCOPE}/packages/container/${PACKAGE}/versions/${VID}"
+              if [ -n "$VID" ]; then
+                echo "Deleting version id: ${VID}"
+                gh api --method DELETE \
+                  -H "Accept: application/vnd.github+json" \
+                  "/${SCOPE}/packages/container/${PACKAGE}/versions/${VID}" || true
+              fi
             done
 
-          echo "Done removing untagged images."
+          echo "Selesai membersihkan image lama."
 
       - name: Image digest
         run: |
