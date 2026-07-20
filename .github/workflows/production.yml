@@ -119,22 +119,21 @@ jobs:
           echo "  # k3s:"
           echo "  kubectl rollout restart deployment/siwali -n siwali"
 
-  # deploy:
-  #   runs-on: self-hosted
-  #   needs: build
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Deploy via SSH
-  #       uses: appleboy/ssh-action@v1.0.3
-  #       with:
-  #         host: ${{ secrets.SSH_HOST_PRODUCTION }}
-  #         username: ${{ secrets.SSH_USERNAME_PRODUCTION }}
-  #         password: ${{ secrets.SSH_PASSWORD_PRODUCTION }}
-  #         script: |
-  #           set -e
-  #           export KUBECONFIG=~/.kube/config
-  #           kubectl rollout restart deployment jtiform-app -n jtiform
-  #           kubectl rollout restart deployment jtiform-queue-evaluation -n jtiform
-  #           kubectl rollout restart deployment jtiform-queue-prodi -n jtiform
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST_PRODUCTION }}
+          username: ${{ secrets.SSH_USERNAME_PRODUCTION }}
+          password: ${{ secrets.SSH_PASSWORD_PRODUCTION }}
+          script: |
+            set -e
+            export KUBECONFIG=~/.kube/config
+            kubectl rollout restart deployment siwali-app -n siwali
+            kubectl rollout restart deployment siwali-worker -n siwali
