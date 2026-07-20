@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CPerwalian extends Controller
 {
@@ -54,6 +55,13 @@ class CPerwalian extends Controller
                 $isEven,
                 $studentUser->external_id
             );
+
+            Log::info('Check JTIFORM Status', [
+                'session_id' => $studentSemester['session_id'] ?? '',
+                'is_even' => $isEven,
+                'external_id' => $studentUser->external_id,
+                'check_status_jtiform' => $checkStatusJtiform,
+            ]);
 
             if ($checkStatusJtiform === false && $request->type === 'gpa_advising') {
                 return back()->withErrors('Anda belum mengisi <a href="https://project-jti.polije.ac.id/" target="_blank" class="alert-link">Form Evaluasi Dosen</a>  untuk semester ini. Silakan isi Form terlebih dahulu sebelum mengajukan perwalian.');
