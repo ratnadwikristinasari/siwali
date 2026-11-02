@@ -57,7 +57,7 @@ export default defineConfig({
     build: {
         chunkSizeWarningLimit: 1200,
     },
-    base: "/siwali/build/",
+    base: "/build/",
     plugins: [
         laravel({
             input: [
