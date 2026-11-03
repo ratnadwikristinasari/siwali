@@ -29,6 +29,7 @@ class CheckJtiformStatusHelper
             );
 
         if (!$response->successful()) {
+            report(new \Exception('Failed to check JTiform status: ' . $response->body()));
             return null;
         }
 
