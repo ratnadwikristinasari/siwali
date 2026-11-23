@@ -29,11 +29,17 @@ class CAllMahasiswa extends Controller
             $studyProgramId = $user->study_program_id;
         }
 
+        $allowedStatuses = ['AKTIF', 'CUTI', 'DO'];
+        $statuses = $statusAkademikFilter !== ''
+            ? [$statusAkademikFilter]
+            : $allowedStatuses;
+
         $filter = [
             'major_id' => $user->major_id,
             'study_program_id' => $studyProgramId,
             'class' => $request->query('class', ''),
             'semester_id' => $request->query('semester_id', $request->query('semester', '')),
+            'status' => $statuses,
         ];
 
         $queryParams = [
@@ -93,14 +99,15 @@ class CAllMahasiswa extends Controller
 
                 return $mhs;
             });
-            if ($statusAkademikFilter !== '') {
-                $data = $data->filter(function ($mhs) use ($statusAkademikFilter) {
-                    if ($statusAkademikFilter === 'TANPA_KETERANGAN') {
-                        return $mhs['status'] === null || $mhs['status'] === 'TANPA KETERANGAN';
-                    }
+            $data = $data->filter(function ($mhs) use ($statusAkademikFilter, $allowedStatuses) {
+                if (!in_array($mhs['status'], $allowedStatuses, true)) {
+                    return false;
+                }
+                if ($statusAkademikFilter !== '') {
                     return $mhs['status'] === $statusAkademikFilter;
-                })->values();
-            }
+                }
+                return true;
+            })->values();
         }
 
         $mahasiswaall = new LengthAwarePaginator(

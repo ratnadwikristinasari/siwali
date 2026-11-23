@@ -253,21 +253,6 @@
                                             <option value="DO"
                                                 {{ request('status_akademik') == 'DO' ? 'selected' : '' }}>Drop Out
                                             </option>
-                                            <option value="MENGUNDURKAN_DIRI"
-                                                {{ request('status_akademik') == 'MENGUNDURKAN_DIRI' ? 'selected' : '' }}>
-                                                Mengundurkan Diri</option>
-                                            <option value="LULUS"
-                                                {{ request('status_akademik') == 'LULUS' ? 'selected' : '' }}>Lulus
-                                            </option>
-                                            <option value="MENINGGAL"
-                                                {{ request('status_akademik') == 'MENINGGAL' ? 'selected' : '' }}>Meninggal
-                                            </option>
-                                            <option value="STUDENT EXCHANGE"
-                                                {{ request('status_akademik') == 'STUDENT EXCHANGE' ? 'selected' : '' }}>
-                                                Student Exchange</option>
-                                            <option value="TANPA_KETERANGAN"
-                                                {{ request('status_akademik') == 'TANPA_KETERANGAN' ? 'selected' : '' }}>
-                                                Tanpa Keterangan</option>
                                         </select>
                                     </div>
                                 </div>
@@ -314,11 +299,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        @if ($allmahasiswa['status'] === null || $allmahasiswa['status'] === 'TANPA KETERANGAN')
-                                            <span class="badge bg-label-secondary rounded-pill">
-                                                Tanpa Keterangan
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'AKTIF')
+                                        @if ($allmahasiswa['status'] === 'AKTIF')
                                             <span class="badge bg-label-success rounded-pill">
                                                 Naik
                                             </span>
@@ -329,26 +310,6 @@
                                         @elseif ($allmahasiswa['status'] === 'DO')
                                             <span class="badge bg-label-info rounded-pill">
                                                 Drop Out
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'MENGUNDURKAN_DIRI')
-                                            <span class="badge bg-label-danger rounded-pill">
-                                                Mengundurkan Diri
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'LULUS')
-                                            <span class="badge bg-label-primary rounded-pill">
-                                                Lulus
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'MENINGGAL')
-                                            <span class="badge bg-label-dark rounded-pill">
-                                                Meninggal
-                                            </span>
-                                        @elseif ($allmahasiswa['status'] === 'STUDENT EXCHANGE')
-                                            <span class="badge bg-label-info rounded-pill">
-                                                Student Exchange
-                                            </span>
-                                        @else
-                                            <span class="badge bg-label-success rounded-pill">
-                                                {{ $allmahasiswa['status'] }}
                                             </span>
                                         @endif
                                     </td>
