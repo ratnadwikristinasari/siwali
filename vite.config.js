@@ -3,6 +3,8 @@ import laravel from "laravel-vite-plugin";
 import html from "@rollup/plugin-html";
 import { glob } from "glob";
 
+process.env.ASSET_URL = process.env.ASSET_URL || "/siwali";
+
 /**
  * Get Files from a directory
  * @param {string} query
