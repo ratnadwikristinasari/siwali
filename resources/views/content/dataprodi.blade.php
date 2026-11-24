@@ -12,6 +12,9 @@
                     $('#form-filter').submit();
                 }, 1000);
             });
+            $('#major_id').on('change', function() {
+                $('#form-filter').submit();
+            });
         });
     </script>
 @endsection
@@ -32,7 +35,22 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('dataprodi') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                @if (auth()->user()->isSuperadmin())
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-select" name="major_id" id="major_id">
+                                                <option value="">Pilih Jurusan</option>
+                                                @foreach ($majors as $major)
+                                                    <option value="{{ $major['value'] }}"
+                                                        {{ request('major_id') == $major['value'] ? 'selected' : '' }}>
+                                                        {{ $major['label'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
+                                                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari..." id="search"
                                             name="search" value="{{ request('search') }}">
@@ -53,6 +71,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if ($needMajor ?? false)
+                                <tr>
+                                    <td colspan="3" class="text-center">Pilih jurusan terlebih dahulu</td>
+                                </tr>
+                            @endif
                             @foreach ($prodis as $index => $listprodi)
                                 <tr>
                                     <td>{{ $prodis->firstItem() + $index }}</td>

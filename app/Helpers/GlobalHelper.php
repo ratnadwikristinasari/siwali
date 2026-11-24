@@ -14,6 +14,8 @@ class GlobalHelper
 
         if (strtoupper($method) === 'POST') {
             $response = $response->post(config('app.super_app_url_internal') . $url, $data);
+        } elseif (strtoupper($method) === 'PUT') {
+            $response = $response->put(config('app.super_app_url_internal') . $url, $data);
         } else {
             $response = $response->get(config('app.super_app_url_internal') . $url, $data);
         }

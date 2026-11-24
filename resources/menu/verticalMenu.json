@@ -48,6 +48,13 @@
             "roles": ["kaprodi", "lecturer", "kajur"]
         },
         {
+            "name": "Atur Pembimbing",
+            "icon": "menu-icon tf-icons ri-user-settings-line",
+            "slug": "admin.supervisors",
+            "url": "admin/supervisors",
+            "roles": ["superadmin_siwali", "superadmin"]
+        },
+        {
             "name": "Biodata Mahasiswa",
             "icon": "menu-icon tf-icons ri-profile-line",
             "slug": "biodata",

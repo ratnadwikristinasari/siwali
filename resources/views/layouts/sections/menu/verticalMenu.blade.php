@@ -23,7 +23,7 @@
 
             {{-- menu headers --}}
             @if (isset($menu->menuHeader))
-                @if (isset($menu->roles) && count(array_intersect(Auth::user()->roles, $menu->roles)) > 0)
+                @if (isset($menu->roles) && Auth::user()->hasAnyRole($menu->roles))
                     <li class="menu-header mt-7">
                         <span class="menu-header-text">{{ __($menu->menuHeader) }}</span>
                     </li>
@@ -59,7 +59,7 @@
                 @endphp
 
                 {{-- main menu --}}
-                @if (isset($menu->roles) && count(array_intersect(Auth::user()->roles, $menu->roles)) > 0)
+                @if (isset($menu->roles) && Auth::user()->hasAnyRole($menu->roles))
                     <li class="menu-item {{ $activeClass }}">
                         <a href="{{ isset($menu->url) ? url($menu->url) : 'javascript:void(0);' }}"
                             class="{{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }}"

@@ -1,0 +1,139 @@
+# ==============================================================================
+# GitHub Actions CI/CD — Build & Push ke GHCR
+# ==============================================================================
+# Trigger: push ke branch main → build → push ke ghcr.io
+#
+# Required GitHub Secrets:
+#   (tidak diperlukan untuk GHCR karena pakai GITHUB_TOKEN bawaan)
+#
+# Required GitHub Variables (Settings > Variables):
+#   IMAGE_NAME      → nama image, contoh: your-org/siwali
+#
+# Di server/k3s, setelah workflow selesai:
+#   docker pull ghcr.io/your-org/siwali:latest
+#   # atau k3s:
+#   kubectl rollout restart deployment/siwali -n siwali
+# ==============================================================================
+
+name: Build & Push Production Image
+
+on:
+  push:
+    branches:
+      - main
+      - production
+    tags:
+      - 'v*.*.*'  # semantic versioning: v1.2.3
+
+  # Manual trigger untuk hotfix tanpa push
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Custom tag (optional, default: manual-YYYYMMDD)'
+        required: false
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}  # otomatis: owner/repo-name
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    # Permission GITHUB_TOKEN untuk push ke GHCR
+    permissions:
+      contents: read
+      packages: write
+      # Untuk sign image dengan Cosign (opsional)
+      id-token: write
+
+    steps:
+      # ── 1. Checkout source code ─────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Setup Docker Buildx (untuk multi-platform & cache) ───────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          # Driver cache-aware untuk build lebih cepat
+          driver-opts: |
+            image=moby/buildkit:latest
+
+      # ── 3. Login ke GHCR ────────────────────────────────────────────────────
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 4. Extract metadata untuk tags dan labels ───────────────────────────
+      # Otomatis generate tag: latest, sha-xxxxx, v1.2.3 (dari git tag)
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # Tag 'latest' untuk push ke main/production branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production' }}
+            # Tag dengan SHA commit (7 chars) untuk traceability
+            type=sha,prefix=sha-,format=short
+            # Semantic versioning dari git tag (v1.2.3 → 1.2.3, 1.2, 1)
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            # Timestamp (untuk manual dispatch)
+            type=raw,value=manual-{{date 'YYYYMMDD'}},enable=${{ github.event_name == 'workflow_dispatch' }}
+          labels: |
+            org.opencontainers.image.title=SiWali
+            org.opencontainers.image.description=Sistem Informasi Perwalian - Politeknik Negeri Jember
+            org.opencontainers.image.vendor=JTI Polije
+
+      # ── 5. Build & Push ──────────────────────────────────────────────────────
+      - name: Build and push Docker image
+        id: build-push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+          # ── Cache strategy: GitHub Actions Cache ──────────────────────────
+          # Layer cache disimpan di GitHub Cache, sehingga build berikutnya
+          # hanya rebuild stage yang berubah (bisa 3-5x lebih cepat)
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+          # ── Provenance & SBOM (opsional, untuk security compliance) ───────
+          # provenance: true
+          # sbom: true
+
+      # ── 6. Output digest untuk logging/tracing ───────────────────────────────
+      - name: Image digest
+        run: |
+          echo "✅ Image pushed successfully!"
+          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          echo "🔖 Digest: ${{ steps.build-push.outputs.digest }}"
+          echo ""
+          echo "Deploy commands:"
+          echo "  # Docker:"
+          echo "  docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "  # k3s:"
+          echo "  kubectl rollout restart deployment/siwali -n siwali"
+
+  # ── Opsional: Notify ke Slack / Discord setelah deploy ─────────────────────
+  # notify:
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Notify
+  #       uses: slackapi/slack-github-action@v2
+  #       with:
+  #         payload: '{"text":"✅ SiWali image pushed: ${{ needs.build-and-push.outputs.digest }}"}'
+  #       env:
+  #         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

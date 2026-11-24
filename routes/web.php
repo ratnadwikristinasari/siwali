@@ -8,6 +8,7 @@ use App\Http\Controllers\page\CAllMahasiswa;
 use App\Http\Controllers\page\Cbiodata;
 use App\Http\Controllers\page\CDetailPerwalian;
 use App\Http\Controllers\page\CFormNonKHS;
+use App\Http\Controllers\page\CSupervisorAdmin;
 use App\Http\Controllers\page\CperwalianNonKHS;
 // use App\Mail\AjukanPerwalianMail;
 use Illuminate\Support\Facades\Route;
@@ -82,6 +83,12 @@ Route::prefix($prefix)->group(
                     Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
                     Route::put('/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
                 });
+            });
+
+            Route::middleware('role:superadmin_siwali|superadmin')->prefix('admin/supervisors')->group(function () {
+                Route::get('', [CSupervisorAdmin::class, 'index'])->name('admin.supervisors');
+                Route::get('{studentId}', [CSupervisorAdmin::class, 'show'])->name('admin.supervisors.show');
+                Route::put('{studentId}', [CSupervisorAdmin::class, 'update'])->name('admin.supervisors.update');
             });
 
             Route::middleware('role:kajur')->group(function () {

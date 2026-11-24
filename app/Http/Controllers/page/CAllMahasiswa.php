@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\page;
 
 use App\Helpers\MahasiswaHelper;
+use App\Helpers\MajorHelper;
 use App\Helpers\ProdiHelper;
 use App\Helpers\SessionApiHelper;
 use App\Http\Controllers\Controller;
@@ -22,11 +23,27 @@ class CAllMahasiswa extends Controller
         $studyProgramId = $request->query('study_program_id', '');
 
         $statusAkademikFilter = $request->query('status_akademik', '');
-        if ($user->hasRole('kajur')) {
+        $majors = [];
+        $majorId = $user->major_id;
+        $needMajor = false;
+
+        if ($user->isSuperadmin()) {
+            $majors = MajorHelper::getOptions($token);
+            $majorId = $request->query('major_id', '');
+            $needMajor = $majorId === '';
+            $studyPrograms = $needMajor ? [] : ProdiHelper::getprodi($token, $majorId)['data'];
+        } elseif ($user->hasRole('kajur')) {
             $studyPrograms = ProdiHelper::getprodi($token, $user->major_id)['data'];
         } else {
             $studyPrograms = [];
             $studyProgramId = $user->study_program_id;
+        }
+
+        if ($needMajor) {
+            $mahasiswaall = new LengthAwarePaginator([], 0, 10, 1, ['path' => $request->url(), 'query' => $request->query()]);
+            $sessions = SessionApiHelper::getAsOptions($token);
+
+            return view('content.data-allmahasiswa', compact('mahasiswaall', 'studyPrograms', 'sessions', 'majors', 'needMajor'));
         }
 
         $allowedStatuses = ['AKTIF', 'CUTI', 'DO'];
@@ -35,7 +52,7 @@ class CAllMahasiswa extends Controller
             : $allowedStatuses;
 
         $filter = [
-            'major_id' => $user->major_id,
+            'major_id' => $majorId,
             'study_program_id' => $studyProgramId,
             'class' => $request->query('class', ''),
             'semester_id' => $request->query('semester_id', $request->query('semester', '')),
@@ -123,6 +140,6 @@ class CAllMahasiswa extends Controller
 
         $sessions = SessionApiHelper::getAsOptions($token);
 
-        return view('content.data-allmahasiswa', compact('mahasiswaall', 'studyPrograms', 'sessions'));
+        return view('content.data-allmahasiswa', compact('mahasiswaall', 'studyPrograms', 'sessions', 'majors', 'needMajor'));
     }
 }

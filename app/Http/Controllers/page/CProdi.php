@@ -18,7 +18,22 @@ class CProdi extends Controller
         $page = $request->query('page', 1);
         $search = $request->query('search', '');
 
-        $response = ProdiHelper::getprodi($token, $loggedUser->major_id, $page, $search);
+        $majors = [];
+        $needMajor = false;
+        $majorId = $loggedUser->major_id;
+        if ($loggedUser->isSuperadmin()) {
+            $majors = MajorHelper::getOptions($token);
+            $majorId = $request->query('major_id', '');
+            $needMajor = $majorId === '';
+        }
+
+        if ($needMajor) {
+            $prodis = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10, 1, ['path' => $request->url(), 'query' => $request->query()]);
+
+            return view('content.dataprodi', compact('prodis', 'majors', 'needMajor'));
+        }
+
+        $response = ProdiHelper::getprodi($token, $majorId, $page, $search);
         $data = $response['data'];
 
         $meta = $response['meta'];
@@ -36,6 +51,6 @@ class CProdi extends Controller
 
         // dd($prodis);
 
-        return view('content.dataprodi', compact('prodis'));
+        return view('content.dataprodi', compact('prodis', 'majors', 'needMajor'));
     }
 }

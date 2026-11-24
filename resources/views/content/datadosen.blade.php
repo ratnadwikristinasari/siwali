@@ -14,6 +14,10 @@
                 }, 1000);
             });
 
+            $('#major_id').on('change', function() {
+                $('#study_program_id').val('');
+                $('#form-filter').submit();
+            });
             $('#study_program_id').on('change', function() {
                 $('#form-filter').submit();
             });
@@ -37,6 +41,21 @@
                     <div class="col-12 col-md">
                         <form action="{{ route('datadosen') }}" method="GET" id="form-filter">
                             <div class="row g-2 justify-content-md-end">
+                                @if (auth()->user()->isSuperadmin())
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-select" name="major_id" id="major_id">
+                                                <option value="">Pilih Jurusan</option>
+                                                @foreach ($majors as $major)
+                                                    <option value="{{ $major['value'] }}"
+                                                        {{ request('major_id') == $major['value'] ? 'selected' : '' }}>
+                                                        {{ $major['label'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
                                 @role('kajur')
                                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                         <div class="input-group input-group-sm">
@@ -94,7 +113,7 @@
                                         {{ $listdosen['study_program']['name'] !== '' ? $listdosen['study_program']['name'] : '-' }}
                                     </td>
                                 @empty
-                                    <td colspan="3" class="text-center">Data tidak ditemukan</td>
+                                    <td colspan="3" class="text-center">{{ ($needMajor ?? false) ? 'Pilih jurusan terlebih dahulu' : 'Data tidak ditemukan' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

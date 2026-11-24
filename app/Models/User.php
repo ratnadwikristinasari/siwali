@@ -63,10 +63,22 @@ class User extends Authenticatable
     {
         $roles = $this->roles ?? [];
         if (!is_array($roles)) $roles = [];
-        return array_values(array_unique(array_map(
+        $roles = array_values(array_unique(array_map(
             fn($r) => strtolower(trim((string)$r)),
             $roles
         )));
+
+        // superadmin & superadmin_siwali = semua role manajemen (bukan student/orang_tua/lecturer, butuh data personal)
+        if (array_intersect(['superadmin', 'superadmin_siwali'], $roles)) {
+            $roles = array_values(array_unique([...$roles, 'kajur', 'kaprodi', 'sekjur']));
+        }
+
+        return $roles;
+    }
+
+    public function isSuperadmin(): bool
+    {
+        return count(array_intersect(['superadmin', 'superadmin_siwali'], $this->normalizedRoles())) > 0;
     }
 
     public function hasRole(string $role): bool

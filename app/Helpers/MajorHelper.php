@@ -29,6 +29,11 @@ class MajorHelper
         return $response->json();
     }
 
+    public static function getOptions(string $token): array
+    {
+        return GlobalHelper::requestWithToken('/majors/options', $token, 'GET')->json('data') ?? [];
+    }
+
     public static function getById(string $token, string $majorId)
     {
         // $response = Http::withHeaders([

@@ -14,7 +14,7 @@ class CHistoryPerwalianDosen extends Controller
     public function index(Request $request)
     {
         $token = Auth::user()->token;
-        $majorId = Auth::user()->major_id;
+        $majorId = Auth::user()->major_id ?? '';
         $page = (int) $request->query('page', 1);
         $search = $request->query('search', '');
         $type = $request->input('type');

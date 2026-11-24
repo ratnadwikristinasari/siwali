@@ -219,7 +219,7 @@ data:
   # + ~256MB overhead Laravel/PHP = ~640MB total untuk app pod
   # Sisakan untuk burst: max_threads = 8 (di Caddyfile)
   CADDY_SERVER_WORKER_COUNT: "4"
-  FRANKENPHP_NUM_THREADS: "4"
+
 
   # SuperApp & Services
   SUPER_APP_URL: "https://be-superapp.jtinova.com/api/v1"
