@@ -57,7 +57,6 @@ export default defineConfig({
     build: {
         chunkSizeWarningLimit: 1200,
     },
-    base: "/build/",
     plugins: [
         laravel({
             input: [

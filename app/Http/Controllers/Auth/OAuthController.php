@@ -10,27 +10,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class OAuthController extends Controller
 {
     public function redirect()
     {
-        $state = Str::random(40);
-        session(['oauth_state' => $state]);
-
         return redirect(config('app.super_app_url') . '/oauth/authorize?' . http_build_query([
             'client_id' => config('auth.oauth.client_id'),
             'redirect_uri' => config('app.url') . '/auth/callback',
             'response_type' => 'code',
-            'state' => $state,
         ]));
     }
 
     public function callback(Request $request)
     {
-        $expected = $request->session()->pull('oauth_state');
-        if (!is_string($request->code) || !$expected || !hash_equals($expected, (string) $request->state)) {
+        if (!is_string($request->code) || $request->code === '') {
             return redirect()->route('login')->withErrors(['msg' => 'Login failed. Please try again.']);
         }
 

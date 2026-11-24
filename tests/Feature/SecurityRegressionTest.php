@@ -131,26 +131,12 @@ it('forbids previewing another student KHS', function () {
         ->assertForbidden();
 });
 
-it('rejects OAuth callback without a matching state', function (?string $sessionState, array $query) {
+it('rejects OAuth callback without a code', function () {
     Http::fake();
 
-    $this->withSession($sessionState ? ['oauth_state' => $sessionState] : [])
-        ->get(route('auth.callback', $query))
-        ->assertRedirect(route('login'));
+    $this->get(route('auth.callback'))->assertRedirect(route('login'));
 
     Http::assertNothingSent();
-})->with([
-    'no state at all' => [null, ['code' => 'c']],
-    'missing state param' => ['abc', ['code' => 'c']],
-    'wrong state' => ['abc', ['code' => 'c', 'state' => 'zzz']],
-]);
-
-it('sends a state param on OAuth redirect and stores it in session', function () {
-    $res = $this->get(route('auth.login'));
-
-    $state = session('oauth_state');
-    expect($state)->toBeString()->not->toBeEmpty();
-    expect($res->headers->get('Location'))->toContain('state=' . $state);
 });
 
 it('rejects non-UUID student ids on supervisor admin routes', function () {

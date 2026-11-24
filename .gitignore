@@ -29,3 +29,5 @@ frankenphp
 frankenphp-worker.php
 
 .agents
+
+docker/.env.app

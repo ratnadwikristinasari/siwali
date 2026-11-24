@@ -1,0 +1,10 @@
+# Snippet untuk server { listen 443 ssl; server_name jti.polije.ac.id; } yang sudah ada.
+upstream siwali { server 127.0.0.1:8084; keepalive 16; }
+
+# Trailing slash pada proxy_pass menghapus prefix /siwali/.
+location = /siwali { return 301 /siwali/; }
+location /siwali/ {
+    client_max_body_size 8m;
+    proxy_pass http://siwali/;
+}
+# proxy_http_version 1.1, Connection "", Host, X-Real-IP, X-Forwarded-* diwarisi dari level server (sama dengan jtisurat).
