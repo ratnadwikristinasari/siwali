@@ -258,6 +258,24 @@
                                                 <i class="ri-eye-fill"></i>
                                             </a>
                                         @endif
+
+                                        @if (auth()->user()->isSuperadmin())
+                                            <button type="button" class="btn btn-icon btn-sm btn-outline-warning"
+                                                title="Edit" data-bs-toggle="modal"
+                                                data-bs-target="#editAdvise{{ $historydosenwali->id }}">
+                                                <i class="ri-edit-fill"></i>
+                                            </button>
+                                            <form action="{{ route('admin.advising.destroy', $historydosenwali->id) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Hapus perwalian ini? Tidak dapat dikembalikan.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-icon btn-sm btn-outline-danger"
+                                                    title="Hapus">
+                                                    <i class="ri-delete-bin-fill"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty
@@ -270,6 +288,53 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if (auth()->user()->isSuperadmin())
+                    @foreach ($perwaliandosen as $a)
+                        <div class="modal fade" id="editAdvise{{ $a->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form class="modal-content" method="POST"
+                                    action="{{ route('admin.advising.update', $a->id) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Perwalian - {{ $a->student->name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select name="status" class="form-select">
+                                                @foreach (['pending', 'signed', 'done'] as $s)
+                                                    <option value="{{ $s }}" @selected($a->status === $s)>
+                                                        {{ $s }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">IPK</label>
+                                            <input type="number" step="0.01" min="0" max="4" name="ipk"
+                                                class="form-control" value="{{ $a->ipk }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Keluhan</label>
+                                            <textarea name="keluhan" class="form-control" rows="3" required>{{ $a->keluhan }}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Masukan</label>
+                                            <textarea name="masukan" class="form-control" rows="3">{{ $a->masukan }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
 
                 {{ $perwaliandosen->links('vendor.pagination.bootstrap-5') }}
             </div>

@@ -143,6 +143,32 @@ class CPerwalian extends Controller
         return $perwalian;
     }
 
+    public function adminUpdate(Request $request, $id)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:pending,signed,done',
+            'ipk' => 'nullable|numeric|between:0,4',
+            'keluhan' => 'required|string|max:5000',
+            'masukan' => 'nullable|string|max:5000',
+        ]);
+
+        Advise::findOrFail($id)->update($data);
+
+        return back()->with('success', 'Perwalian diperbarui.');
+    }
+
+    public function adminDestroy($id)
+    {
+        $perwalian = Advise::findOrFail($id);
+
+        if ($perwalian->khs) {
+            Storage::disk('s3')->delete('khs_files/' . $perwalian->khs);
+        }
+        $perwalian->delete();
+
+        return back()->with('success', 'Perwalian dihapus.');
+    }
+
     public function edit($id)
     {
         $perwalian = $this->ownedPending($id);

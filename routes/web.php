@@ -97,6 +97,11 @@ Route::prefix($prefix)->group(
                 Route::put('{studentId}', [CSupervisorAdmin::class, 'update'])->name('admin.supervisors.update');
             });
 
+            Route::middleware('role:superadmin_siwali|superadmin')->prefix('admin/advising')->group(function () {
+                Route::put('{id}', [CPerwalian::class, 'adminUpdate'])->name('admin.advising.update');
+                Route::delete('{id}', [CPerwalian::class, 'adminDestroy'])->name('admin.advising.destroy');
+            });
+
             Route::middleware('role:kajur')->group(function () {
                 Route::get('page/prodi', [CProdi::class, 'getProdiById'])->name('dataprodi');
                 Route::get('need-sign', [App\Http\Controllers\page\CNeedSign::class, 'index'])->name('page.need_sign');
