@@ -35,6 +35,14 @@ class CPerwalian extends Controller
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
 
+        $hasPendingKonseling = Advise::where('student_user_id', $studentUser->id)
+            ->where('type', 'non_gpa_advising')
+            ->where('status', 'pending')
+            ->exists();
+        if ($hasPendingKonseling) {
+            return back()->withErrors('Anda masih memiliki pengajuan konseling yang belum diproses dosen wali. Tunggu hingga konseling selesai sebelum mengajukan perwalian baru.');
+        }
+
         $studentSemester = null;
 
         if ($request->type === 'gpa_advising') {

@@ -22,6 +22,14 @@ class CperwalianNonKHS extends Controller
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
 
+        $hasPendingKonseling = Advise::where('student_user_id', $studentUser->id)
+            ->where('type', 'non_gpa_advising')
+            ->where('status', 'pending')
+            ->exists();
+        if ($hasPendingKonseling) {
+            return back()->withErrors('Anda masih memiliki pengajuan konseling yang belum diproses dosen wali. Tunggu hingga konseling selesai sebelum mengajukan konseling baru.');
+        }
+
         $advisor = collect($dataAuth['data']['student_detail']['supervisor_lectures'])->firstWhere('position', 'ACADEMIC_ADVISOR');
         if (!$advisor) {
             return back()->withErrors('Dosen Wali tidak ditemukan');
