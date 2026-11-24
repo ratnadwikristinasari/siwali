@@ -25,6 +25,7 @@ class OAuthController extends Controller
     public function callback(Request $request)
     {
         if (!is_string($request->code) || $request->code === '') {
+            report('Invalid authorization code received from OAuth provider.');
             return redirect()->route('login')->withErrors(['msg' => 'Login failed. Please try again.']);
         }
 
@@ -37,6 +38,7 @@ class OAuthController extends Controller
         ]);
 
         if ($response->failed()) {
+            report('Failed to obtain access token from OAuth provider: ' . $response->body());
             return redirect()->route('login')->withErrors(['msg' => $response->json('message') ?? 'Login failed. Please try again.']);
         }
 
