@@ -198,7 +198,11 @@
                 <div class="row g-2 align-items-center my-3 mx-1">
                     <div class="col-12 col-md">
                         <form action="{{ route('datamahasiswa') }}" method="GET" id="form-filter">
+                            @if (request('lecture_id'))
+                                <input type="hidden" name="lecture_id" value="{{ request('lecture_id') }}">
+                            @endif
                             <div class="row g-2 justify-content-md-end">
+                                @unless (auth()->user()->isSuperadmin())
                                 <div class="col-12 col-sm-6 col-md-4 col-lg">
                                     <div class="input-group input-group-sm">
                                         <select class="form-select" name="session_id" id="session_id">
@@ -271,6 +275,7 @@
                                         </select>
                                     </div>
                                 </div>
+                                @endunless
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="input-group input-group-sm">
                                         <input type="search" class="form-control" placeholder="Cari berdasarkan nama"

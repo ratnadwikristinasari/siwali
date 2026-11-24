@@ -90,6 +90,9 @@
                                 <th class="text-truncate">Nama</th>
                                 <th class="text-truncate">NIP</th>
                                 <th class="text-truncate">Prodi</th>
+                                @if (auth()->user()->isSuperadmin())
+                                    <th class="text-truncate text-center">Aksi</th>
+                                @endif
 
                             </tr>
                         </thead>
@@ -112,8 +115,24 @@
                                     <td class="text-truncate">
                                         {{ $listdosen['study_program']['name'] !== '' ? $listdosen['study_program']['name'] : '-' }}
                                     </td>
+                                    @if (auth()->user()->isSuperadmin())
+                                        <td class="text-center">
+                                            <a href="{{ route('datamahasiswa', ['lecture_id' => $listdosen['id']]) }}"
+                                                class="btn btn-sm btn-outline-primary" title="Data Mahasiswa Wali"
+                                                aria-label="Data Mahasiswa Wali">
+                                                <i class="ri-graduation-cap-fill"></i>
+                                            </a>
+                                            <a href="{{ route('dataperwaliandosen', ['lecture_id' => $listdosen['id']]) }}"
+                                                class="btn btn-sm btn-outline-info" title="Perwalian Mahasiswa"
+                                                aria-label="Perwalian Mahasiswa">
+                                                <i class="ri-bank-card-2-line"></i>
+                                            </a>
+                                        </td>
+                                    @endif
+                                </tr>
                                 @empty
-                                    <td colspan="3" class="text-center">{{ ($needMajor ?? false) ? 'Pilih jurusan terlebih dahulu' : 'Data tidak ditemukan' }}</td>
+                                <tr>
+                                    <td colspan="5" class="text-center">{{ ($needMajor ?? false) ? 'Pilih jurusan terlebih dahulu' : 'Data tidak ditemukan' }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

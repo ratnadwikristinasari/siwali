@@ -56,10 +56,13 @@ Route::prefix($prefix)->group(
             });
 
             Route::prefix('student')->group(function () {
-                Route::middleware('role:lecturer')->group(function () {
+                Route::middleware('role:lecturer|superadmin|superadmin_siwali')->group(function () {
                     Route::get('', [CMahasiswa::class, 'index'])->name('datamahasiswa');
                     Route::post('{studentId}/reminder/{semesterId}', [CMahasiswa::class, 'sendReminder'])->name('datamahasiswa.reminder');
                     Route::get('history', [CHistoryPerwalianDosen::class, 'index'])->name('dataperwaliandosen');
+                });
+
+                Route::middleware('role:lecturer')->group(function () {
                     Route::get('preview-gpa/{studentId}/{semesterId}', [CMahasiswa::class, 'previewGPA'])->name('datamahasiswa.preview-gpa');
                 });
 
@@ -79,8 +82,11 @@ Route::prefix($prefix)->group(
                     Route::get('history', [CHistoryPerwalian::class, 'index'])->name('dataperwalian');
                 });
 
+                Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])
+                    ->middleware('role:lecturer|superadmin|superadmin_siwali')
+                    ->name('perwalian.detail');
+
                 Route::middleware('role:lecturer')->group(function () {
-                    Route::get('/{id}/fill', [CDetailPerwalian::class, 'detail'])->name('perwalian.detail');
                     Route::put('/{id}', [CPerwalian::class, 'update'])->name('perwalian.update');
                 });
             });

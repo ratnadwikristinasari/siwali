@@ -13,7 +13,8 @@ class MahasiswaHelper
         ?string $search = '',
         ?string $sessionId = null,
         ?string $semesterId = null,
-        ?string $status = null
+        ?string $status = null,
+        ?string $lectureId = null
     ): array {
         $queryParams = [
             'search' => $search,
@@ -21,6 +22,7 @@ class MahasiswaHelper
             'session_id' => $sessionId,
             'semester_id' => $semesterId,
             'status' => $status,
+            'lecture_id' => $lectureId,
             'page' => $page
         ];
         // $response = Http::withoutVerifying()->withHeaders([

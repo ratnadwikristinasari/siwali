@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\history;
 
-use App\Helpers\MahasiswaHelper;
 use App\Helpers\SessionApiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Advise;
@@ -14,8 +13,6 @@ class CHistoryPerwalianDosen extends Controller
     public function index(Request $request)
     {
         $token = Auth::user()->token;
-        $majorId = Auth::user()->major_id ?? '';
-        $page = (int) $request->query('page', 1);
         $search = $request->query('search', '');
         $type = $request->input('type');
         $status = $request->input('status');
@@ -24,16 +21,22 @@ class CHistoryPerwalianDosen extends Controller
         $selectedSemesterId = $request->query('semester_id', $request->query('semester', ''));
 
         $user = Auth::user();
-        $response = MahasiswaHelper::getMahasiswa(
-            $token,
-            $majorId,
-            $page,
-            $search,
-            $selectedSemesterId,
-            $selectedSemesterId,
-        );
+        $lectureId = '';
 
-        $perwaliandosen = Advise::where('lecture_user_id', $user->id)
+        if ($user->isSuperadmin()) {
+            $lectureId = $request->query('lecture_id', '');
+
+            if ($lectureId === '') {
+                return redirect()->route('datadosen')->with('error', 'Pilih dosen terlebih dahulu.');
+            }
+        }
+
+        $perwaliandosen = Advise::query()
+            ->when(
+                $lectureId !== '',
+                fn ($query) => $query->where('lecture_id', $lectureId),
+                fn ($query) => $query->where('lecture_user_id', $user->id)
+            )
             ->when($search, function ($query, $search) {
                 $query->where(function ($subQuery) use ($search) {
                     $subQuery->where('status', 'like', '%' . $search . '%')

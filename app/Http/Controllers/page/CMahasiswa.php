@@ -22,8 +22,20 @@ class CMahasiswa extends Controller
     public function index(Request $request)
     {
 
-        $token = Auth::user()->token;
-        $majorId = Auth::user()->major_id ?? '';
+        $user = Auth::user();
+        $token = $user->token;
+        $majorId = $user->major_id ?? '';
+        $lectureId = '';
+
+        if ($user->isSuperadmin()) {
+            $lectureId = $request->query('lecture_id', '');
+            $majorId = '';
+
+            if ($lectureId === '') {
+                return redirect()->route('datadosen')->with('error', 'Pilih dosen terlebih dahulu.');
+            }
+        }
+
         $page = (int) $request->query('page', 1);
         $search = $request->query('search', '');
         $selectedSessionId = $request->query('session_id', '');
@@ -40,6 +52,8 @@ class CMahasiswa extends Controller
             $search,
             $selectedSessionId,
             $selectedSemesterId,
+            null,
+            $lectureId ?: null,
         );
 
         if (!isset($response['data']) || empty($response['data'])) {

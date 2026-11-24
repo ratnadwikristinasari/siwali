@@ -45,7 +45,8 @@
             "icon": "menu-icon tf-icons ri-graduation-cap-fill ri-list-view",
             "slug": "datamahasiswa",
             "url": "student",
-            "roles": ["kaprodi", "lecturer", "kajur"]
+            "roles": ["kaprodi", "lecturer", "kajur"],
+            "hideForSuperadmin": true
         },
         {
             "name": "Atur Pembimbing",
@@ -83,7 +84,8 @@
             "icon": "menu-icon tf-icons ri-bank-card-2-line",
             "slug": "dataperwaliandosen",
             "url": "student/history",
-            "roles": ["kaprodi", "lecturer", "kajur"]
+            "roles": ["kaprodi", "lecturer", "kajur"],
+            "hideForSuperadmin": true
         },
         {
             "name": "Pengesahan KHS",

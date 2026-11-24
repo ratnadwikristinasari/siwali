@@ -59,7 +59,9 @@
                 @endphp
 
                 {{-- main menu --}}
-                @if (isset($menu->roles) && Auth::user()->hasAnyRole($menu->roles))
+                @if (isset($menu->roles) &&
+                        Auth::user()->hasAnyRole($menu->roles) &&
+                        !(($menu->hideForSuperadmin ?? false) && Auth::user()->isSuperadmin()))
                     <li class="menu-item {{ $activeClass }}">
                         <a href="{{ isset($menu->url) ? url($menu->url) : 'javascript:void(0);' }}"
                             class="{{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }}"
