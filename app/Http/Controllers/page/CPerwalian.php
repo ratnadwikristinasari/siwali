@@ -52,25 +52,28 @@ class CPerwalian extends Controller
                 return back()->withErrors('Semester tidak valid.');
             }
 
-            $isEven = (int) $studentSemester['semester'] % 2 === 0;
+            $nim = strtoupper(explode('@', $studentUser->email)[0] ?? '');
+            if (!in_array($nim, config('demo.jtiform_bypass_nims', []), true)) {
+                $isEven = (int) $studentSemester['semester'] % 2 === 0;
 
-            $checkStatusJtiform = CheckJtiformStatusHelper::check(
-                $studentSemester['session_id'] ?? '',
-                $isEven,
-                $studentUser->external_id
-            );
+                $checkStatusJtiform = CheckJtiformStatusHelper::check(
+                    $studentSemester['session_id'] ?? '',
+                    $isEven,
+                    $studentUser->external_id
+                );
 
-            Log::info('Check JTIFORM Status', [
-                'session_id' => $studentSemester['session_id'] ?? '',
-                'is_even' => $isEven,
-                'external_id' => $studentUser->external_id,
-                'check_status_jtiform' => $checkStatusJtiform,
-            ]);
+                Log::info('Check JTIFORM Status', [
+                    'session_id' => $studentSemester['session_id'] ?? '',
+                    'is_even' => $isEven,
+                    'external_id' => $studentUser->external_id,
+                    'check_status_jtiform' => $checkStatusJtiform,
+                ]);
 
-            if ($checkStatusJtiform === false && $request->type === 'gpa_advising') {
-                return back()->withErrors('Anda belum mengisi <a href="https://project-jti.polije.ac.id/" target="_blank" class="alert-link">Form Evaluasi Dosen</a>  untuk semester ini. Silakan isi Form terlebih dahulu sebelum mengajukan perwalian.');
-            } elseif ($checkStatusJtiform === null && $request->type === 'gpa_advising') {
-                return back()->withErrors('Gagal memeriksa status JTIFORM. Silakan coba lagi nanti.');
+                if ($checkStatusJtiform === false) {
+                    return back()->withErrors('Anda belum mengisi <a href="https://project-jti.polije.ac.id/" target="_blank" class="alert-link">Form Evaluasi Dosen</a>  untuk semester ini. Silakan isi Form terlebih dahulu sebelum mengajukan perwalian.');
+                } elseif ($checkStatusJtiform === null) {
+                    return back()->withErrors('Gagal memeriksa status JTIFORM. Silakan coba lagi nanti.');
+                }
             }
         }
 
