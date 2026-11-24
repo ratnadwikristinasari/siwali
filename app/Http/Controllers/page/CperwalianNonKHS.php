@@ -17,7 +17,7 @@ class CperwalianNonKHS extends Controller
     public function storekhs(Request $request)
     {
         $request->validate([
-            'keluhan' => 'nullable|string'
+            'keluhan' => 'nullable|string|max:5000'
         ]);
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
@@ -77,7 +77,8 @@ class CperwalianNonKHS extends Controller
             'lecture_user_id' => $lectureUser->id,
             'student_id' => $dataAuth['data']['student_detail']['id'],
             'lecture_id' => $employeeId,
-            'status' => empty($request->masukan) ? 'pending' : 'done',
+            'status' => 'pending',
+            'type' => 'non_gpa_advising',
             'semester' => $semesterAktif,
             'study_program' => $studyProgramName,
             'major' => $majorName,
@@ -91,19 +92,15 @@ class CperwalianNonKHS extends Controller
             ->with('Success', 'Perwalian Berhasil Diajukan');
     }
 
-    public function edit($id)
-    {
-        $perwalian = Advise::findOrFail($id);
-        return view('content.editform-perwalian', compact('perwalian'));
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
-            'masukan' => 'nullable|string',
+            'masukan' => 'nullable|string|max:5000',
         ]);
 
         $perwalian = Advise::findOrFail($id);
+        abort_unless($perwalian->lecture_user_id === Auth::id(), 403);
+        abort_unless($perwalian->type === 'non_gpa_advising' && $perwalian->status === 'pending', 409);
         $newstatus = empty($request->masukan) ? 'pending' : 'done';
         $perwalian->update([
             'masukan' => $request->masukan,

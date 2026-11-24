@@ -52,23 +52,17 @@ class AppServiceProvider extends ServiceProvider
         });
         View::composer('*', function ($view) {
             if (Auth::check()) {
-                static $counts = null;
+                $user = Auth::user();
 
-                if ($counts === null) {
-                    $user = Auth::user();
+                $view->with([
+                    'pendingPerwalianCount' => Advise::where('lecture_user_id', $user->id)
+                        ->where('status', 'pending')
+                        ->count(),
 
-                    $counts = [
-                        'pendingPerwalianCount' => Advise::where('lecture_user_id', $user->id)
-                            ->where('status', 'pending')
-                            ->count(),
-
-                        'pendingKHSCount' => Advise::where('status', 'signed')
-                            ->where('type', 'gpa_advising')
-                            ->count(),
-                    ];
-                }
-
-                $view->with($counts);
+                    'pendingKHSCount' => Advise::where('status', 'signed')
+                        ->where('type', 'gpa_advising')
+                        ->count(),
+                ]);
             }
         });
     }

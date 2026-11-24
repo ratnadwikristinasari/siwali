@@ -86,6 +86,11 @@ class Cbiodata extends Controller
         $token = Auth::user()->token;
         $authData = AuthHelper::getauth(null, $token)['data'] ?? [];
 
+        $ownStudentId = $user->hasRole('orang_tua')
+            ? optional(optional($user->studentParents->first())->student)->student_employee_id
+            : $user->student_employee_id;
+        abort_unless($ownStudentId && $ownStudentId === $studentId, 403);
+
         if ($user->hasRole('orang_tua')) {
             $raw = MahasiswaHelper::getStudentDetails($token, $user->studentParents->first()->student->student_employee_id);
             $rawData = $raw['data'];

@@ -17,13 +17,18 @@ class CDetailPerwalian extends Controller
 {
     public function detail(Request $request, $id)
     {
-        $token = Auth::user()->token;
-        $authData = AuthHelper::getauth(null, $token)['data'] ?? [];
-
         $perwalian = Advise::with([
             'student',
             'lecture'
         ])->findOrFail($id);
+
+        abort_unless(
+            Auth::user()->isSuperadmin() || $perwalian->lecture_user_id === Auth::id(),
+            403
+        );
+
+        $token = Auth::user()->token;
+        $authData = AuthHelper::getauth(null, $token)['data'] ?? [];
 
         if ($perwalian->type === 'non_gpa_advising') {
             return view('content.detailperwaliannokhs', compact('perwalian'));

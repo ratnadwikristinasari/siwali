@@ -111,13 +111,15 @@ Route::prefix($prefix)->group(
             // Route::get('/form-perwalian', [DropzoneController::class, 'index'])->name('dropezone.form');
             // Route::post('/upload', [DropzoneController::class, 'khs'])->name('upload.khs');
 
-            Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
-            Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+            Route::middleware('role:student|orang_tua')->group(function () {
+                Route::get('page/nonkhs', [CFormNonKHS::class, 'index'])->name('form-perwalian-nonkhs');
+                Route::post('/perwalian/non', [CperwalianNonKHS::class, 'storekhs'])->name('perwalian.nonkhs');
+            });
 
-            Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->name('perwalian.edit');
+            Route::get('/perwalian/{id}/edit', [CPerwalian::class, 'edit'])->middleware('role:lecturer')->name('perwalian.edit');
 
             // Route::get('/perwalian/nonkhs/{id}/edit', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
-            Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->name('perwalian.nonkhs.update');
+            Route::put('/perwalian/nonkhs/{id}', [CperwalianNonKHS::class, 'update'])->middleware('role:lecturer')->name('perwalian.nonkhs.update');
             // Route::get('/perwalian/nonkhs/{id}/detail', [CDetailPerwalianNonKHS::class, 'detail'])->name('perwalian.nonkhs.detail');
             Route::get('/api/semester/option', [CSuperappApi::class, 'semesterOption'])->name('api.semester.option');
         });

@@ -36,8 +36,11 @@ class CNeedSign extends Controller
     {
         $token = Auth::user()->token;
 
-        $advise = Advise::findOrFail($id);
-        $advise->update(['status' => 'processing']);
+        $claimed = Advise::where('id', $id)
+            ->where('type', 'gpa_advising')
+            ->where('status', 'signed')
+            ->update(['status' => 'processing']);
+        abort_unless($claimed, 409, 'Dokumen tidak dalam status signed.');
 
         ProcessSignDocument::dispatch($id, $token);
 
@@ -52,14 +55,15 @@ class CNeedSign extends Controller
             'ids.*' => 'exists:advise,id',
         ]);
         $token = Auth::user()->token;
-        Advise::whereIn('id', $request->ids)->update(['status' => 'processing']);
-        foreach ($request->ids as $id) {
-            if (is_null($id)) {
-                continue; 
-            }
+        $ids = Advise::whereIn('id', $request->ids)
+            ->where('type', 'gpa_advising')
+            ->where('status', 'signed')
+            ->pluck('id');
+        Advise::whereIn('id', $ids)->update(['status' => 'processing']);
+        foreach ($ids as $id) {
             ProcessSignDocument::dispatch($id, $token);
         }
 
-        return redirect()->route('page.need_sign')->with('success', count($request->ids) . ' dokumen perwalian telah ditandatangani.');
+        return redirect()->route('page.need_sign')->with('success', count($ids) . ' dokumen perwalian telah ditandatangani.');
     }
 }

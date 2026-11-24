@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CSupervisorAdmin extends Controller
 {
@@ -44,6 +45,7 @@ class CSupervisorAdmin extends Controller
 
     public function show(string $studentId)
     {
+        abort_unless(Str::isUuid($studentId), 404);
         $response = GlobalHelper::requestWithToken("/supervisor-lectures/student/{$studentId}", Auth::user()->token);
 
         return response()->json($response->json(), $response->status());
@@ -51,6 +53,7 @@ class CSupervisorAdmin extends Controller
 
     public function update(Request $request, string $studentId)
     {
+        abort_unless(Str::isUuid($studentId), 404);
         $payload = $request->validate(
             collect(array_keys(self::POSITIONS))
                 ->mapWithKeys(fn($key) => [$key => ['nullable', 'string', 'uuid']])

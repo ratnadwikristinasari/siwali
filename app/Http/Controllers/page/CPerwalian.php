@@ -27,15 +27,15 @@ class CPerwalian extends Controller
     {
         $request->validate([
             'type' => 'required|string|in:gpa_advising,non_gpa_advising',
-            'keluhan' => 'required|string',
+            'keluhan' => 'required|string|max:5000',
             'semester_id' => 'required_if:type,gpa_advising',
-            // 'ipk' => 'required|number'
+            'ipk' => 'nullable|numeric|between:0,4',
         ]);
-
-        //dd($request->all());
 
         $studentUser = Auth::user();
         $dataAuth = AuthHelper::getauth('', $studentUser->token);
+
+        $studentSemester = null;
 
         if ($request->type === 'gpa_advising') {
             $hasSubmitedKhs = Advise::where('student_user_id', $studentUser->id)
@@ -47,6 +47,10 @@ class CPerwalian extends Controller
             }
             $studentSemester = collect($dataAuth['data']['student_detail']['student_semester'] ?? [])
                 ->firstWhere('semester_id', $request->semester_id);
+
+            if (!$studentSemester) {
+                return back()->withErrors('Semester tidak valid.');
+            }
 
             $isEven = (int) $studentSemester['semester'] % 2 === 0;
 
@@ -96,8 +100,8 @@ class CPerwalian extends Controller
             'lecture_user_id' => $lectureUser->id,
             'student_id' => $dataAuth['data']['student_detail']['id'],
             'lecture_id' => $employeeId,
-            'status' => empty($request->masukan) ? 'pending' : 'done',
-            'semester' => $request->semester ?? null,
+            'status' => 'pending',
+            'semester' => $studentSemester['semester'] ?? null,
             'ipk' => $request->ipk,
             'keluhan' => $request->keluhan,
             'semester_id' => $request->semester_id ?? null,
@@ -130,9 +134,18 @@ class CPerwalian extends Controller
             ->with('Success', 'Perwalian Berhasil Diajukan');
     }
 
-    public function edit($id)
+    private function ownedPending($id): Advise
     {
         $perwalian = Advise::findOrFail($id);
+        abort_unless($perwalian->lecture_user_id === Auth::id(), 403);
+        abort_unless($perwalian->status === 'pending', 409, 'Perwalian sudah diproses.');
+
+        return $perwalian;
+    }
+
+    public function edit($id)
+    {
+        $perwalian = $this->ownedPending($id);
 
         $eSign = ESignApiHelper::signDocument(
             Auth::user()->token,
@@ -152,10 +165,10 @@ class CPerwalian extends Controller
         //Todo: move this to queue job to avoid timeout error when signing pdf
         set_time_limit(100); // Set time limit to 5 minutes
         $request->validate([
-            'masukan' => 'required|string',
+            'masukan' => 'required|string|max:5000',
         ]);
 
-        $perwalian = Advise::findOrFail($id);
+        $perwalian = $this->ownedPending($id);
 
         if ($perwalian->type === 'non_gpa_advising') {
             $perwalian->update([
