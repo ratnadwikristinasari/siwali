@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OAuthController extends Controller
 {
@@ -25,6 +26,7 @@ class OAuthController extends Controller
     public function callback(Request $request)
     {
         if (!is_string($request->code) || $request->code === '') {
+            Log::error('Invalid authorization code received from OAuth provider.');
             report('Invalid authorization code received from OAuth provider.');
             return redirect()->route('login')->withErrors(['msg' => 'Login failed. Please try again.']);
         }
@@ -38,6 +40,7 @@ class OAuthController extends Controller
         ]);
 
         if ($response->failed()) {
+            Log::error('Failed to obtain access token from OAuth provider: ' . $response->body());
             report('Failed to obtain access token from OAuth provider: ' . $response->body());
             return redirect()->route('login')->withErrors(['msg' => $response->json('message') ?? 'Login failed. Please try again.']);
         }
